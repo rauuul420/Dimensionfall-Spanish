@@ -1,44 +1,44 @@
-# Lore
-This page describes the lore, the story behind Dimensionfall. Game concepts and content should fit within the lore to create an game experience that is consistent.
+# Historia
+Esta página describe la historia y el trasfondo de Dimensionfall. Los conceptos y el contenido del juego deben ajustarse a esta historia para crear una experiencia de juego coherente.
 
-## Dimensionfall: World Lore and Setting Overview
+## Dimensionfall: Descripción general del mundo y la ambientación
 
-### Our dimension (199X)
+### Nuestra dimensión (199X)
 
-Dimensionfall takes place in an alternate version of our world, set in the ambiguous year of **199X**. Technology is frozen in a strange state—personal computers like the iconic **Amigo** dominate homes and workplaces, alongside outdated machinery and analog devices. Landlines, pagers, and fax machines form the backbone of communication, while dial-up internet hums through crackling phone lines.
+Dimensionfall transcurre en una versión alternativa de nuestro mundo, ambientada en el incierto año **199X**. La tecnología se encuentra congelada en un estado extraño: ordenadores personales como el icónico **Amigo** dominan hogares y lugares de trabajo, junto con maquinaria obsoleta y dispositivos analógicos. Los teléfonos fijos, los buscapersonas y las máquinas de fax constituyen la base de la comunicación, mientras que la conexión a internet por módem funciona a través de líneas telefónicas con interferencias.
 
-The location is deliberately undefined but draws heavy inspiration from post-Soviet, Eastern European settings. Imagine crumbling concrete buildings, bleak industrial zones, and sprawling forests under gray skies. Rusting railway lines crisscross the land, a fading reminder of a once-connected world. Life here is practical, often harsh, and colored by the remnants of a communist past. This world serves as the foundation—the baseline dimension from which all other realities diverge.
+La ubicación es deliberadamente indefinida, pero se inspira profundamente en los escenarios postsoviéticos de Europa del Este. Imagínese edificios de hormigón en ruinas, desoladas zonas industriales y extensos bosques bajo cielos grises. Vías férreas oxidadas se entrecruzan, un vago recordatorio de un mundo que alguna vez estuvo conectado. La vida aquí es práctica, a menudo dura, y está marcada por los vestigios de un pasado comunista. Este mundo sirve de base, la dimensión fundamental de la que se desprenden todas las demás realidades.
 
-### The Collapse: Dimensional convergence
+### El colapso: convergencia dimensional
 
-But something went wrong.
+Pero algo salió mal.
 
-Suddenly, through some cosmic event—or perhaps something far more sinister—reality fractured. At first, the signs were minimal—strange objects appearing where they did not belong, things are out of place. As time progressed, landscapes shifted, and the result is a twisted, unstable reality where entities, artifacts, and environments from countless other dimensions have fused into our dimension.
+De repente, a través de algún evento cósmico —o quizás algo mucho más siniestro— la realidad se fracturó. Al principio, las señales eran mínimas: objetos extraños aparecían donde no correspondían, cosas fuera de lugar. Con el paso del tiempo, los paisajes se transformaron, y el resultado es una realidad retorcida e inestable donde entidades, artefactos y entornos de innumerables otras dimensiones se han fusionado con la nuestra.
 
-Survivors call this brief but cataclysmic period the **Fall**.
+Los supervivientes llaman a este breve pero catastrófico período la **Caída**.
 
-### Fractured Realities: Influences from other dimensions
+### Realidades fracturadas: influencias de otras dimensiones
 
-The world is now a chaotic patchwork of conflicting technologies, cultures, and horrors. The convergence brought strange new opportunities but also unimaginable dangers. These are some of the most notable dimensions that seeped into the Default:
+El mundo es ahora un mosaico caótico de tecnologías, culturas y horrores en conflicto. La convergencia trajo consigo nuevas y extrañas oportunidades, pero también peligros inimaginables. Estas son algunas de las dimensiones más notables que se filtraron en el Predeterminado:
 
-- **Modern World (201X-20XX)**: Smartphones, the internet, and sleek consumer tech find their way into the hands of scavengers. Devices flicker to life, desperately searching for a connection to a world that no longer exists.
+- **Mundo Moderno (201X-20XX)**: Los teléfonos inteligentes, internet y la tecnología de consumo de última generación acaban en manos de carroñeros. Los dispositivos cobran vida, buscando desesperadamente una conexión con un mundo que ya no existe.
 
-- **Cyberpunk Future**: Augmented mercenaries roam the wastes with bionic limbs and retinal implants. Rogue AI constructs lurk within derelict servers, and corporate enclaves fight to carve out new empires amidst the ruins.
+- **Futuro Cyberpunk**: Mercenarios aumentados con extremidades biónicas e implantes de retina deambulan por los páramos. Constructos de IA rebeldes acechan en servidores abandonados, y enclaves corporativos luchan por forjar nuevos imperios entre las ruinas.
 
-- **Biopunk Nightmare**: Perhaps the most disturbing of all. A dimension where biology replaced silicon. Flesh-bound weapons, living armor, chimeric beasts, and grotesque human experiments roam freely. Mutations are both a curse and a tool for survival.
+- **Pesadilla Biopunk**: Quizás la más perturbadora de todas. Una dimensión donde la biología reemplazó al silicio. Armas de carne y hueso, armaduras vivientes, bestias quiméricas y grotescos experimentos humanos campan a sus anchas. Las mutaciones son tanto una maldición como una herramienta de supervivencia.
 
-- \*\*Other \***punk Subgenres**: Dieselpunk war machines rust in abandoned factories, while steampunk automatons sputter with steam in forgotten laboratories. The possibilities are endless.
+- **Otros subgéneros del punk:** Las máquinas de guerra dieselpunk se oxidan en fábricas abandonadas, mientras que los autómatas steampunk chisporrotean con vapor en laboratorios olvidados. Las posibilidades son infinitas.
 
-- **Fantasy Realm**: Knights in corroded plate armor stand beside elves with weary eyes. Ruins whisper of ancient magic, while enchanted weapons clash with off-world technology. Magic exists here—but its laws remain unclear.
+- **Reino de Fantasía**: Caballeros con armaduras corroídas se yerguen junto a elfos de mirada cansada. Las ruinas susurran sobre magia ancestral, mientras armas encantadas chocan con tecnología de otros mundos. La magia existe aquí, pero sus leyes siguen siendo inciertas.
 
-- **The Plague Dimension (Zombies, but Twisted)**: The undead shuffle through the streets—but they are not merely mindless husks. The infection evolves, creating fungal horrors, parasitic masses, and undead that remember their past lives.
+- **La Dimensión de la Plaga (Zombis, pero retorcidos)**: Los muertos vivientes deambulan por las calles, pero no son simples cáscaras sin mente. La infección evoluciona, creando horrores fúngicos, masas parasitarias y muertos vivientes que recuerdan sus vidas pasadas.
 
-### The World After
+### El mundo después
 
-The Fall was not a single event but a sudden, violent collapse. Cities crumbled under the weight of disasters both familiar and alien. Traces of catastrophe linger—twisted wreckage, scorched ruins, and poisoned rivers. Streets buckle and buildings crumble, leaving behind a broken world scarred by disasters both natural and unnatural.
+La Caída no fue un evento aislado, sino un colapso repentino y violento. Las ciudades se derrumbaron bajo el peso de desastres tanto conocidos como desconocidos. Aún quedan huellas de la catástrofe: escombros retorcidos, ruinas calcinadas y ríos envenenados. Las calles se desmoronan y los edificios se derrumban, dejando tras de sí un mundo destrozado, marcado por desastres naturales y provocados por el hombre.
 
-Each region bears scars of these calamities. Survivors pick through the wreckage of plane crashes, the fuselage rusting alongside eldritch ruins from other dimensions. Life persists, but the landscape itself reminds all who endure: the world is broken, and the Fall has left its mark.
+Cada región conserva las cicatrices de estas calamidades. Los supervivientes rebuscan entre los restos de los accidentes aéreos, cuyos fuselajes se oxidan junto a ruinas extrañas de otras dimensiones. La vida persiste, pero el paisaje mismo recuerda a todos los que resisten: el mundo está roto y la Caída ha dejado su huella.
 
-Our dimension is now a brutal survival ground. Humanity clings to existence in scattered enclaves, walled settlements, or nomadic bands. Trust is scarce. Relics from other dimensions can offer power—but they can also bring corruption, mutation, or worse.
+Nuestra dimensión se ha convertido en un brutal campo de batalla para la supervivencia. La humanidad se aferra a la existencia en enclaves dispersos, asentamientos amurallados o bandas nómadas. La confianza escasea. Las reliquias de otras dimensiones pueden ofrecer poder, pero también pueden traer corrupción, mutaciones o algo peor.
 
-This is the world of Dimensionfall—a place where dimensions collide; where magic and machine intertwine; and where every day is a battle to endure the chaos left in the wake of the Fall.
+Este es el mundo de Dimensionfall, un lugar donde las dimensiones chocan; donde la magia y la máquina se entrelazan; y donde cada día es una batalla para sobrevivir al caos que quedó tras la Caída.
