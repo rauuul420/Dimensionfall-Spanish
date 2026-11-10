@@ -1,88 +1,88 @@
-# Dimensionfall Map Format Documentation
+# Documentación del formato de mapa de Dimensionfall
 
-This document defines the structure and usage of map JSON files in Dimensionfall. This knowledge is intended for agents or developers creating new maps or modifying existing ones through automated means.
+Este documento define la estructura y el uso de los archivos JSON de mapas en Dimensionfall. Esta información está dirigida a agentes o desarrolladores que crean nuevos mapas o modifican los existentes mediante métodos automatizados.
 
-## Overview
-Dimensionfall maps are stored as JSON files. A map consists of metadata (name, weight, etc.), a list of areas that can be randomly spawned on the map, and a multi-layered grid representing the actual tile layout.
+## Descripción general
+Los mapas de Dimensionfall se almacenan como archivos JSON. Un mapa consta de metadatos (nombre, peso, etc.), una lista de áreas que pueden generarse aleatoriamente en el mapa y una cuadrícula multicapa que representa la disposición real de las casillas.
 
-## Map JSON Structure
+## Estructura JSON del mapa
 
-### Top-Level Fields (Metadata)
+### Campos de nivel superior (metadatos)
 
-| Field | Type | Required | Description |
+| Campo | Tipo | Obligatorio | Descripción |
 | :---0|:---|:---|:---|
-| `id` | String | Yes | Unique identifier for the map (matches filename without `.json`). |
-| `name` | String | Yes | User-friendly name. |
-| `description` | String | No | Flavor text describing the map. |
-| `categories` | Array[String] | No | Tags used for grouping maps (e.g., `["Field", "Plains"]`). |
-| `weight` | Integer | No | Probability weight when selecting maps in a pool (default: `1000`). |
-| `mapwidth` | Integer | No | Width of the map grid in tiles (default: `32`). |
-| `mapheight` | Integer | No | Height of the map grid in tiles (default: `32`). |
-| `connections` | Dictionary | No | Road connection types for cardinal directions (`north`, `south`, `east`, `west`). Values are typically `"road"` or `"ground"`. |
-| `areas` | Array[Object] | Yes | List of areas that can be instantiated on the map. |
-| `levels` | Array[Array[Object]] | Yes | The actual tile data for each layer/level. |
+| `id` | Cadena | Sí | Identificador único para el mapa (coincide con el nombre del archivo sin `.json`). |
+| `name` | Cadena | Sí | Nombre fácil de usar. |
+| `description` | Cadena | No | Texto descriptivo del mapa. |
+| `categories` | Array[String] | No | Etiquetas utilizadas para agrupar mapas (por ejemplo, `["Field", "Plains"]`). |
+| `weight` | Entero | No | Peso de probabilidad al seleccionar mapas en un grupo (predeterminado: `1000`). |
+| `mapwidth` | Entero | No | Ancho de la cuadrícula del mapa en mosaicos (predeterminado: `32`). |
+| `mapheight` | Entero | No | Altura de la cuadrícula del mapa en mosaicos (predeterminado: `32`). |
+| `connections` | Diccionario | No | Tipos de conexión vial para direcciones cardinales (`north`, `south`, `east`, `west`). Los valores suelen ser `"road"` o `"ground"`. |
+| `areas` | Array[Object] | Sí | Lista de áreas que se pueden instanciar en el mapa. |
+| `levels` | Array[Array[Object]] | Sí | Los datos reales de los mosaicos para cada capa/nivel. |
 
-### Areas Structure
-An area defines a "template" for what tiles and entities exist in a specific part of the map. These are used to populate the levels or define specific zones.
+### Estructura de áreas
+Un área define una "plantilla" para los mosaicos y entidades que existen en una parte específica del mapa. Estos se utilizan para rellenar los niveles o definir zonas específicas.
 
-**Area Object Fields:**
-- `id` (String): Unique identifier for this area template.
-- `rotate_random` (Boolean): If true, the area's tile's rotation is randomized upon spawning.
-- `spawn_chance` (Integer): Probability (0-100) that this area will spawn in its designated level.
-- `tiles` (Array[Object]): A list of tiles that belong to this area. 
-	- Each tile object: `{ "id": "tile_id", "count": integer }`.
-	- A "null" tile is used to alter the spawn chance of entities, eg. if { "id": "null", "count": 1000 } and the entity is { "id": "Tree_00", "type": "furniture", "count": 1 }, the tree's spawn chance is 1/1000
-- `entities` (Array[Object]): A list of entities (furniture, mobs, itemgroups) belonging to this area.
-    - Each entity object: `{ "id": "entity_id", "type": "furniture" | "mob" | "mobgroup" | "itemgroup", "count": integer }`.
+**Campos del objeto de área:**
+- `id` (Cadena): Identificador único para esta plantilla de área.
+- `rotate_random` (Booleano): Si es verdadero, la rotación de la casilla del área se genera aleatoriamente.
+- `spawn_chance` (Entero): Probabilidad (0-100) de que esta área aparezca en su nivel designado.
+- `tiles` (Array[Object]): Una lista de casillas que pertenecen a esta área. 
+	- Cada objeto de baldosa: `{ "id": "tile_id", "count": integer }`.
+	- Se utiliza una casilla "nula" para alterar la probabilidad de aparición de entidades, por ejemplo, si { "id": "null", "count": 1000 } y la entidad es { "id": "Tree_00", "type": "furniture", "count": 1 }, la probabilidad de aparición del árbol es 1/1000.
+- `entities` (Array[Object]): Una lista de entidades (muebles, criaturas, grupos de objetos) que pertenecen a esta área.
+    - Cada objeto de entidad: `{ "id": "entity_id", "type": "furniture" | "mob" | "mobgroup" | "itemgroup", "count": integer }`.
 
-### Levels Structure
-The `levels` field is an array of arrays. Each inner array represents a single depth/layer. 
-- An index in the `levels` array containing an empty array `[]` represents an empty level.
-- A populated level contains objects (Tiles) that represent actual tile placements.
+### Estructura de niveles
+El `levels` El campo es una matriz de matrices. Cada matriz interna representa una única profundidad/capa. 
+- Un índice en el `levels` matriz que contiene una matriz vacía `[]` representa un nivel vacío.
+- Un nivel poblado contiene objetos (baldosas) que representan la colocación real de las baldosas.
 
-**Tile Object (in Levels):**
-- `id` (String): The ID of the tile to place. Must correspond to a valid entry in `Tiles.json`.
-- `rotation` (Integer): Rotation in degrees ($0, 90, 180, 270$).
-- `areas` (Array[Object]): A list of area references that are "active" at this tile's location.
-	- Each reference: `{ "id": "area_id", "rotation": integer }`.
-	- The rotation of the area will be used when the area's tiles and entities are placed, so the default tile/entity's rotation may alter when the area is applied.
+**Objeto de mosaico (en niveles):**
+- `id` (Cadena): El ID de la ficha a colocar. Debe corresponder a una entrada válida en `Tiles.json`.
+- `rotation` (Entero): Rotación en grados ($0, 90, 180, 270$).
+- `areas` (Array[Object]): Una lista de referencias de área que están "activas" en la ubicación de esta casilla.
+	- Cada referencia: `{ "id": "area_id", "rotation": integer }`.
+	- La rotación del área se utilizará al colocar las baldosas y entidades del área, por lo que la rotación predeterminada de las baldosas/entidades puede alterarse al aplicar el área.
 
-## Valid Content References
+## Referencias de contenido válidas
 
-When constructing maps, ensure all IDs used exist in their respective source files:
+Al crear mapas, asegúrese de que todos los identificadores utilizados existan en sus respectivos archivos fuente:
 
-1.  **Tiles**: Verified via `Mods/Dimensionfall/Tiles/Tiles.json`.
-	*   *Examples*: `grass_plain_01`, `forest_underbrush_00`, `brick_wall_00`.
-2.  **Furniture**: Verified via `Mods/Dimensionfall/Furniture/Furniture.json`.
-	*   *Examples*: `table_round_wood`, `chair_wood`, `door_wood`.
-3.  **Entities**:
-	*   `mobgroup`: e.g., `basic_zombies`.
-	*   `itemgroup`: e.s., `generic_field_finds`.
+1.  **Baldosas**: Verificado a través de `Mods/Dimensionfall/Tiles/Tiles.json`.
+	*   *Ejemplos*: `grass_plain_01`, `forest_underbrush_00`, `brick_wall_00`.
+2.  **Muebles**: Verificado a través de `Mods/Dimensionfall/Furniture/Furniture.json`.
+	*   *Ejemplos*: `table_round_wood`, `chair_wood`, `door_wood`.
+3.  **Entidades**:
+	*   `mobgroup`: p.ej, `basic_zombies`.
+	*   `itemgroup`: es, `generic_field_finds`.
 
-## Map Editor Behavior
-The Map Editor (`mapeditor.gd`) provides a UI for manual editing. It:
-- Allows browsing and selecting tiles from the tile database.
-- Supports setting map metadata (name, description, categories).
-- Provides checkboxes to toggle `"road"` vs `"ground"` connections.
-- Saves changes back to the JSON file using `DMap.save_data_to_disk()`.
+## Comportamiento del editor de mapas
+El editor de mapas (`mapeditor.gd`) proporciona una interfaz de usuario para la edición manual.
+- Permite explorar y seleccionar mosaicos de la base de datos de mosaicos.
+- Permite configurar los metadatos del mapa (nombre, descripción, categorías).
+- Proporciona casillas de verificación para alternar `"road"` vs `"ground"` conexiones.
+- Guarda los cambios en el archivo JSON usando `DMap.save_data_to_disk()`.
 
-## Examples
+## Ejemplos
 
-### Simple Field Map (`field_grass_basic_00.json`)
-A minimal map with a base layer of grass tiles and simple area templates for trees and items. Uses many empty levels to represent height/depth layers that are unused.
+### Mapa de campo simple (`field_grass_basic_00.json`)
+Un mapa minimalista con una capa base de baldosas de césped y plantillas de área sencillas para árboles y objetos. Utiliza muchos niveles vacíos para representar capas de altura/profundidad que no se utilizan.
 
-### Complex Structure (`Generichouse.json`)
-Includes specific `pick_one: true` areas which select from a list of floor types (e.g., different carpet or wood patterns) to make sure that area is made using only that one floor type.
+### Estructura compleja (`Generichouse.json`)
+Incluye específico `pick_one: true` áreas que seleccionan de una lista de tipos de piso (por ejemplo, diferentes patrones de alfombra o madera) para asegurarse de que esa área se construya utilizando solo ese tipo de piso.
 
-## Agent Guidance
+## Orientación para agentes
 
-### ✅ Do
-- **Create new files** for entirely new map concepts to avoid breaking existing mod content.
-- Use the `areas` system to build complex, randomized terrain without manually defining thousands of tile entries.
-- Respect `mapwidth` and `mapheight` boundaries when populating `levels`.
-- Verify all `id` strings against `Tiles.json` and `Furniture.json`.
+### ✅ Hacer
+- **Crea nuevos archivos** para conceptos de mapas completamente nuevos para evitar dañar el contenido del mod existente.
+- Utilice el `areas` Sistema para construir terrenos complejos y aleatorios sin necesidad de definir manualmente miles de casillas.
+- Respeto `mapwidth` y `mapheight` límites al poblar `levels`.
+- Verificar todo `id` cuerdas contra `Tiles.json` y `Furniture.json`.
 
-### ❌ Do Not
-- **Modify existing maps** unless specifically tasked to a small change (e.g., changing a connection type).
-- Hardcode massive lists of tiles in the `levels` array for large areas; instead, define those tiles in an `area` object and reference that area in the level's tile entry.
-- Use IDs that do not exist in the project's content databases.
+### ❌ No lo hagas
+- **Modificar mapas existentes** a menos que se le asigne específicamente un cambio pequeño (por ejemplo, cambiar un tipo de conexión).
+- Codificar listas masivas de mosaicos en el `levels` matriz para áreas grandes; en su lugar, defina esas baldosas en una `area` objeto y referencia esa área en la entrada de la casilla del nivel.
+- Utilice identificadores que no existan en las bases de datos de contenido del proyecto.
