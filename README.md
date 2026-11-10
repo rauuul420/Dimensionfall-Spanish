@@ -1,8 +1,8 @@
 # Dimensionfall
-Dimensionfall is a top-down real-time survival game set in a post-apocalyptic world. Survive in a strange place where multiple dimensions have merged. Will you fight demons? Aliens? Zombies? Who knows what you will come across. The [lore](https://github.com/Khaligufzel/Dimensionfall/blob/main/Documentation/Game_design/Lore.md) has many interesting angles.
+Dimensionfall es un juego de supervivencia en tiempo real con perspectiva cenital, ambientado en un mundo postapocalíptico. Sobrevive en un lugar extraño donde han convergido múltiples dimensiones. ¿Te enfrentarás a demonios? ¿A alienígenas? ¿A zombis? Quién sabe con qué te encontrarás. El [lore](https://github.com/rauuul420/Dimensionfall-Spanish/blob/main/Documentation/Game_design/Lore.md) presenta muchos aspectos interesantes
 
-## Table of Contents
-- [How to play](#how-to-play)
+## Tabla de Contenidos
+- [Como jugar](#como-jugar)
 - [Features](#features)
 - [Roadmap](#roadmap)
 - [Contribute](#contribute)
@@ -19,7 +19,7 @@ Check out the gameplay video:
 
 [![Dimensionfall_gameplay_demo](https://img.youtube.com/vi/Dnn8xvyTN74/maxresdefault.jpg)](https://www.youtube.com/watch?v=Dnn8xvyTN74)
 
-## How to play
+## Como jugar
 You can find some demo releases [here](https://github.com/Khaligufzel/Dimensionfall/releases).
 Alternatively, you can play the game in the following way:
 - Download [Godot](https://godotengine.org/download/) from their website or from [Steam](https://store.steampowered.com/app/404790/Godot_Engine/)
