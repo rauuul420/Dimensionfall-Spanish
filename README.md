@@ -45,39 +45,39 @@ Consulté también la [lista ampliada de características](FeatureList.md)
 ## Hoja de ruta
 
 ### Etapa 1 (primer lanzamiento)
-- Building ~~/crafting/reloading~~ should take resources from the inventory
-- Basic ~~crafting/~~ building menu
-- ~~"Progress bar" to show the player when the current action will be finished (reloading, building, crafting etc.)~~
-- A few additional weapons
-- ~~In-game content editor to make our own mods or contribute to the core mod~~
-- ~~Doors~~
-- Sounds
-- Bug fixing
-- Polishing
+- Construir/fabricar/recargar debería consumir recursos del inventario.
+- Menú básico de creación/construcción
+- ~~"Barra de progreso" para mostrar al jugador cuándo finalizará la acción actual (recargar, construir, fabricar, etc.)~~
+- Algunas armas adicionales
+- ~~Editor de contenido dentro del juego para crear nuestros propios mods o contribuir al mod principal~~
+- ~~Puertas~~
+- Sonidos
+- Corrección de errores
+- Pulido
 
-Additional features before our first release:
-- ~~furniture/containers~~
-- personal goals
-- more enemies/better AI
-- noise
-- some fancy shaders?
-- equipment
-- ~~proper player inventory, bags~~
+Funcionalidades adicionales antes de nuestro primer lanzamiento:
+- ~~muebles/contenedores~~
+- metas personales
+- Más enemigos/mejor IA
+- ruido
+- ¿Algunos sombreadores sofisticados?
+- equipo
+- ~~Inventario adecuado del jugador, bolsas~~
 
-### Stage 2
-- Vehicles
-- Proper base building
-- Base raids?
-- ~~World map~~
-- ~~Saving~~
-- Player stats and skills
-- ~~Melee weapons~~
-- ~~Recoil/sway/spread/aiming~~
+### Etapa 2
+- vehículos
+- Construcción de bases adecuadas
+- ¿Asaltos a bases?
+- ~~Mapa del mundo~~
+- ~~Ahorrando~~
+- Estadísticas y habilidades del jugador
+- ~~Armas cuerpo a cuerpo~~
+- ~~Retroceso/balanceo/dispersión/apuntado~~
 
 ## Contribuir
 Si te gusta Godot y quieres contribuir, no dudes en enviar una solicitud de extracción o un informe de error con tus ideas, o unirte a nosotros en Discord. Para realizar ediciones, comienza leyendo la [guía de inicio](https://github.com/Khaligufzel/Dimensionfall/blob/main/Documentation/Game_development/Getting_started.md).
 
-This will always be a hobby project and will not be for sale. However, if you want to, you can donate to the developers:
+Este siempre será un proyecto de afición y no estará a la venta. Sin embargo, si lo deseas, puedes hacer una donación a los desarrolladores:
 
 Khaligufzel: https://ko-fi.com/khaligufzel
 
@@ -85,33 +85,33 @@ snipercup: https://ko-fi.com/snipercup
 
 ## Comunidad
 
-Official Discord:
+Discord oficial:
 [https://discord.gg/yzrxG9zZqA](https://discord.gg/yzrxG9zZqA)
 
 ## Créditos
 - Repositorio original: https://github.com/Dimensionfall/Dimensionfall
-- Sprites: Some sprites were created with https://github.com/int-ua/blender-pixelart
-- Sprites: Some sprites were created with https://github.com/RodZill4/material-maker
-- Inventario: Este juego usea https://github.com/peter-kish/gloot para implementar el inventario
-- Text display: Some UI uses https://github.com/daenvil/MarkdownLabel for text display
-- Music:
-	Main menu music: Desolate - https://opengameart.org/users/matthew-pablo
-	Game over music: Lonelyhood - https://opengameart.org/users/yd
-	Gameplay music:
+- Sprites: Algunos sprites fueron creados con https://github.com/int-ua/blender-pixelart
+- Sprites: Algunos sprites fueron creados con https://github.com/RodZill4/material-maker
+- Inventario: Este juego utiliza https://github.com/peter-kish/glot para implementar el inventario
+- Visualización de texto: Algunas interfaces de usuario utilizan https://github.com/daenvil/MarkdownLabel para la visualización de texto.
+- Música:
+	Música del menú principal: Desolate - https://opengameart.org/users/matthew-pablo
+	Música de fin de partida: Lonelyhood - https://opengameart.org/users/yd
+	Música del juego:
 	Dark Fallout - https://opengameart.org/users/remaxim
-	Please, answer me my friend - https://opengameart.org/users/alexandr-zhelanov
-	Ambience Pack 1 -- Sci Fi Horror - https://opengameart.org/users/joth
-	Pressure - https://opengameart.org/users/yd
-	Ambience:
-        Nature Sounds Pack - https://opengameart.org/users/antoinemax (License: CC-BY 4.0)
-	Cricket sounds - https://opengameart.org/users/syncopika
+	Por favor, respóndeme, amigo mío: https://opengameart.org/users/alexandr-zhelanov
+	Paquete de ambiente 1: Terror de ciencia ficción - https://opengameart.org/users/joth
+	Presión - https://opengameart.org/users/yd
+	Ambiente:
+        Paquete de sonidos de la naturaleza - https://opengameart.org/users/antoinemax (Licencia: CC-BY 4.0)
+	Sonidos de grillos - https://opengameart.org/users/syncopika
 	Wind1 - https://opengameart.org/users/lukerustltd
-- SFX:
-	Old Computer Click - https://pixabay.com/users/finntastico-33933679/
-	Mechanical keyboard - https://pixabay.com/users/freesound_community-46691455/
-	Computer Humming SFX - https://pixabay.com/users/soul_serenity_sounds-6817262/
-- Settings:
-	For game settings code: https://github.com/Maaack/Godot-Options-Menus
-- Fonts:
+- Efectos de sonido:
+	Ordenador antiguo (clic) - https://pixabay.com/users/finntastico-33933679/
+	Teclado mecánico - https://pixabay.com/users/freesound_community-46691455/
+	Efecto de sonido de zumbido de ordenador - https://pixabay.com/users/soul_serenity_sounds-6817262/
+- Ajustes:
+	Para el código de configuración del juego: https://github.com/Maaack/Godot-Options-Menus
+- Fuentes:
 Apple: https://www.fontget.com/font/apple/
 Glitch: https://www.fontget.com/font/glitch/
