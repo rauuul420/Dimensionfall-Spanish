@@ -1,90 +1,90 @@
-# Dimensionfall Agent Guide
+# Guía del agente de Dimensionfall
 
-This is the Dimensionfall repository.
-# Dimensionfall Agent Guide
+Este es el repositorio de Dimensionfall.
+# Guía del agente de Dimensionfall
 
-This is the Dimensionfall repository.
+Este es el repositorio de Dimensionfall.
 
-This is the only `AGENTS.md` file in the repository. Do not search for additional agent instruction files.
-
----
-
-# Project Overview
-
-Dimensionfall is a moddable survival RPG built with Godot 4.
-
-Most gameplay content is data-driven and stored as JSON inside the `Mods` directory. The project contains an extensive in-game content editor for maintaining game data.
-
-Unless explicitly requested otherwise, extend existing systems instead of introducing new ones.
+Este es el único `AGENTES.md` archivo en el repositorio. No busque archivos de instrucciones adicionales del agente.
 
 ---
 
-# Repository Structure
+# Descripción general del proyecto
 
-## Core Logic & Scenes
-- **Scripts/**: Gameplay logic written in GDScript. Includes subdirectories for components and modular logic (e.g., `Mob/`, `Runtimedata/`).
-- **Scenes/**: Godot scenes, editor interfaces, and UI layouts.
-- **Tests/Unit**: GUT unit tests located here.
+Dimensionfall es un juego de rol de supervivencia modificable creado con Godot 4.
 
-## Content & Modding
-- **Mods/**: Core game content including maps, *tiles, furniture, items, mobs, quests, etc.* (Note: Most data is in JSON).
-- **Defaults/**: Default configurations for player, blocks, and entities.
+La mayor parte del contenido del juego se basa en datos y se almacena como JSON dentro del `Mods` directorio. El proyecto contiene un extenso editor de contenido dentro del juego para mantener los datos del juego.
 
-## Assets & Media
-- **Assets/ / Textures/ / Shaders/**: Visual assets, textures, and custom GDShader files.
-- **Sounds/ / Images/ / Media/**: Audio (SFX/Music), screenshots, and editor preview media.
-- **Documents/**: Technical documentation and design notes.
-
-## Tools & Infrastructure
-- **Tools/**: Developer utilities and validation scripts (e.g., `map_validator.py`).
-- **addons/**: Third-party plugins (e.g., `gloot` for inventory, `gut` for testing). Do not modify unless explicitly requested.
+A menos que se solicite explícitamente lo contrario, amplíe los sistemas existentes en lugar de introducir otros nuevos.
 
 ---
 
-# Coding Standards
+# Estructura del repositorio
 
-- Use Godot 4.x GDScript syntax.
-- Follow the existing coding style and use tabs for indentation.
-- Add comments only when they improve maintainability.
-- Prefer small, focused changes.
-- Avoid introducing unnecessary external dependencies.
-- Reuse existing systems (especially in `Scripts/` and `Mods/`) whenever practical.
+## Lógica básica y escenas
+- **Scripts/**: Lógica de juego escrita en GDScript. Incluye subdirectorios para componentes y lógica modular (por ejemplo, `Mob/`, `Runtimedata/`).
+- **Escenas/**: Escenas de Godot, interfaces de editor y diseños de interfaz de usuario.
+- **Pruebas/Unidad**: Las pruebas unitarias de GUT se encuentran aquí.
 
----
+## Contenido y modificaciones
+- **Mods/**: Contenido principal del juego, incluyendo mapas, *baldosas, muebles, objetos, criaturas, misiones, etc.* (Nota: La mayoría de los datos están en formato JSON).
+- **Valores predeterminados/**: Configuraciones predeterminadas para el jugador, los bloques y las entidades.
 
-# Working Rules
+## Activos y medios
+- **Recursos/ / Texturas/ / Shaders/**: Recursos visuales, texturas y archivos GDShader personalizados.
+- **Sonidos/ / Imágenes/ / Multimedia/**: Audio (efectos de sonido/música), capturas de pantalla y material de vista previa del editor.
+- **Documentos/**: Documentación técnica y notas de diseño.
 
-- Work from the current workspace.
-- Preserve existing user changes; do not overwrite unrelated files.
-- Inspect the current implementation before proposing replacements or refactors.
-- Explain unexpected findings or architectural conflicts before making broad changes.
-- When changing data formats (JSON/Resource) or serialization, preserve backwards compatibility.
-
----
-
-# Validation
-
-Validate changes when appropriate for the task. 
-**Note:** When adding new files, ensure they are properly recognized by the project via `project.godot`.
-
-Available validation tools include:
-- GUT unit tests (`Tests/Unit`)
-- Godot headless import/validation
-- Project validation scripts in `Tools/`
-
-If validation is performed, report:
-- Errors and warnings
-- Failed tests
-- Notable observations
-
-Do not hide failures.
+## Herramientas e infraestructura
+- **Herramientas/**: Utilidades para desarrolladores y scripts de validación (por ejemplo, `map_validator.py`).
+- **complementos/**: Complementos de terceros (por ejemplo, `gloot` para inventario, `gut` (para pruebas). No lo modifique a menos que se le solicite explícitamente.
 
 ---
 
-# Development Process
+# Estándares de codificación
 
-1. **Understand**: Research the existing implementation and relevant documentation.
-2. **Implement**: Make the smallest reasonable change to achieve the goal.
-3. **Validate**: Run appropriate tests or validation scripts.
-4. **Summarize**: Clear description of what was changed.
-5. **Report**: Detail any remaining issues or recommended follow-up work.
+- Utilice la sintaxis GDScript de Godot 4.x.
+- Sigue el estilo de codificación existente y utiliza tabulaciones para la indentación.
+- Añade comentarios solo cuando mejoren la facilidad de mantenimiento.
+- Prefiero cambios pequeños y específicos.
+- Evite introducir dependencias externas innecesarias.
+- Reutilizar los sistemas existentes (especialmente en `Scripts/` y `Mods/`) siempre que sea posible.
+
+---
+
+# Normas de funcionamiento
+
+- Trabaja desde tu espacio de trabajo actual.
+- Conservar los cambios de usuario existentes; no sobrescribir archivos no relacionados.
+- Inspeccione la implementación actual antes de proponer reemplazos o refactorizaciones.
+- Explique los hallazgos inesperados o los conflictos arquitectónicos antes de realizar cambios importantes.
+- Al cambiar los formatos de datos (JSON/Recurso) o la serialización, mantenga la compatibilidad con versiones anteriores.
+
+---
+
+# Validación
+
+Validar los cambios cuando sea apropiado para la tarea. 
+**Nota:** Al agregar nuevos archivos, asegúrese de que el proyecto los reconozca correctamente mediante `project.godot`.
+
+Las herramientas de validación disponibles incluyen:
+- Pruebas unitarias de GUT (`Tests/Unit`)
+- Importación/validación sin interfaz gráfica de Godot
+- Scripts de validación de proyectos en `Tools/`
+
+Si se realiza la validación, informa lo siguiente:
+- Errores y advertencias
+- Pruebas fallidas
+- Observaciones destacadas
+
+No ocultes tus fracasos.
+
+---
+
+# Proceso de desarrollo
+
+1. **Comprender**: Investiga la implementación existente y la documentación pertinente.
+2. **Implementar**: Realizar el cambio más pequeño y razonable para lograr el objetivo.
+3. **Validar**: Ejecutar las pruebas o los scripts de validación adecuados.
+4. **Resumir**: Descripción clara de los cambios realizados.
+5. **Informar**: Detalla cualquier problema pendiente o trabajo de seguimiento recomendado.
