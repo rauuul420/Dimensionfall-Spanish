@@ -1,10 +1,10 @@
-# Recipe-driven map generator
+# Generador de mapas basado en recetas
 
-`Tools/map_generator.py` converts a compact JSON recipe into a complete Dimensionfall map JSON file. Dimensionfall maps have fixed dimensions of 32 x 32 tiles and 21 possible logical levels from `z: -10` through `z: 10`. Every populated level has exactly 1024 entries; unused levels remain `[]`.
+`Tools/map_generator.py` Convierte una receta JSON compacta en un archivo JSON de mapa de Dimensionfall completo. Los mapas de Dimensionfall tienen dimensiones fijas de 32 x 32 casillas y 21 posibles niveles lógicos. `z: -10` a través de `z: 10`Cada nivel poblado tiene exactamente 1024 entradas; los niveles no utilizados permanecen `[]`.
 
-## Usage
+## Uso
 
-Run from the repository root:
+Ejecutar desde la raíz del repositorio:
 
 ```sh
 python3 Tools/map_generator.py \
@@ -13,49 +13,49 @@ python3 Tools/map_generator.py \
 python3 Tools/map_validator.py /tmp/generated_meadow_prototype.json
 ```
 
-Recipes used for production maps may live under `Tools/recipes/`; small schema fixtures remain under `Tools/examples/`. Both use the same generator and validator contract. Maintained production examples include Pine Hollow (`Tools/recipes/pine_hollow_outpost.json` → `Mods/Dimensionfall/Maps/pine_hollow_outpost.json`) and Crater Research Camp (`Tools/recipes/crater_research_camp.json` → `Mods/Dimensionfall/Maps/crater_research_camp.json`). Published maps also need a same-ID `.png` preview for warning-free Godot loading and map-browser thumbnails.
+Las recetas utilizadas para los mapas de producción pueden estar bajo `Tools/recipes/`; los accesorios de esquema pequeños permanecen bajo `Tools/examples/`. Ambos utilizan el mismo contrato generador y validador. Los ejemplos de producción mantenidos incluyen Pine Hollow (`Tools/recipes/pine_hollow_outpost.json` → `Mods/Dimensionfall/Maps/pine_hollow_outpost.json`) y el Campamento de Investigación del Cráter (`Tools/recipes/crater_research_camp.json` → `Mods/Dimensionfall/Maps/crater_research_camp.json`). Los mapas publicados también necesitan un mismo ID `.png` Vista previa para la carga de Godot sin advertencias y miniaturas del navegador de mapas.
 
-The output filename must be `<id>.json`, matching the map loader's filename-derived ID. Existing output is protected. Pass `--overwrite` only when replacement is intended. Use `--tiles PATH` to validate tile IDs against a tile database other than `Mods/Dimensionfall/Tiles/Tiles.json`. Furniture operations validate against `Furniture/Furniture.json` beside the selected `Tiles` directory by default; use `--furniture PATH` when that database is elsewhere.
+El nombre del archivo de salida debe ser `<id>.json`, que coincide con el ID derivado del nombre de archivo del cargador de mapas. La salida existente está protegida. Pasar `--overwrite` solo cuando se pretende un reemplazo. `--tiles PATH` para validar los ID de los mosaicos contra una base de datos de mosaicos distinta de `Mods/Dimensionfall/Tiles/Tiles.json`Las operaciones de mobiliario se validan según `Furniture/Furniture.json` junto a los seleccionados `Tiles` directorio por defecto; usar `--furniture PATH` cuando esa base de datos está en otro lugar.
 
-For batch generation of deterministic seed variants and instructions for inspecting them in Godot's content editor, see [`map_example_generation.md`](map_example_generation.md).
+Para la generación por lotes de variantes de semillas deterministas e instrucciones para inspeccionarlas en el editor de contenido de Godot, consulte [`map_example_generation.md`](map_example_generation.md).
 
-## Recipe format
+## Formato de receta
 
-The root must be a JSON object with these fields:
+La raíz debe ser un objeto JSON con los siguientes campos:
 
-| Field | Type | Meaning |
+| Campo | Tipo | Significado |
 | --- | --- | --- |
-| `id` | string | Map ID using only letters, numbers, `_`, and `-`. |
-| `name` | non-empty string | Display name. |
-| `description` | non-empty string | Map description. |
-| `categories` | array of strings | Optional map-selection categories. Pine Hollow uses `["Field"]` so it participates as a generic field map rather than a road segment. |
-| `seed` | integer | Fixed seed used by tile and furniture palettes, random rotations, scatter, and pattern cells. Recipe input only; the map format does not store it. |
-| `base_tile` | tile object | Legacy-mode tile initially placed in every cell at `z: 0`. Required unless `levels` is used. |
-| `palette` | object | Named weighted tile sets that tile objects can reference. Optional; defaults to `{}`. |
-| `furniture_palette` | object | Named weighted furniture sets used by `furniture_scatter`. Optional; defaults to `{}`. |
-| `areas` | array | Strict runtime area definitions referenced by `area_rectangle`. Optional; defaults to `[]`. |
-| `patterns` | object | Named arrays of relative tile placements used by `pattern` operations. Optional; defaults to `{}`. |
-| `regions` | array | Legacy filled rectangles. Optional; defaults to `[]`. |
-| `operations` | array | Ordered placement operations. Optional; defaults to `[]`. |
-| `levels` | non-empty array | Explicit grouped level definitions. Cannot be combined with root `base_tile`, `regions`, or `operations`. |
-| `connections` | object | Authored map-edge connection metadata. Optional; defaults to all `"ground"`. |
-| `road_endpoints` | array | Authored road endpoint anchors at map edges. Optional; defaults to `[]`. |
-| `road_paths` | array | Authored cardinal routes between road endpoints. Optional; defaults to `[]`; a path may paint a map-local route with `tile`. |
-| `templates` | object | Reusable template definitions with relative `levels`, optional named `anchors`, and declared parameter definitions. Optional; requires `placements` when present. |
-| `placements` | array | Template placements with a literal `origin` or anchor-to-anchor alignment through `anchor_to` and `at_anchor`, plus optional parameter overrides. |
-| `building_surfaces` | array | Authored per-building floor, ceiling, and roof surface semantics. Optional; defaults to `[]`. |
-| `building_supports` | array | Authored multi-level structural support paths. Optional; defaults to `[]`. |
+| `id` | cadena | ID del mapa usando solo letras, números, `_`, y `-`. |
+| `name` | cadena no vacía | Nombre para mostrar. |
+| `description` | cadena no vacía | Descripción del mapa. |
+| `categories` | matriz de cadenas | Categorías de selección de mapa opcionales. Pine Hollow utiliza `["Field"]` Por lo tanto, participa como un mapa de campo genérico en lugar de un segmento de carretera.
+| `seed` | entero | Semilla fija utilizada por las paletas de baldosas y muebles, rotaciones aleatorias, dispersión y celdas de patrones. Solo entrada de recetas; el formato del mapa no la almacena. |
+| `base_tile` | objeto de mosaico | Mosaico de modo heredado colocado inicialmente en cada celda en `z: 0`. Obligatorio a menos que `levels` se utiliza. |
+| `palette` | objeto | Conjuntos de mosaicos ponderados con nombre a los que pueden hacer referencia los objetos de mosaico. Opcional; por defecto es `{}`. |
+| `furniture_palette` | objeto | Conjuntos de muebles ponderados con nombre utilizados por `furniture_scatter`. Opcional; por defecto es `{}`. |
+| `areas` | matriz | Definiciones estrictas del área de tiempo de ejecución a las que hace referencia `area_rectangle`. Opcional; por defecto es `[]`. |
+| `patterns` | objeto | Matrices con nombre de colocaciones relativas de mosaicos utilizadas por `pattern` operaciones. Opcional; por defecto es `{}`. |
+| `regions` | matriz | Rectángulos rellenos heredados. Opcional; por defecto es `[]`. |
+| `operations` | matriz | Operaciones de colocación ordenadas. Opcional; por defecto es `[]`. |
+| `levels` | matriz no vacía | Definiciones de nivel agrupadas explícitas. No se puede combinar con la raíz `base_tile`, `regions`, o `operations`. |
+| `connections` | objeto | Metadatos de conexión de borde de mapa creados por el autor. Opcional; por defecto, todos. `"ground"`. |
+| `road_endpoints` | matriz | Anclajes de punto final de carretera creados en los bordes del mapa. Opcional; por defecto es `[]`. |
+| `road_paths` | matriz | Rutas cardinales creadas entre puntos finales de carretera. Opcional; por defecto es `[]`; un camino puede pintar una ruta local del mapa con `tile`. |
+| `templates` | objeto | Definiciones de plantillas reutilizables con relación `levels`, opcionalmente llamado `anchors`y definiciones de parámetros declaradas. Opcional; requiere `placements` cuando esté presente. |
+| `placements` | matriz | Colocaciones de plantillas con un literal `origin` o alineación de anclaje a anclaje mediante `anchor_to` y `at_anchor`, además de la posibilidad de modificar parámetros opcionalmente. |
+| `building_surfaces` | matriz | Semántica de superficie de piso, techo y cubierta definida por autor para cada edificio. Opcional; por defecto es `[]`. |
+| `building_supports` | matriz | Rutas de soporte estructural multinivel creadas. Opcional; por defecto es `[]`. |
 
-A recipe does not define map dimensions: all generated maps are 32 x 32. Top-down `[x, y]` coordinates start at the top-left. Logical `z` is vertical elevation, not a third element in `[x, y]`. Every shape must fit entirely within the map; operations are never silently clipped.
+Una receta no define las dimensiones del mapa: todos los mapas generados son de 32 x 32. De arriba hacia abajo. `[x, y]` Las coordenadas comienzan en la esquina superior izquierda. Lógico `z` es elevación vertical, no un tercer elemento en `[x, y]`Cada forma debe encajar completamente dentro del mapa; las operaciones nunca se recortan silenciosamente.
 
-A tile object has exactly one of:
+Un objeto de baldosa tiene exactamente una de las siguientes características:
 
-- `id`: a raw tile ID from the selected `Tiles.json`; or
-- `palette`: the name of a root-level palette.
+- `id`: un ID de mosaico sin procesar de la selección `Tiles.json`; o
+- `palette`: el nombre de una paleta de nivel raíz.
 
-It may also include an optional `rotation` when using `id`. Rotation is `0`, `90`, `180`, `270`, or `"random"`. Operation tiles may be `null`, which writes the project's empty-tile representation, `{}`.
+También puede incluir una opción `rotation` al usar `id`La rotación es `0`, `90`, `180`, `270`, o `"random"`. Las fichas de operación pueden ser `null`, que escribe la representación de mosaico vacío del proyecto, `{}`.
 
-Palette entries are objects with `id`, optional positive integer `weight` (default `1`), and optional `rotation`. Palette names may contain only letters, numbers, underscores, and hyphens. Palette selection uses the same seeded random-number generator as scatter, furniture scatter, and random rotation, so the same complete recipe and seed produce identical output. Changing a recipe from a raw tile to a palette reference may change later random choices because palette selection consumes random numbers.
+Las entradas de la paleta son objetos con `id`, entero positivo opcional `weight` (por defecto `1`), y opcional `rotation`Los nombres de las paletas solo pueden contener letras, números, guiones bajos y guiones. La selección de paletas utiliza el mismo generador de números aleatorios con semilla que la dispersión, la dispersión de muebles y la rotación aleatoria, por lo que la misma receta completa y semilla producen resultados idénticos. Cambiar una receta de una ficha sin procesar a una referencia de paleta puede modificar las elecciones aleatorias posteriores, ya que la selección de paletas consume números aleatorios.
 
 ```json
 {
@@ -73,11 +73,11 @@ Palette entries are objects with `id`, optional positive integer `weight` (defau
 }
 ```
 
-Legacy `regions` are applied first in array order, followed by `operations` in array order. Pattern cells are expanded in their definition order at the position of the invoking operation. Later tile placements on the same logical level overwrite earlier cells, including the complete `feature` of an earlier furnished tile. A furniture operation instead rejects a cell that already has a feature. `regions` remain supported for version-one recipes and use the same filled-rectangle placement implementation as `rectangle` operations.
+Legado `regions` se aplican primero en orden de matriz, seguidos de `operations` en orden de matriz. Las celdas de patrón se expanden en su orden de definición en la posición de la operación invocadora. Las colocaciones de fichas posteriores en el mismo nivel lógico sobrescriben las celdas anteriores, incluyendo la completa `feature` de una baldosa amueblada anteriormente. Una operación de mobiliario rechaza en cambio una celda que ya tiene una característica. `regions` Se seguirán admitiendo las recetas de la versión uno y se utilizará la misma implementación de colocación de rectángulos rellenos que `rectangle` operaciones.
 
-## Map-edge connections
+## conexiones de los bordes del mapa
 
-The `connections` field authors the map's edge connection metadata — the type of terrain or road that connects at each cardinal edge. The runtime uses these values to select appropriate edge tiles when the map is instanced in the overworld.
+El `connections` Los autores de campo definen los metadatos de conexión de los bordes del mapa: el tipo de terreno o carretera que se conecta en cada borde cardinal. El sistema utiliza estos valores para seleccionar las teselas de borde adecuadas cuando el mapa se instancia en el mundo principal.
 
 ```json
 {
@@ -90,15 +90,15 @@ The `connections` field authors the map's edge connection metadata — the type 
 }
 ```
 
-Each key is one of `north`, `east`, `south`, or `west`; each value is one of `ground` or `road`. Omitted directions default to `"ground"`, so existing recipes without a `connections` field remain compatible. The standalone validator rejects unknown directions and unsupported connection types.
+Cada llave es una de `north`, `east`, `south`, o `west`; cada valor es uno de `ground` o `road`Las instrucciones omitidas se establecen por defecto en `"ground"`, por lo que las recetas existentes sin una `connections` Los campos siguen siendo compatibles. El validador independiente rechaza las direcciones desconocidas y los tipos de conexión no compatibles.
 
-This field authors metadata only: it does not generate road tiles, path routing, or edge tile placement. It declares what the runtime should expect at each edge so the overworld generator can connect adjacent maps correctly.
+Este campo solo genera metadatos: no crea teselas de carretera, rutas ni coloca las teselas de borde. Declara lo que el entorno de ejecución debe esperar en cada borde para que el generador del mapa general pueda conectar correctamente los mapas adyacentes.
 
-For a field location such as Pine Hollow, leave all four edge connections as `"ground"` and use an ordinary `line` operation for a local pedestrian/service path. That path is map-local geometry and does not imply that vehicles can enter the map from an edge. Pine Hollow's maintained recipe uses a short `dirt_light_00` line from `[8, 14]` to `[10, 14]`, ending at the connection-level exterior approach.
+Para una ubicación de campo como Pine Hollow, deje las cuatro conexiones de borde como `"ground"` y utilice un ordinario `line` Operación para un sendero peatonal/de servicio local. Ese sendero es geometría local del mapa y no implica que los vehículos puedan entrar al mapa desde un borde. La receta mantenida de Pine Hollow utiliza un corto `dirt_light_00` línea de `[8, 14]` a `[10, 14]`, finalizando en el enfoque exterior a nivel de conexión.
 
-## Road endpoints
+## Puntos finales de la carretera
 
-The `road_endpoints` field authors named anchor points that identify where roads enter or exit the map at its edges. Each endpoint is a data-only reference point — it does not generate road tiles, path routing, or geometry.
+El `road_endpoints` Los autores del mapa nombraron puntos de anclaje que indican dónde entran o salen las carreteras en sus bordes. Cada punto final es un punto de referencia que solo contiene datos; no genera teselas de carreteras, trazado de rutas ni geometría.
 
 ```json
 {
@@ -110,11 +110,11 @@ The `road_endpoints` field authors named anchor points that identify where roads
 }
 ```
 
-Each entry has exactly `id`, `direction`, `at`, and `z`. `id` is unique within the recipe and follows the standard naming pattern. `direction` is one of `north`, `east`, `south`, or `west` and must match a `connections` entry whose value is `"road"` — a road endpoint cannot be placed on an edge declared as `"ground"`. `at` is a two-integer `[x, y]` coordinate that must lie on the correct map edge for its `direction` (north edge: `y = 0`, south edge: `y = 31`, west edge: `x = 0`, east edge: `x = 31`). `z` must be `0` — road endpoints are ground-level only in this first slice.
+Cada entrada tiene exactamente `id`, `direction`, `at`, y `z`. `id` Es único dentro de la receta y sigue el patrón de nomenclatura estándar. `direction` es uno de `north`, `east`, `south`, o `west` y debe coincidir con un `connections` entrada cuyo valor es `"road"` — un punto final de carretera no puede colocarse en un borde declarado como `"ground"`. `at` es un número entero de dos `[x, y]` coordenada que debe estar en el borde correcto del mapa para su `direction` (borde norte: `y = 0`borde sur: `y = 31`, borde oeste: `x = 0`, borde este: `x = 31`). `z` debe ser `0` — En esta primera sección, los extremos de las carreteras están únicamente a nivel del suelo.
 
-The standalone validator independently checks the same content: it rejects unknown directions, duplicate IDs, coordinates not on the correct edge, and non-zero `z` values. `DMap` preserves valid road endpoints through editor save/load and removes entries with missing fields, invalid directions, duplicate IDs, or malformed coordinates.
+El validador independiente comprueba de forma independiente el mismo contenido: rechaza direcciones desconocidas, ID duplicados, coordenadas que no están en el borde correcto y valores distintos de cero. `z` valores. `DMap` Conserva los puntos finales de carretera válidos mediante la función de guardar/cargar del editor y elimina las entradas con campos faltantes, direcciones no válidas, identificadores duplicados o coordenadas mal formadas.
 
-`road_paths` authors a named cardinal polyline between two road endpoints. For a map-local physical route, add a `tile` field; the generator rasterizes every cell in the route and replaces its terrain with that tile. This keeps route geometry explicit and deterministic while avoiding a second pathfinding system.
+`road_paths` autores una polilínea cardinal con nombre entre dos puntos finales de la carretera. Para una ruta física local del mapa, agregue una `tile` campo; el generador rasteriza cada celda de la ruta y reemplaza su terreno con esa tesela. Esto mantiene la geometría de la ruta explícita y determinista, evitando un segundo sistema de búsqueda de rutas.
 
 ```json
 {
@@ -130,13 +130,13 @@ The standalone validator independently checks the same content: it rejects unkno
 }
 ```
 
-Each path requires `id`, `from`, `to`, and `waypoints`; `tile` is optional for backwards-compatible metadata-only paths. Both endpoint IDs must exist and be different. `waypoints` is an optional array of map-bounded `[x, y]` coordinates; the complete sequence from the `from` endpoint through the waypoints to the `to` endpoint must form cardinally aligned segments. When `tile` is present, it must reference a known non-empty `Ground` cube tile, every route cell must contain supporting terrain, route cells may not contain features, and the generator paints the complete ground-level route. This conservative tile guard makes the generated route suitable for runtime navigation geometry; the Godot navigation test verifies actual connectivity. The generator still does not run pathfinding, alter collision/navigation, or integrate multiple maps. `DMap` preserves valid paths with or without `tile` and removes paths with stale endpoints, malformed points, duplicate IDs, invalid tile objects, or non-cardinal segments.
+Cada camino requiere `id`, `from`, `to`, y `waypoints`; `tile` Es opcional para rutas de metadatos compatibles con versiones anteriores. Ambos ID de punto final deben existir y ser diferentes. `waypoints` es una matriz opcional de elementos delimitados por el mapa `[x, y]` coordenadas; la secuencia completa desde el `from` punto final a través de los puntos de ruta hacia el `to` El punto final debe formar segmentos alineados cardinalmente. Cuando `tile` está presente, debe hacer referencia a un valor conocido no vacío `Ground` En este modelo de teselas cúbicas, cada celda de ruta debe contener terreno de apoyo, las celdas de ruta no pueden contener elementos del terreno y el generador pinta la ruta completa a nivel del suelo. Esta estricta protección de teselas hace que la ruta generada sea adecuada para la geometría de navegación en tiempo de ejecución; la prueba de navegación de Godot verifica la conectividad real. El generador aún no ejecuta la búsqueda de rutas, no modifica la detección de colisiones ni la navegación, ni integra múltiples mapas. `DMap` conserva rutas válidas con o sin `tile` y elimina rutas con puntos finales obsoletos, puntos mal formados, identificadores duplicados, objetos de mosaico no válidos o segmentos no cardinales.
 
-`Tools/examples/map_recipe_road_endpoints.json` demonstrates the maintained example with two road endpoints: `west_entrance` at the west edge and `east_exit` at the east edge.
+`Tools/examples/map_recipe_road_endpoints.json` muestra el ejemplo mantenido con dos puntos finales de carretera: `west_entrance` en el borde oeste y `east_exit` en el extremo este.
 
-## Minimal template expansion
+## Expansión mínima de la plantilla
 
-Templates are expanded before ordinary recipe validation and generation. A template defines relative `levels` and may define named anchors as `{ "at": [x, y], "z": dz, "facing": "north" }`. Anchors are relative to the placement origin and are not serialized into the generated map. A placement may use a literal `origin`, or align its `at_anchor` to an anchor on a prior placement using `anchor_to`.
+Las plantillas se expanden antes de la validación y generación de recetas ordinarias. Una plantilla define la relativa `levels` y puede definir anclas con nombre como `{ "at": [x, y], "z": dz, "facing": "north" }`Los anclajes son relativos al origen de la ubicación y no se serializan en el mapa generado. Una ubicación puede usar un literal. `origin`o alinear su `at_anchor` a un anclaje en una colocación previa usando `anchor_to`.
 
 ```json
 {
@@ -181,7 +181,7 @@ Templates are expanded before ordinary recipe validation and generation. A templ
 }
 ```
 
-Templates can also expose named rectangular `locations` for richer three-dimensional composition:
+Las plantillas también pueden exponer rectángulos con nombre `locations` Para una composición tridimensional más rica:
 
 ```json
 "locations": {
@@ -189,7 +189,7 @@ Templates can also expose named rectangular `locations` for richer three-dimensi
 }
 ```
 
-A root placement may align an equal-sized location on an earlier placement:
+Una ubicación raíz puede alinear una ubicación de igual tamaño con una ubicación anterior:
 
 ```json
 {
@@ -200,35 +200,35 @@ A root placement may align an equal-sized location on an earlier placement:
 }
 ```
 
-Locations resolve their local rectangle through placement rotation and `origin.z + location.z`. The placed and referenced rotated dimensions must match exactly. Location alignment intentionally permits overlap inside the referenced location volume; ordinary root placements still reject conflicting three-dimensional footprints. Anchor-connected placements likewise permit overlap with their explicitly referenced placement, preserving intentional coincident-anchor composition. Each placement footprint is conservatively derived from its resolved set, rectangle, outline, line, pattern, scatter, furniture, area, room, and nested operations. Out-of-bounds x/y/z cells and unconnected conflicts are rejected before ordinary generation.
+Las ubicaciones resuelven su rectángulo local mediante rotación de colocación y `origin.z + location.z`Las dimensiones rotadas colocadas y referenciadas deben coincidir exactamente. La alineación de ubicación permite intencionalmente la superposición dentro del volumen de ubicación referenciado; las colocaciones raíz ordinarias aún rechazan huellas tridimensionales conflictivas. Las colocaciones conectadas por anclaje también permiten superposición con su colocación referenciada explícitamente, preservando la composición intencional de anclaje coincidente. Cada huella de colocación se deriva de manera conservadora de su conjunto resuelto, rectángulo, contorno, línea, patrón, dispersión, mobiliario, área, habitación y operaciones anidadas. Las celdas x/y/z fuera de límites y los conflictos no conectados se rechazan antes de la generación ordinaria.
 
-Nested templates are declared with a template-local `placements` array. A nested placement uses `{ "template", "origin", "rotation", "parameters" }`; its `origin.at` and `origin.z` are relative to the enclosing template origin, its rotation is added to the enclosing rotation, and its parameter values may reference enclosing parameters. The child template expands recursively into ordinary root operations. Nested placements intentionally use literal local origins in this slice: they cannot use `anchor_to`, `at_anchor`, or `rotation: "auto"`, and child anchors are not re-exported through the parent. Cycles, unknown child templates, malformed local origins, unsupported rotations, unresolved forwarded parameters, and logical-z overflow are rejected.
+Las plantillas anidadas se declaran con una plantilla local. `placements` matriz. Una colocación anidada utiliza `{ "template", "origin", "rotation", "parameters" }`; es `origin.at` y `origin.z` son relativos al origen de la plantilla contenedora, su rotación se suma a la rotación contenedora y sus valores de parámetros pueden hacer referencia a parámetros contenedores. La plantilla hija se expande recursivamente en operaciones raíz ordinarias. Las colocaciones anidadas utilizan intencionalmente orígenes locales literales en esta porción: no pueden utilizar `anchor_to`, `at_anchor`, o `rotation: "auto"`y los anclajes secundarios no se reexportan a través del elemento principal. Se rechazan los ciclos, las plantillas secundarias desconocidas, los orígenes locales mal formados, las rotaciones no compatibles, los parámetros reenviados no resueltos y el desbordamiento lógico-z.
 
-For anchor-to-anchor placement, the referenced placement must appear earlier in the `placements` array. `rotation` accepts `0`, `90`, `180`, or `270` degrees clockwise around the template origin. It rotates all local horizontal operation coordinates, rectangular footprints, line endpoints, scatter regions, patterns, anchors, anchor `facing`, and explicit tile/furniture/pattern rotations; it never changes relative `dz`. Set `rotation` to `"auto"` only with `anchor_to` and `at_anchor` to derive the quarter-turn that makes the placed anchor face opposite the referenced anchor. Auto rotation requires both connected anchors to declare cardinal `facing` values; it resolves the placed `at_anchor` after rotation before aligning it to the prior anchor. To place separate structures side by side, author connection anchors on the exterior edge immediately beyond each footprint (for example, a 4×4 template can use west `[0, 1]` and east `[4, 1]` anchors); interior anchors intentionally produce overlapping geometry when coincident.
+Para la colocación de anclaje a anclaje, la colocación de referencia debe aparecer antes en el `placements` formación. `rotation` acepta `0`, `90`, `180`, o `270` grados en el sentido de las agujas del reloj alrededor del origen de la plantilla. Gira todas las coordenadas de operación horizontales locales, huellas rectangulares, puntos finales de línea, regiones de dispersión, patrones, anclas, ancla `facing`y rotaciones explícitas de baldosas/muebles/patrones; nunca cambia de forma relativa. `dz`. Colocar `rotation` a `"auto"` solo con `anchor_to` y `at_anchor` para derivar el cuarto de vuelta que hace que el ancla colocada quede frente al ancla de referencia. La rotación automática requiere que ambas anclas conectadas declaren cardinal. `facing` valores; resuelve el colocado `at_anchor` después de la rotación antes de alinearlo con el ancla anterior. Para colocar estructuras separadas una al lado de la otra, cree anclas de conexión en el borde exterior inmediatamente más allá de cada huella (por ejemplo, una plantilla de 4×4 puede usar oeste `[0, 1]` y este `[4, 1]` anclas); las anclas interiores producen intencionalmente una geometría superpuesta cuando coinciden.
 
-Templates may declare typed `parameters`. `tile_id` values substitute exact `$parameter_name` strings before normal operation validation and may provide a string `default`; without a default they are required on every placement. `boolean` values may provide a boolean `default` and control a template operation with `"when": "$parameter_name"`. `enum` values require a non-empty, unique string `values` array and may provide a default from that array; they select semantic operation variants with `"when": {"parameter": "material", "equals": "metal"}`. `integer` values require inclusive integer `minimum` and `maximum` bounds and can substitute operation coordinates, dimensions, or counts. `string_list` values require an allowed non-empty, unique string `values` array; each resolved list is unique and may be empty, and `"when": {"parameter": "features", "contains": "roof"}` conditionally includes an operation. `object` values require a non-empty declared `properties` object; each property uses any supported parameter schema, resolves its own default or required value, and rejects unknown fields. Use an exact dotted reference such as `$style.wall_tile` or `$style.include_roof` to substitute a declared object field. Placements override declared values through `parameters`. Unknown overrides, missing required values, malformed declarations, invalid enum/list values, out-of-range integers, unresolved `$` references, and invalid conditions are rejected. Substituted tile IDs then follow the same tile-database validation as literal tile IDs.
+Las plantillas pueden declarar tipificado `parameters`. `tile_id` valores sustituir exacto `$parameter_name` cadenas antes de la validación de operación normal y puede proporcionar una cadena `default`; sin una configuración predeterminada, son obligatorios en cada colocación. `boolean` Los valores pueden proporcionar un valor booleano. `default` y controlar una operación de plantilla con `"when": "$parameter_name"`. `enum` Los valores requieren una cadena única y no vacía. `values` matriz y pueden proporcionar un valor predeterminado de esa matriz; seleccionan variantes de operaciones semánticas con `"when": {"parameter": "material", "equals": "metal"}`. `integer` Los valores requieren un número entero inclusivo. `minimum` y `maximum` límites y puede sustituir coordenadas de operación, dimensiones o recuentos. `string_list` Los valores requieren una cadena única y no vacía permitida. `values` matriz; cada lista resuelta es única y puede estar vacía, y `"when": {"parameter": "features", "contains": "roof"}` incluye condicionalmente una operación. `object` Los valores requieren una declaración no vacía `properties` objeto; cada propiedad utiliza cualquier esquema de parámetros admitido, resuelve su propio valor predeterminado o requerido y rechaza los campos desconocidos. Utilice una referencia exacta con puntos, como por ejemplo: `$style.wall_tile` o `$style.include_roof` para sustituir un campo de objeto declarado. Las ubicaciones anulan los valores declarados a través de `parameters`. Anulaciones desconocidas, valores obligatorios faltantes, declaraciones mal formadas, valores de enumeración/lista no válidos, enteros fuera de rango, sin resolver `$` Se rechazan las referencias y las condiciones no válidas. Los identificadores de mosaico sustituidos siguen la misma validación de la base de datos de mosaicos que los identificadores de mosaico literales.
 
-The expansion supports existing `set`, rectangle, outline, line, pattern, scatter, furniture, area-rectangle, room-rectangle, and furniture-scatter operation shapes. It rejects nested operation `z` values, unsupported rotations, automatic rotation without a connected facing anchor pair, invalid nested placements, template cycles, malformed locations, incompatible location dimensions, unknown templates or anchors, duplicate relative `dz` levels, forward root-anchor/location references, out-of-bounds three-dimensional footprints, and unconnected conflicting footprints. Templates cannot yet be combined with the grouped root `levels` layout. The generated map contains only expanded ordinary recipe output; `templates`, `placements`, anchors, and locations are not serialized.
+La ampliación da soporte a los ya existentes. `set`Formas de operación de rectángulo, contorno, línea, patrón, dispersión, muebles, área-rectángulo, habitación-rectángulo y muebles-dispersión. Rechaza operaciones anidadas. `z` valores, rotaciones no compatibles, rotación automática sin un par de anclajes conectados, colocaciones anidadas no válidas, ciclos de plantillas, ubicaciones mal formadas, dimensiones de ubicación incompatibles, plantillas o anclajes desconocidos, duplicado relativo `dz` niveles, referencias de ubicación/anclaje raíz hacia adelante, huellas tridimensionales fuera de límites y huellas conflictivas no conectadas. Las plantillas aún no se pueden combinar con la raíz agrupada. `levels` diseño. El mapa generado contiene únicamente la salida de recetas ordinarias ampliadas; `templates`, `placements`Los anclajes y las ubicaciones no están serializados.
 
-`Tools/examples/map_recipe_small_cabin_template.json` is the maintained template-feature example. Its tests verify deterministic expansion, relative `dz` placement, nested roof-panel composition with forwarded style and dimension parameters, anchor-to-anchor alignment, automatic facing-compatible rotation, structured style-object overrides, bounded integer footprint dimensions, and a rotated 5×3 footprint.
+`Tools/examples/map_recipe_small_cabin_template.json` es el ejemplo de plantilla-característica mantenida. Sus pruebas verifican la expansión determinista, relativa `dz` Colocación, composición de paneles de techo anidados con parámetros de estilo y dimensión transmitidos, alineación de anclaje a anclaje, rotación automática compatible con la orientación, anulaciones de objetos de estilo estructurados, dimensiones de huella enteras limitadas y una huella rotada de 5×3.
 
-`Tools/examples/map_recipe_village_square_composition.json` is the maintained Phase 9 map-local composition example. It composes a central plaza with nested benches, exposed road anchors, and two automatically oriented multi-level cabin variants. Generate it with `python3 Tools/map_generator.py Tools/examples/map_recipe_village_square_composition.json Mods/Dimensionfall/Maps/generated_village_square_composition.json --overwrite`, then validate the generated map with `python3 Tools/map_validator.py Mods/Dimensionfall/Maps/generated_village_square_composition.json`.
-## Logical levels
+`Tools/examples/map_recipe_village_square_composition.json` es el ejemplo de composición local del mapa de la Fase 9 mantenido. Compone una plaza central con bancos anidados, anclajes de carretera expuestos y dos variantes de cabañas multinivel orientadas automáticamente. Genérelo con `python3 Tools/map_generator.py Tools/examples/map_recipe_village_square_composition.json Mods/Dimensionfall/Maps/generated_village_square_composition.json --overwrite`, luego valide el mapa generado con `python3 Tools/map_validator.py Mods/Dimensionfall/Maps/generated_village_square_composition.json`.
+## Niveles lógicos
 
-Map level-array index `10` is logical ground level `z: 0`. The conversion is:
+Índice de matriz de niveles del mapa `10` es lógico a nivel del suelo `z: 0`La conversión es:
 
 ```text
 level-array index = logical z + 10
 logical z = level-array index - 10
 ```
 
-Valid logical levels are integers from `-10` through `10`. Booleans are not integers for recipe purposes. A populated level contains 1024 row-major cells, while a level containing no non-empty tiles is serialized as unused `[]`.
+Los niveles lógicos válidos son números enteros de `-10` a través de `10`Los booleanos no son enteros para fines de recetas. Un nivel poblado contiene 1024 celdas de fila principal, mientras que un nivel que no contiene casillas no vacías se serializa como no utilizado. `[]`.
 
-There are two mutually exclusive authoring modes.
+Existen dos modos de autoría mutuamente excluyentes.
 
-### Legacy-compatible root layout
+### Diseño de raíz compatible con versiones anteriores
 
-Existing recipes continue to use root `base_tile`, `regions`, and `operations`. The base tile fills `z: 0`. Every root region and operation accepts optional `z`; omission means `z: 0`. Targeting a previously unused level starts that level as empty cells before applying the placement.
+Las recetas existentes siguen utilizando raíz `base_tile`, `regions`, y `operations`. La baldosa base se rellena `z: 0`Cada región raíz y operación acepta opciones `z`; omisión significa `z: 0`Al seleccionar un nivel previamente no utilizado, ese nivel comienza como celdas vacías antes de aplicar la colocación.
 
 ```json
 {
@@ -245,11 +245,11 @@ Existing recipes continue to use root `base_tile`, `regions`, and `operations`. 
 }
 ```
 
-Root `regions` are still processed before root `operations`, even when entries target different logical levels. RNG consumption follows this exact processing order.
+Raíz `regions` todavía se procesan antes de la raíz `operations`, incluso cuando las entradas apuntan a diferentes niveles lógicos. El consumo del generador de números aleatorios sigue este orden de procesamiento exacto.
 
-### Grouped multi-level layout
+### Diseño agrupado de varios niveles
 
-For substantial multi-level maps, use a root `levels` array. Every entry requires one unique logical `z` and may contain `base_tile`, `regions`, and `operations`. The entry's base tile, when present, fills that level before its regions and operations. Without a base tile, the level starts empty.
+Para mapas multinivel sustanciales, utilice una raíz `levels` matriz. Cada entrada requiere una lógica única. `z` y puede contener `base_tile`, `regions`, y `operations`La loseta base de la entrada, cuando está presente, llena ese nivel antes que sus regiones y operaciones. Sin una loseta base, el nivel comienza vacío.
 
 ```json
 {
@@ -275,15 +275,15 @@ For substantial multi-level maps, use a root `levels` array. Every entry require
 }
 ```
 
-Grouped entries are processed in declaration order. Within each entry, regions precede operations. This declaration order also defines deterministic RNG consumption across levels. Nested regions and operations inherit the entry's `z` and must not repeat a `z` field. Root `base_tile`, `regions`, and `operations` cannot coexist with `levels`; this rejects ambiguous merge and overwrite ordering.
+Las entradas agrupadas se procesan en orden de declaración. Dentro de cada entrada, las regiones preceden a las operaciones. Este orden de declaración también define el consumo determinista de RNG en todos los niveles. Las regiones y operaciones anidadas heredan la entrada. `z` y no debe repetir un `z` campo. Raíz `base_tile`, `regions`, y `operations` no pueden coexistir con `levels`; esto rechaza el ordenamiento ambiguo de fusión y sobrescritura.
 
-Reusable pattern definitions remain two-dimensional. A root pattern operation selects its target with `z`, while a grouped pattern operation inherits the enclosing level. Multi-level pattern and template composition is outside the current schema.
+Las definiciones de patrones reutilizables siguen siendo bidimensionales. Una operación de patrón raíz selecciona su objetivo con `z`, mientras que una operación de patrón agrupado hereda el nivel que lo contiene. La composición de patrones y plantillas multinivel está fuera del esquema actual.
 
-## Reusable cell patterns
+## Patrones celulares reutilizables
 
-`patterns` maps a name to a non-empty array of relative tile placements. Pattern names follow the same naming rules as palettes. Every cell has an integer `[x, y]` offset in `at` and a `tile`; offsets may be negative, and tiles may use raw IDs, palettes, rotations, or `null` just like operation tiles.
+`patterns` Asigna un nombre a una matriz no vacía de posiciones relativas de mosaicos. Los nombres de los patrones siguen las mismas reglas de nomenclatura que las paletas. Cada celda tiene un número entero. `[x, y]` desplazamiento en `at` y un `tile`; los desplazamientos pueden ser negativos y los mosaicos pueden usar identificadores sin procesar, paletas, rotaciones o `null` Igual que las fichas de operación.
 
-Pattern definitions do not consume random numbers. An invoked pattern consumes randomness in cell-array order only when a cell uses a palette or `"random"` tile rotation. Unused definitions therefore do not change generated output.
+Las definiciones de patrones no consumen números aleatorios. Un patrón invocado consume aleatoriedad en el orden de la matriz de celdas solo cuando una celda utiliza una paleta o `"random"` Rotación de mosaicos. Por lo tanto, las definiciones no utilizadas no modifican la salida generada.
 
 ```json
 {
@@ -297,9 +297,9 @@ Pattern definitions do not consume random numbers. An invoked pattern consumes r
 }
 ```
 
-## Furniture palettes
+## Palets de muebles
 
-`furniture_palette` maps a name to a non-empty weighted array of known furniture entries. Entries have `id`, optional positive integer `weight` (default `1`), and optional editor-facing `rotation` (`0`, `90`, `180`, `270`, or `"random"`). Furniture palette names use the same letters/numbers/underscore/hyphen rule as tile palettes. Every entry is validated against the selected furniture database, including unused palette definitions.
+`furniture_palette` asigna un nombre a una matriz ponderada no vacía de entradas de muebles conocidas. Las entradas tienen `id`, entero positivo opcional `weight` (por defecto `1`), y opcionalmente orientado al editor `rotation` (`0`, `90`, `180`, `270`, o `"random"`Los nombres de las paletas de muebles siguen la misma regla de letras, números, guiones bajos y guiones que las paletas de mosaicos. Cada entrada se valida con la base de datos de muebles seleccionada, incluidas las definiciones de paleta no utilizadas.
 
 ```json
 {
@@ -314,22 +314,22 @@ Pattern definitions do not consume random numbers. An invoked pattern consumes r
 }
 ```
 
-Definitions themselves consume no randomness. An invoked `furniture_scatter` first samples eligible cells, in row-major candidate order, and then selects one palette entry and resolves any random rotation for each sampled cell in the sample order. This is part of the shared recipe RNG stream: moving, adding, or removing an earlier RNG-consuming operation can change later selections.
+Las definiciones en sí mismas no consumen aleatoriedad. Una invocada `furniture_scatter` Primero, se muestrean las celdas elegibles, en orden de candidatos por fila, y luego se selecciona una entrada de la paleta y se resuelve cualquier rotación aleatoria para cada celda muestreada en el orden de muestreo. Esto forma parte del flujo de RNG de receta compartida: mover, agregar o eliminar una operación anterior que consume RNG puede modificar las selecciones posteriores.
 
-## Placement operations
+## Operaciones de colocación
 
-Every operation requires a `type`. Unknown operation types and fields are errors. At the recipe root, every operation accepts optional logical `z` and defaults to `0`. Inside a grouped level, the operation inherits `z` and must omit the field.
+Cada operación requiere una `type`Los tipos de operación y campos desconocidos son errores. En la raíz de la receta, cada operación acepta valores lógicos opcionales. `z` y por defecto `0`Dentro de un nivel agrupado, la operación hereda `z` y debe omitir el campo.
 
-## Runtime areas and tile membership
+## Áreas de tiempo de ejecución y membresía de mosaico
 
-Dimensionfall's existing area system has two linked serialized forms:
+El sistema de áreas existente de Dimensionfall tiene dos formas serializadas vinculadas:
 
-1. the map-level `areas` array defines a runtime spawn/transformation rule; and
-2. a terrain tile's `areas` array records membership as `{"id": "...", "rotation": 0}`.
+1. el nivel del mapa `areas` El array define una regla de generación/transformación en tiempo de ejecución; y
+2. una loseta de terreno `areas` Los registros de la matriz son miembros de `{"id": "...", "rotation": 0}`.
 
-At runtime, `Helper.map_manager.process_areas_in_map()` selects definitions by `spawn_chance`, then applies each selected definition to connected clusters of matching tile memberships on every populated level. The editor displays these memberships and permits multiple *different* area IDs on one tile, so recipe generation preserves that supported overlay behavior. It rejects a duplicate membership of the same area ID on the same cell.
+En tiempo de ejecución, `Helper.map_manager.process_areas_in_map()` selecciona definiciones por `spawn_chance`Luego, aplica cada definición seleccionada a los grupos conectados de pertenencias a mosaicos coincidentes en cada nivel poblado. El editor muestra estas pertenencias y permite múltiples ID de área *diferentes* en un mismo mosaico, de modo que la generación de recetas conserva ese comportamiento de superposición compatible. Rechaza una pertenencia duplicada del mismo ID de área en la misma celda.
 
-Recipe area definitions require exactly `id`, `spawn_chance`, `rotate_random`, `pick_one`, `tiles`, and `entities`. Area IDs use letters, numbers, `_`, and `-`; `spawn_chance` is an integer from `0` through `100`; `rotate_random` and `pick_one` are booleans. `tiles` is a non-empty array of `{ "id", "count" }` entries whose IDs are known tiles or the runtime's `"null"` sentinel. `entities` is an array of `{ "id", "type", "count" }` entries. The generator accepts only the existing runtime entity types—`furniture`, `mob`, `mobgroup`, and `itemgroup`—and validates each ID against its core catalog before publishing a map.
+Las definiciones del área de recetas requieren exactamente `id`, `spawn_chance`, `rotate_random`, `pick_one`, `tiles`, y `entities`. Los identificadores de área utilizan letras, números, `_`, y `-`; `spawn_chance` es un número entero de `0` a través de `100`; `rotate_random` y `pick_one` son booleanos. `tiles` es una matriz no vacía de `{ "id", "count" }` entradas cuyos ID son mosaicos conocidos o el tiempo de ejecución `"null"` centinela. `entities` es una variedad de `{ "id", "type", "count" }` entradas. El generador solo acepta los tipos de entidades de tiempo de ejecución existentes.`furniture`, `mob`, `mobgroup`, y `itemgroup`—y valida cada ID con respecto a su catálogo principal antes de publicar un mapa.
 
 ```json
 {
@@ -346,20 +346,20 @@ Recipe area definitions require exactly `id`, `spawn_chance`, `rotate_random`, `
 }
 ```
 
-### Runtime entity variation
+### Variación de entidad en tiempo de ejecución
 
-An area entity is a runtime rule, not a pre-generated feature. For every processed membership tile, `map_manager` adds an implicit no-spawn entry weighted by the total `tiles` weight, then selects one declared entity by `count`. As a result, the generated JSON boundary is deterministic, but an entity-bearing field can differ each time the map is instanced. Do not replace this with `furniture_scatter` when per-instance variation is desired: scatter intentionally writes the same seeded features into every generated map.
+Una entidad de área es una regla de tiempo de ejecución, no una característica pregenerada. Para cada mosaico de membresía procesado, `map_manager` agrega una entrada implícita de no aparición ponderada por el total `tiles` peso, luego selecciona una entidad declarada por `count`Como resultado, el límite JSON generado es determinista, pero un campo que contiene una entidad puede diferir cada vez que se instancia el mapa. No reemplace esto con `furniture_scatter` Cuando se desea variación por instancia: scatter escribe intencionalmente las mismas características predefinidas en cada mapa generado.
 
-Entity `count` values must be positive integers in recipes. The generator enforces that stricter authoring rule; the standalone validator accepts positive numeric legacy weights so existing authored maps continue to match the runtime's weighted-picker contract. The supported types and ID catalogs are:
+Entidad `count` Los valores deben ser enteros positivos en las recetas. El generador aplica esta regla de autoría más estricta; el validador independiente acepta ponderaciones numéricas positivas heredadas para que los mapas creados existentes sigan coincidiendo con el contrato de selección ponderada del entorno de ejecución. Los tipos y catálogos de ID admitidos son:
 
-| Type | Catalog | Runtime feature result |
+| Tipo | Catálogo | Resultado de la función en tiempo de ejecución |
 |---|---|---|
 | `furniture` | `Furniture/Furniture.json` | `{ "type", "id", "rotation" }` |
 | `mob` | `Mobs/Mobs.json` | `{ "type", "id", "rotation" }` |
 | `mobgroup` | `Mobgroups/Mobgroups.json` | `{ "type", "id", "rotation" }` |
 | `itemgroup` | `Itemgroups/Itemgroups.json` | `{ "type": "itemgroup", "itemgroups": ["id"], "rotation" }` |
 
-When `rotate_random` is false, a selected entity uses the membership's editor-facing rotation. When it is true, runtime chooses a quarter turn. Entity selection remains runtime-owned and is never pre-baked by the Python generator.
+Cuando `rotate_random` Si es falso, la entidad seleccionada utiliza la rotación visible en el editor de la membresía. Si es verdadero, el entorno de ejecución elige un cuarto de vuelta. La selección de entidades sigue siendo responsabilidad del entorno de ejecución y nunca es precalculada por el generador de Python.
 
 ```json
 {
@@ -374,7 +374,7 @@ When `rotate_random` is false, a selected entity uses the membership's editor-fa
 
 ### `area_rectangle`
 
-Adds one area membership to every terrain tile in a filled rectangle. Fields are `type`, `area`, `x`, `y`, positive `width`, positive `height`, optional root-level `z`, and optional editor-facing `rotation`. The rotation defaults to `0` and accepts `0`, `90`, `180`, or `270`.
+Agrega una membresía de área a cada casilla de terreno en un rectángulo relleno. Los campos son `type`, `area`, `x`, `y`, positivo `width`, positivo `height`, opcional a nivel raíz `z`y opcionalmente orientado al editor `rotation`. La rotación predeterminada es `0` y acepta `0`, `90`, `180`, o `270`.
 
 ```json
 {
@@ -389,11 +389,11 @@ Adds one area membership to every terrain tile in a filled rectangle. Fields are
 }
 ```
 
-The referenced top-level area must exist and every target cell must already contain terrain at the selected logical level. A membership operation does not replace terrain, features, or other distinct area memberships, and consumes no RNG. Coordinates are preflighted against the complete `32×32` map, so the operation cannot be clipped or partially applied.
+El área de nivel superior referenciada debe existir y cada celda objetivo debe contener terreno en el nivel lógico seleccionado. Una operación de pertenencia no reemplaza terreno, características u otras pertenencias de área distintas, y no consume RNG. Las coordenadas se verifican previamente contra el área completa. `32×32` mapa, por lo que la operación no puede recortarse ni aplicarse parcialmente.
 
-## Authored room semantics
+## semántica de sala de autoría
 
-Rooms are authored semantic labels; they are not inferred from floor material, wall topology, door placement, or roof coverage. A recipe may define a root `rooms` array whose entries contain exactly an `id` and `kind`:
+Las habitaciones son etiquetas semánticas creadas; no se infieren del material del suelo, la topología de las paredes, la ubicación de las puertas o la cobertura del techo. Una receta puede definir una raíz. `rooms` matriz cuyas entradas contienen exactamente un `id` y `kind`:
 
 ```json
 {
@@ -405,19 +405,19 @@ Rooms are authored semantic labels; they are not inferred from floor material, w
 }
 ```
 
-Supported kinds are:
+Los tipos admitidos son:
 
-| Kind | Authored meaning |
+| Tipo | Significado del autor |
 |---|---|
-| `enclosed` | A conventional room intended to be physically enclosed once geometry generation is added. |
-| `covered_open` | A roofed but intentionally open space, such as a garage without a garage door. |
-| `ruin` | A semantic room that may deliberately have holes or open wall sections. |
+| `enclosed` | Una habitación convencional destinada a ser cerrada físicamente una vez que se añade la generación de geometría. |
+| `covered_open` Un espacio techado pero intencionalmente abierto, como un garaje sin puerta.
+| `ruin` | Una habitación semántica que puede tener deliberadamente agujeros o secciones de pared abiertas. |
 
-Tile membership uses `rooms` as a one-element string array, for example `{"id": "concrete_00", "rooms": ["garage_bay"]}`. A terrain tile may have exactly one room label, while it may still carry multiple runtime `areas` memberships. This makes floor material and area behavior independent from room semantics: adjacent rooms may share one floor material, and one floor-like area can span several rooms.
+Usos de la membresía Tile `rooms` como una matriz de cadenas de un solo elemento, por ejemplo `{"id": "concrete_00", "rooms": ["garage_bay"]}`Una casilla de terreno puede tener exactamente una etiqueta de habitación, mientras que aún puede contener múltiples etiquetas de tiempo de ejecución. `areas` membresías. Esto hace que el comportamiento del material del piso y del área sea independiente de la semántica de la habitación: las habitaciones adyacentes pueden compartir un material de piso, y un área similar a un piso puede abarcar varias habitaciones.
 
 ### `room_rectangle`
 
-Adds one authored room label to every terrain tile in a filled rectangle. Fields are `type`, `room`, `x`, `y`, positive `width`, positive `height`, and optional root-level `z`. It has no rotation because it is semantic metadata, not a spatial transform.
+Agrega una etiqueta de habitación creada por el autor a cada casilla de terreno en un rectángulo relleno. Los campos son `type`, `room`, `x`, `y`, positivo `width`, positivo `height`y nivel raíz opcional `z`No tiene rotación porque se trata de metadatos semánticos, no de una transformación espacial.
 
 ```json
 {
@@ -431,28 +431,28 @@ Adds one authored room label to every terrain tile in a filled rectangle. Fields
 }
 ```
 
-The referenced root room must exist. Every target cell must already contain terrain, and room membership is exclusive: an operation cannot overlap another room label or partially apply. A same-z `room_surface` (below) may provide that terrain after membership has been declared. Room definitions and membership consume no RNG.
+La sala raíz referenciada debe existir. Cada celda objetivo debe contener terreno, y la pertenencia a la sala es exclusiva: una operación no puede superponerse a la etiqueta de otra sala ni aplicarse parcialmente. Una misma z `room_surface` (abajo) puede proporcionar ese terreno después de que se haya declarado la membresía. Las definiciones de sala y la membresía no consumen RNG.
 
 ### `room_surface`
 
-Materializes one tile across the final authored membership of a room. It is deliberately separate from generic coordinate operations: use `rectangle` for terrain, roads, yards, and intentional eaves; use `room_surface` when a floor or roof belongs to a room.
+Materializa una casilla a través de la membresía final creada de una habitación. Está deliberadamente separado de las operaciones de coordenadas genéricas: use `rectangle` para terrenos, caminos, patios y aleros intencionales; usar `room_surface` cuando un piso o techo pertenece a una habitación.
 
 ```json
 {"type": "room_surface", "room": "outpost_loft", "z": 2, "tile": {"id": "concrete_00"}}
 {"type": "room_surface", "room": "outpost_loft", "z": 4, "tile": {"id": "concrete_00"}, "outline_padding": 1}
 ```
 
-Fields are exactly `type`, `room`, root-level `z`, `tile`, and optional `outline_padding`. The room must have authored membership on exactly one logical level. `outline_padding` defaults to `0`; a non-negative value expands every member cell by that Chebyshev radius, producing a one-cell padded `8×8` roof envelope around Pine Hollow's `6×6` loft without naming a duplicate rectangle. Derived cells must stay inside the map.
+Los campos son exactamente `type`, `room`, nivel raíz `z`, `tile`y opcional `outline_padding`. La sala debe haber creado la membresía en un único nivel lógico. `outline_padding` por defecto `0`; un valor no negativo expande cada celda miembro por ese radio de Chebyshev, produciendo un relleno de una celda `8×8` Envolvente del techo alrededor de Pine Hollow `6×6` loft sin nombrar un rectángulo duplicado. Las celdas derivadas deben permanecer dentro del mapa.
 
-Room surfaces are deferred until every layout operation has painted room membership, so their result is independent of the order of `room_rectangle` operations. Existing runtime metadata is preserved. Features and authored slope tiles remain authoritative when a same-z room surface materializes beneath them. The operation validates unknown rooms, malformed or unknown tiles, invalid padding, missing room membership, multi-storey room membership, and out-of-bounds derived cells.
+Las superficies de las habitaciones se posponen hasta que cada operación de diseño haya pintado la pertenencia a las habitaciones, por lo que su resultado es independiente del orden de `room_rectangle` Operaciones. Se conservan los metadatos de tiempo de ejecución existentes. Las características y las teselas de pendiente creadas siguen siendo válidas cuando se materializa una superficie de habitación con el mismo eje Z debajo de ellas. La operación valida habitaciones desconocidas, teselas mal formadas o desconocidas, relleno no válido, pertenencia a habitaciones faltante, pertenencia a habitaciones de varios pisos y celdas derivadas fuera de los límites.
 
-This slice preserves `rooms` through `DMap`/content-editor save-load paths and validates generated map output independently. `room_surface` is recipe-only authoring syntax and is not serialized into generated maps, so it requires no new DMap persistence field.
+Esta rebanada conserva `rooms` a través de `DMap`/content-editor guarda y carga rutas y valida la salida del mapa generado de forma independiente. `room_surface` es una sintaxis de autoría exclusiva de recetas y no se serializa en mapas generados, por lo que no requiere ningún campo de persistencia DMap nuevo.
 
 ### `room_connections`
 
-`room_connections` accepts the existing fields `id`, `at`, `target_at`, `z`, `from`, and `to`, plus the optional connection-level `entrance` object. Phase 10.7 implementation and focused tests now cover this object. It is valid only on room-to-exterior connections and must define exactly `exterior_at` and `facing`; both coordinates must be in bounds and facing must be cardinal. Generated connection data preserves the validated object. Conflicting legacy building entrance metadata is rejected during the compatibility window.
+`room_connections` acepta los campos existentes `id`, `at`, `target_at`, `z`, `from`, y `to`, además del nivel de conexión opcional `entrance` objeto. La implementación de la fase 10.7 y las pruebas específicas ahora cubren este objeto. Es válido solo en conexiones de habitación a exterior y debe definirse exactamente `exterior_at` y `facing`Ambas coordenadas deben estar dentro de los límites y la orientación debe ser cardinal. Los datos de conexión generados conservan el objeto validado. Los metadatos de entrada de edificios heredados que presenten conflictos se rechazan durante el período de compatibilidad.
 
-The supported form is:
+El formulario admitido es:
 
 ```json
 {
@@ -466,7 +466,7 @@ The supported form is:
 }
 ```
 
-The connection-level form is implemented and may now be used for new recipes. Existing recipes may continue using the established building-level `entrance`/`entrances`, `exterior_context`, and `exterior_access_context` fields during migration. Do not remove legacy door anchors or entrance/context records until exact-equivalence coverage is in place.
+El formulario de nivel de conexión está implementado y ahora se puede utilizar para nuevas recetas. Las recetas existentes pueden seguir utilizando el formulario de nivel de edificio establecido. `entrance`/`entrances`, `exterior_context`, y `exterior_access_context` campos durante la migración. No elimine los anclajes de puerta heredados ni los registros de entrada/contexto hasta que se haya establecido una cobertura de equivalencia exacta.
 
 
 ```json
@@ -490,20 +490,20 @@ The connection-level form is implemented and may now be used for new recipes. Ex
 }
 ```
 
-`id` must be unique and use the normal definition-name characters. `at` is exactly `[x, y]` within the `32×32` map and `z` is a required logical level from `-10` through `10`. Endpoints use one of two exact forms:
+`id` Debe ser único y utilizar los caracteres normales del nombre de la definición. `at` es exactamente `[x, y]` dentro del `32×32` mapa y `z` es un nivel lógico requerido desde `-10` a través de `10`Los puntos finales utilizan una de dos formas exactas:
 
 ```json
 {"kind": "room", "id": "office"}
 {"kind": "exterior"}
 ```
 
-Room IDs must exist in root `rooms`; the two endpoints must be distinct; and one door coordinate may have only one connection. The target tile must already exist at the declared level and contain a catalog-recognized door-capable furniture feature—for example, `door_wood`, whose existing runtime implementation owns open/closed state and collision behavior.
+Los ID de las habitaciones deben existir en la raíz. `rooms`; los dos puntos finales deben ser distintos; y una coordenada de puerta puede tener solo una conexión. La casilla de destino ya debe existir en el nivel declarado y contener una característica de mobiliario con capacidad de puerta reconocida por el catálogo; por ejemplo, `door_wood`, cuya implementación en tiempo de ejecución existente posee el estado abierto/cerrado y el comportamiento de colisión.
 
-Connections are semantic metadata only. They preserve their authored `from`/`to` order but do not create a new door feature, alter existing door behavior, infer enclosure, generate geometry, or introduce an indoor/outdoor runtime state. `DMap` preserves valid links through content-editor save/load and removes links that name deleted rooms.
+Las conexiones son metadatos semánticos únicamente. Conservan su autoría. `from`/`to` Ordene, pero no cree una nueva función de puerta, altere el comportamiento de la puerta existente, infiera el cerramiento, genere geometría o introduzca un estado de ejecución interior/exterior. `DMap` Conserva los enlaces válidos mediante la función de guardar/cargar del editor de contenido y elimina los enlaces que hacen referencia a salas eliminadas.
 
 ### `room_boundaries`
 
-`room_boundaries` explicitly attaches an existing physical wall tile or connected door opening to one authored room. It does not derive a perimeter from rooms, floor material, wall rotation, or neighboring geometry. A legacy/partial record contains `id`, `room`, `at`, `z`, and `element`; it may add `side` when directional evidence is needed:
+`room_boundaries` adjunta explícitamente una baldosa de pared física existente o una abertura de puerta conectada a una habitación creada. No deriva un perímetro de las habitaciones, el material del suelo, la rotación de la pared o la geometría vecina. Un registro heredado/parcial contiene `id`, `room`, `at`, `z`, y `element`; puede añadir `side` cuando se necesita evidencia direccional:
 
 ```json
 {
@@ -527,18 +527,18 @@ Connections are semantic metadata only. They preserve their authored `from`/`to`
 }
 ```
 
-`id` is unique and uses normal definition-name characters. `room` must name a root room, `at` is an in-bounds `[x, y]`, and `z` is a required logical level from `-10` through `10`. `element` is exactly one of:
+`id` es único y utiliza caracteres normales de definición-nombre. `room` debe nombrar una sala raíz, `at` es un límite `[x, y]`, y `z` es un nivel lógico requerido desde `-10` a través de `10`. `element` es exactamente uno de:
 
-| Element | Existing target requirement |
+| Elemento | Requisito objetivo existente |
 |---|---|
-| `wall_tile` | The target terrain ID is in the tile catalog and has the `Wall` category; it must be cardinally adjacent to a tile labelled with the named room. |
-| `door_furniture` | The target terrain tile contains catalog-recognized door-capable furniture and a `room_connections` entry at the same `[x, y, z]` names the room. |
+| `wall_tile` | El ID del terreno objetivo está en el catálogo de mosaicos y tiene el `Wall` categoría; debe ser cardinalmente adyacente a una casilla etiquetada con la habitación nombrada. |
+| `door_furniture` | La loseta de terreno objetivo contiene muebles con capacidad de puerta reconocidos por el catálogo y un `room_connections` entrada al mismo tiempo `[x, y, z]` Nombra la habitación.
 
-A room cannot name the same target coordinate twice, but one wall tile may deliberately bound different rooms through separate records. `side`, when present, is `north`, `east`, `south`, or `west`. For `wall_tile`, it points from the wall tile toward its room; for `door_furniture`, it points outward from the room tile through that door.
+Una habitación no puede tener la misma coordenada de destino dos veces, pero una misma baldosa de pared puede delimitar deliberadamente diferentes habitaciones mediante registros separados. `side`, cuando está presente, es `north`, `east`, `south`, o `west`. Para `wall_tile`, apunta desde el azulejo de la pared hacia su habitación; para `door_furniture`, apunta hacia afuera desde el azulejo de la habitación a través de esa puerta.
 
-An `enclosed` room may opt in to strict completeness by adding `"boundary_validation": "complete"` to its root definition. The legacy explicit mode requires every exposed cardinal edge of every labelled room tile to have exactly one directed `room_boundaries` record. Its records therefore require `side`: a wall must point to the matching room edge, and a door must start on the matching room tile and retain its required `room_connections` endpoint. Missing, wrongly oriented, duplicate, or non-exposed records are rejected. `covered_open` and `ruin` rooms cannot opt in and continue to allow partial boundary evidence.
+Un `enclosed` La habitación puede optar por la integridad estricta añadiendo `"boundary_validation": "complete"` a su definición raíz. El modo explícito heredado requiere que cada borde cardinal expuesto de cada baldosa de habitación etiquetada tenga exactamente una dirección `room_boundaries` registro. Por lo tanto, sus registros requieren `side`: una pared debe apuntar hacia el borde de la habitación correspondiente, y una puerta debe comenzar en la baldosa de la habitación correspondiente y conservar su posición requerida. `room_connections` Punto final. Se rechazan los registros que faltan, están mal orientados, duplicados o no expuestos. `covered_open` y `ruin` Las salas no pueden optar por participar y seguir permitiendo evidencia parcial de límites.
 
-For a normal generated enclosure, add `"boundary_generation": "walls"` alongside `boundary_validation` instead of enumerating each wall:
+Para un recinto generado normal, agregue `"boundary_generation": "walls"` junto a `boundary_validation` en lugar de enumerar cada pared:
 
 ```json
 {
@@ -549,13 +549,13 @@ For a normal generated enclosure, add `"boundary_generation": "walls"` alongside
 }
 ```
 
-This mode requires an owning building with `building_geometry.wall_tile`. After final room membership is painted, the generator derives a one-tile wall ring at `floor_z + 1`, including diagonal corner caps. Every same-z `room_connections` link crossing a generated room perimeter becomes an opening; room-to-room links open the facing edge for both rooms while retaining the one authored door-furniture target. Connection crossings must be cardinal. Adjacent generated rooms without a connection share exactly one partition wall, deterministically placed on the lexicographically higher room ID's membership cell. Explicit `room_boundaries` for a generated room are rejected, so a recipe cannot mix competing wall-ownership modes. The standalone validator independently checks the resulting wall ring and openings against the building's declared wall tile. `room_rectangle` remains membership-only; it does not directly place walls.
+Este modo requiere un edificio propio con `building_geometry.wall_tile`. Después de pintar la membresía final de la habitación, el generador obtiene un anillo de pared de una baldosa en `floor_z + 1`, incluyendo tapas de esquina diagonales. Cada mismo z `room_connections` Un enlace que cruza el perímetro de una habitación generada se convierte en una abertura; los enlaces entre habitaciones abren el borde frontal para ambas habitaciones, manteniendo el objetivo de puerta-mueble creado. Los cruces de conexión deben ser cardinales. Las habitaciones adyacentes generadas sin conexión comparten exactamente una pared divisoria, colocada de forma determinista en la celda de pertenencia del ID de habitación lexicográficamente superior. Explícito `room_boundaries` Las solicitudes para una habitación generada se rechazan, por lo que una receta no puede mezclar modos de propiedad de pared en competencia. El validador independiente comprueba de forma independiente el anillo de pared y las aberturas resultantes con respecto a la baldosa de pared declarada del edificio. `room_rectangle` Sigue siendo solo para miembros; no coloca muros directamente.
 
-Generated ground-storey wall supports use `dirt_light_00` while preserving existing room, area, and compatible tile metadata. Boundary generation does not create door furniture, infer connections, change navigation, or add indoor/outdoor effects.
+Los soportes de pared de la planta baja generados utilizan `dirt_light_00` Conservando los metadatos existentes de habitaciones, áreas y baldosas compatibles. La generación de límites no crea herrajes para puertas, no infiere conexiones, no modifica la navegación ni añade efectos de interior/exterior.
 
 ### `buildings`
 
-`buildings` groups authored room evidence into one explicit, rectangular building footprint. By default it remains metadata-only. An opted-in `building_geometry` record generates physical floors, authored wall-boundary tiles, and authored support tiles while preserving existing door features and staircase slopes:
+`buildings` Los grupos crearon evidencia de la habitación en una huella de edificio rectangular explícita. Por defecto, permanece solo como metadatos. Una opción de participación `building_geometry` El registro genera pisos físicos, baldosas de límite de pared y baldosas de soporte personalizadas, conservando al mismo tiempo las características existentes de las puertas y las pendientes de las escaleras:
 
 ```json
 {
@@ -570,11 +570,11 @@ Generated ground-storey wall supports use `dirt_light_00` while preserving exist
 }
 ```
 
-Each record has required `id`, `rooms`, `footprint`, and `z`, plus optional `building_geometry`, `building_levels`, `staircases`, `access_validation`, `interior_rooms`, `open_space_rooms`, `room_partition_validation`, `overhead_validation`, `exterior_context`, `exterior_access_context`, `entrance`, `entrances`, `entrance_validation`, and `furniture_anchors`. `id` is unique; `rooms` is a nonempty list of unique known room IDs; `footprint` has exactly non-negative integer `x`/`y` plus positive integer `width`/`height`, fully inside the 32×32 map; and `z` is a required logical level from `-10` through `10`. Footprints on the same logical z must not overlap, though they may touch.
+Cada registro tiene requerido `id`, `rooms`, `footprint`, y `z`, más opcional `building_geometry`, `building_levels`, `staircases`, `access_validation`, `interior_rooms`, `open_space_rooms`, `room_partition_validation`, `overhead_validation`, `exterior_context`, `exterior_access_context`, `entrance`, `entrances`, `entrance_validation`, y `furniture_anchors`. `id` es único; `rooms` es una lista no vacía de identificadores de sala únicos conocidos; `footprint` tiene exactamente un número entero no negativo `x`/`y` más un número entero positivo `width`/`height`, completamente dentro del mapa de 32×32; y `z` es un nivel lógico requerido desde `-10` a través de `10`Las huellas en la misma coordenada lógica z no deben superponerse, aunque pueden tocarse.
 
-Every owned room must have membership only at the building level and wholly inside its footprint. At least one owned room must be an `enclosed` room with `"boundary_validation": "complete"`. Its same-level `room_boundaries` and any same-level `room_connections` naming it must also lie inside the footprint. Without `building_geometry`, this remains a strict ownership/containment contract; with it, the footprint's declared occupied levels receive generated floor terrain.
+Cada habitación propia debe tener membresía solo a nivel del edificio y completamente dentro de su área. Al menos una habitación propia debe ser una `enclosed` habitación con `"boundary_validation": "complete"`. Su mismo nivel `room_boundaries` y cualquier nivel del mismo `room_connections` Nombrarlo también debe estar dentro de la huella. Sin `building_geometry`, esto sigue siendo un contrato estricto de propiedad/contención; con él, los niveles declarados ocupados de la huella reciben un terreno de piso generado.
 
-`building_geometry` has exactly these fields:
+`building_geometry` tiene exactamente estos campos:
 
 ```json
 {
@@ -587,9 +587,9 @@ Every owned room must have membership only at the building level and wholly insi
 }
 ```
 
-`floor_tile` and `roof_tile` must be known `Ground`, `Floor`, or `Urban` tiles; `wall_tile` and `support_tile` must be known `Wall` or `Ground` tiles. The generator fills every declared occupied building level, materializes `wall_tile` boundaries one logical level above their boundary z, materializes `support_tile` at `building_supports.from_z`, and materializes `roof_tile` at the authored roof surface z. Every authored matching `wall_tile` at a building's ground-wall level receives `dirt_light_00` beneath it; elevated wall boundaries retain their storey's `floor_tile` beneath them. Existing features and slope tiles are preserved, lower staircase slope coordinates reserve empty headroom on the directly overhead z2 floor, and generated geometry rejects feature overwrites. `upper_clearance_at`, when authored on a staircase, clears that coordinate on z2 so an exceptional stair approach can retain player headroom. There is no independent wall elevation property; a future `wall_height` feature is deferred until genuinely tall storeys are required. Doors and staircase slopes remain authored operations; collision and navigation are verified by Godot tests rather than inferred by Python.
+`floor_tile` y `roof_tile` debe ser conocido `Ground`, `Floor`, o `Urban` baldosas; `wall_tile` y `support_tile` debe ser conocido `Wall` o `Ground` baldosas. El generador llena cada nivel de edificio declarado ocupado, se materializa `wall_tile` límites un nivel lógico por encima de su límite z, se materializa `support_tile` en `building_supports.from_z`y se materializa `roof_tile` en la superficie del techo creada z. Cada coincidencia creada `wall_tile` a nivel de la planta baja de un edificio recibe `dirt_light_00` debajo de ella; los límites elevados de la pared conservan su piso. `floor_tile` debajo de ellos. Se conservan las características existentes y las baldosas de pendiente, las coordenadas de pendiente de la escalera inferior reservan espacio libre en el piso z2 directamente encima, y ​​la geometría generada rechaza las sobrescrituras de características. `upper_clearance_at`Cuando se crea en una escalera, elimina esa coordenada en z2 para que un acceso excepcional a la escalera pueda mantener el espacio libre para el jugador. No hay una propiedad de elevación de pared independiente; una futura `wall_height` Esta función se pospone hasta que se requieran pisos realmente altos. Las puertas y las pendientes de las escaleras siguen siendo operaciones definidas por el usuario; la detección de colisiones y la navegación se verifican mediante pruebas de Godot en lugar de inferirse con Python.
 
-A building may declare a multi-level footprint foundation with `building_levels`:
+Un edificio puede declarar una base de planta de varios niveles con `building_levels`:
 
 ```json
 {
@@ -601,13 +601,13 @@ A building may declare a multi-level footprint foundation with `building_levels`
 }
 ```
 
-`building_levels` is an optional non-empty, strictly ascending array of objects with required `z` and optional `rooms` and `furniture_anchors` arrays. The building record itself remains rooted at ground level `z: 0`. Declared occupied floor levels must be even logical levels: `z: 0` is the ground floor, `z: 1` is an intentional open gap, `z: 2` is the ceiling/first-floor level, `z: 3` is another open gap, and so on. The current supported range is `0` through `10`. Walls are derived at `floor_z + 1`; do not add an independent wall elevation field. A future `wall_height` property is deferred until genuinely tall storeys are needed. The declaration must start with `{"z": 0}`; odd levels are not occupied floor declarations. A declaration such as `[{"z": 0, "rooms": ["office"], "furniture_anchors": ["desk_anchor"]}, {"z": 2, "rooms": ["office_upper"], "furniture_anchors": ["upper_bench_anchor"]}]` assigns each room and furniture anchor to one occupied floor. When either ownership list is used, it must assign every aggregate building room or anchor exactly once. A declaration such as `[{"z": 0}, {"z": 2}, {"z": 4}]` remains valid as a vertical-only foundation without per-floor ownership lists.
+`building_levels` es una matriz opcional no vacía y estrictamente ascendente de objetos con requisitos `z` y opcional `rooms` y `furniture_anchors` matrices. El registro del edificio en sí permanece arraigado en el nivel del suelo. `z: 0`Los niveles de piso declarados como ocupados deben ser niveles lógicos pares: `z: 0` es la planta baja, `z: 1` es una brecha abierta intencional, `z: 2` es el nivel del techo/primer piso, `z: 3` es otra brecha abierta, y así sucesivamente. El rango actualmente admitido es `0` a través de `10`. Los muros se derivan en `floor_z + 1`; no agregue un campo de elevación de pared independiente. Un futuro `wall_height` La propiedad se pospone hasta que se necesiten pisos realmente altos. La declaración debe comenzar con `{"z": 0}`; los niveles impares no son declaraciones de pisos ocupados. Una declaración como `[{"z": 0, "rooms": ["office"], "furniture_anchors": ["desk_anchor"]}, {"z": 2, "rooms": ["office_upper"], "furniture_anchors": ["upper_bench_anchor"]}]` asigna cada habitación y anclaje de muebles a un piso ocupado. Cuando se utiliza cualquiera de las listas de propiedad, debe asignar cada habitación o anclaje del edificio agregado exactamente una vez. Una declaración como `[{"z": 0}, {"z": 2}, {"z": 4}]` Sigue siendo válida como una base exclusivamente vertical sin listas de propiedad por piso.
 
-Without `building_geometry`, this is a metadata-only foundation. With `building_geometry`, the generator creates physical floor, wall-boundary, support, and authored-roof tiles for the declared building levels. It still does not generate ceilings, doors, stairs, vertical transitions, indoor runtime state, or runtime behavior beyond the existing Chunk geometry for the emitted tiles. `DMap` preserves valid declarations through save/load and removes malformed declarations. Its shared JSON loader normalizes whole-number numeric literals to integers before sanitization, preserving JSON-authored coordinates, z levels, rotations, and other integer contracts; non-integral values remain floats.
+Sin `building_geometry`, esta es una fundación que solo utiliza metadatos. Con `building_geometry`El generador crea losas físicas de piso, límites de pared, soporte y techo para los niveles de edificio declarados. Sin embargo, no genera techos, puertas, escaleras, transiciones verticales, estado de ejecución en interiores ni comportamiento en tiempo de ejecución más allá de la geometría Chunk existente para las losas emitidas. `DMap` Conserva las declaraciones válidas mediante guardar/cargar y elimina las declaraciones mal formadas. Su cargador JSON compartido normaliza los literales numéricos enteros a enteros antes de la sanitización, conservando las coordenadas, los niveles z, las rotaciones y otros contratos enteros creados con JSON; los valores no enteros permanecen como números de coma flotante.
 
-A building may declare staircases with `staircases`. Staircases are authored physical transition semantics for a two-floor building: exactly two slope blocks are needed to ascend from the ground floor to the first floor. The two slopes never stack — the upper slope must be horizontally offset from the lower slope. Both slope tiles must be tiles whose tile-database `shape` is `"slope"` (for example `grass_ramp_00`, `wood_stairs`, or `dirt_light_ramp_00`), placed on `z: 1` (lower) and `z: 2` (upper). Staircases require declared building levels `z: 0` and `z: 2`.
+Un edificio puede declarar escaleras con `staircases`Las escaleras son semánticas de transición física creadas para un edificio de dos plantas: se necesitan exactamente dos bloques de pendiente para ascender desde la planta baja hasta la primera planta. Las dos pendientes nunca se apilan; la pendiente superior debe estar desplazada horizontalmente con respecto a la pendiente inferior. Ambas baldosas de pendiente deben ser baldosas cuya base de datos de baldosas `shape` es `"slope"` (Por ejemplo `grass_ramp_00`, `wood_stairs`, o `dirt_light_ramp_00`), colocado en `z: 1` (inferior) y `z: 2` (superior). Las escaleras requieren niveles de construcción declarados `z: 0` y `z: 2`.
 
-**Straight stairs** use two cardinally adjacent slopes:
+**Las escaleras rectas** utilizan dos pendientes cardinalmente adyacentes:
 
 ```json
 {
@@ -618,9 +618,9 @@ A building may declare staircases with `staircases`. Staircases are authored phy
 }
 ```
 
-The lower slope at `lower_at` on `z: 1` and the upper slope at `upper_at` on `z: 2` are cardinally adjacent, and both use the same editor-facing `rotation` so the slope continues in the same direction.
+La pendiente inferior en `lower_at` en `z: 1` y la pendiente superior en `upper_at` en `z: 2` son cardinalmente adyacentes y ambos utilizan el mismo editor. `rotation` por lo tanto, la pendiente continúa en la misma dirección.
 
-**Corner stairs** insert one flat landing block at `z: 1` between the two slopes, so the upper slope is diagonally offset from the lower slope and turns the corner:
+**Escaleras de esquina** insertar un bloque de rellano plano en `z: 1` entre las dos pendientes, de modo que la pendiente superior está desplazada diagonalmente con respecto a la pendiente inferior y gira en la esquina:
 
 ```json
 {
@@ -631,114 +631,114 @@ The lower slope at `lower_at` on `z: 1` and the upper slope at `upper_at` on `z:
 }
 ```
 
-The landing block at `landing_at` on `z: 1` must be a flat (non-slope) existing tile, cardinally adjacent to both `lower_at` and `upper_at`. `upper_rotation` is optional and defaults to `rotation`; it is the editor-facing rotation of the upper slope, which may turn the corner. The maintained `Tools/examples/map_recipe_multi_level_building_foundation.json` demonstrates both formations.
+El bloque de aterrizaje en `landing_at` en `z: 1` debe ser una baldosa existente plana (sin pendiente), cardinalmente adyacente a ambos `lower_at` y `upper_at`. `upper_rotation` es opcional y por defecto es `rotation`; es la rotación orientada hacia el editor de la pendiente superior, que puede girar en la esquina. El mantenido `Tools/examples/map_recipe_multi_level_building_foundation.json` muestra ambas formaciones.
 
-Every staircase record has a unique `id` and required `lower_at`, `upper_at`, and editor-facing `rotation`. All coordinates must be inside the building footprint. `upper_clearance_at` is optional and clears one authored coordinate on z2 for an exceptional stair approach; it does not add a slope or landing. Staircase metadata still does not generate slope tiles; it validates existing slope evidence. When combined with `building_geometry`, floors and supports are generated around those authored slopes, while the existing slope runtime tests remain responsible for mesh, collision, navigation, and traversal behavior.
+Cada registro de escalera tiene una característica única. `id` y requerido `lower_at`, `upper_at`y orientado al editor `rotation`Todas las coordenadas deben estar dentro del perímetro del edificio. `upper_clearance_at` es opcional y borra una coordenada de autor en z2 para un acceso de escalera excepcional; no agrega una pendiente ni un rellano. Los metadatos de la escalera aún no generan teselas de pendiente; valida la evidencia de pendiente existente. Cuando se combina con `building_geometry`Los pisos y soportes se generan alrededor de esas pendientes creadas, mientras que las pruebas de tiempo de ejecución de pendientes existentes siguen siendo responsables del comportamiento de la malla, la colisión, la navegación y el recorrido.
 
-A building may opt into authored access completeness with `"access_validation": "complete"`:
+Un edificio puede optar por la integridad del acceso autorizado con `"access_validation": "complete"`:
 
 ```json
 {"id": "office_building", "rooms": ["office"], "footprint": {"x": 7, "y": 7, "width": 4, "height": 4}, "z": 0, "access_validation": "complete"}
 ```
 
-For that building, every owned room must have a path to `exterior` through same-z authored `room_connections`. A room-to-exterior connection seeds the path; a room-to-room connection propagates it only when both endpoint rooms belong to the same building. Links to rooms outside the building do not satisfy the rule. This validates semantic authored access, not physical walkability: it does not infer door adjacency, rotation, collision, navigation, or player traversal.
+Para ese edificio, cada habitación propia debe tener un camino hacia `exterior` a través de same-z autorizado `room_connections`Una conexión entre una habitación y el exterior inicia la ruta; una conexión entre habitaciones la propaga solo cuando ambas habitaciones pertenecen al mismo edificio. Los enlaces a habitaciones fuera del edificio no cumplen esta regla. Esto valida el acceso semántico, no la transitabilidad física: no infiere la adyacencia de puertas, la rotación, la colisión, la navegación ni el recorrido del jugador.
 
-A building may explicitly classify a nonempty subset of its owned rooms as interior with `interior_rooms`:
+Un edificio puede clasificar explícitamente un subconjunto no vacío de sus habitaciones de propiedad como interior con `interior_rooms`:
 
 ```json
 {"id": "office_building", "rooms": ["office"], "footprint": {"x": 7, "y": 7, "width": 4, "height": 4}, "z": 0, "interior_rooms": ["office"]}
 ```
 
-Every declared interior room must be a unique, owned, known room whose authored kind is `enclosed` and whose `boundary_validation` is `complete`. The contract never infers interiors from floor material, walls, doors, access links, roof/ceiling records, or geometry. It deliberately excludes `covered_open` and `ruin`; those retain their authored semantic meanings without being classified as interior.
+Cada habitación interior declarada debe ser una habitación única, propia y conocida cuyo tipo de autor es `enclosed` y cuyo `boundary_validation` es `complete`El contrato nunca infiere interiores a partir del material del suelo, paredes, puertas, enlaces de acceso, registros de techo/cielo o geometría. Excluye deliberadamente `covered_open` y `ruin`; aquellos conservan sus significados semánticos originales sin ser clasificados como interiores.
 
-A building may explicitly classify a nonempty subset of its owned rooms as open space with `open_space_rooms`:
+Un edificio puede clasificar explícitamente un subconjunto no vacío de sus habitaciones de propiedad como espacio abierto con `open_space_rooms`:
 
 ```json
 {"id": "office_building", "rooms": ["office", "garage_bay"], "footprint": {"x": 7, "y": 7, "width": 5, "height": 4}, "z": 0, "interior_rooms": ["office"], "open_space_rooms": ["garage_bay"]}
 ```
 
-Every declared open-space room must be unique, owned, known, and authored as `covered_open` or `ruin`. It must not overlap `interior_rooms`. This makes a roofed/open-front garage or damaged annex explicit without treating it as an interior. The contract does not infer open space from missing walls, absent roofs, exterior access, terrain material, or geometry, and it neither generates nor changes physical openings.
+Cada espacio abierto declarado debe ser único, propiedad de, conocido y creado como `covered_open` o `ruin`No debe superponerse. `interior_rooms`Esto hace explícito un garaje techado o abierto, o un anexo dañado, sin tratarlo como un espacio interior. El contrato no infiere la existencia de espacio abierto a partir de la falta de paredes, techos, accesos exteriores, material del terreno o geometría, y tampoco genera ni modifica aberturas físicas.
 
-A building may opt into a complete authored room partition with `room_partition_validation: "complete"`:
+Un edificio puede optar por una partición de habitación completamente personalizada con `room_partition_validation: "complete"`:
 
 ```json
 {"id": "office_building", "rooms": ["office", "garage_bay"], "footprint": {"x": 7, "y": 7, "width": 5, "height": 4}, "z": 0, "interior_rooms": ["office"], "open_space_rooms": ["garage_bay"], "room_partition_validation": "complete"}
 ```
 
-For an opted-in building, every owned room must appear exactly once across `interior_rooms` and `open_space_rooms`. Existing classification rules supply the exact-once guarantees: the lists cannot overlap, interiors must be complete `enclosed` rooms, and open spaces must be `covered_open` or `ruin`. This is optional and validates authored labels only; it does not require every footprint cell to belong to a room and does not infer a classification from geometry or runtime behavior.
+Para un edificio que ha optado por participar, cada habitación de propiedad debe aparecer exactamente una vez en `interior_rooms` y `open_space_rooms`Las reglas de clasificación existentes proporcionan las garantías de coincidencia exacta: las listas no pueden superponerse, los interiores deben estar completos. `enclosed` Las habitaciones y los espacios abiertos deben ser `covered_open` o `ruin`Esto es opcional y solo valida las etiquetas creadas por el usuario; no requiere que cada celda de la huella pertenezca a una habitación y no infiere una clasificación a partir de la geometría o el comportamiento en tiempo de ejecución.
 
-A building may opt into complete authored overhead classification with `overhead_validation: "complete"`:
+Un edificio puede optar por una clasificación completa de gastos generales con `overhead_validation: "complete"`:
 
 ```json
 {"id": "office_building", "rooms": ["office", "garage_bay"], "footprint": {"x": 7, "y": 7, "width": 5, "height": 4}, "z": 0, "overhead_validation": "complete"}
 ```
 
-The building must then have both exactly-valid authored `roof` and `ceiling` `building_surfaces` at logical `z: 1` (`building.z + 1`). Existing surface validation continues to require that those records name the building, have their own unique IDs/kinds, and sit exactly at that overhead level. This opt-in rule validates classifications only: it does not create roof or ceiling geometry, require physical coverage, mark cells occupied or indoors, imply support/collision, or alter lighting/weather/runtime behavior.
+El edificio debe entonces tener ambos derechos de autor exactamente válidos `roof` y `ceiling` `building_surfaces` en lógica `z: 1` (`building.z + 1`La validación de superficie existente sigue requiriendo que esos registros nombren el edificio, tengan sus propios identificadores/tipos únicos y se ubiquen exactamente en ese nivel superior. Esta regla opcional valida únicamente las clasificaciones: no crea geometría de techo ni cielo raso, no requiere cobertura física, no marca celdas ocupadas ni interiores, no implica soporte/colisión ni altera el comportamiento de iluminación/clima/tiempo de ejecución.
 
-A building may author one data-only external footprint context coordinate:
+Un edificio puede generar una coordenada de contexto de huella externa que solo contenga datos:
 
 ```json
 {"id": "office_building", "rooms": ["office", "garage_bay"], "footprint": {"x": 7, "y": 7, "width": 5, "height": 4}, "z": 0, "exterior_context": {"at": [6, 8], "z": 0}}
 ```
 
-`exterior_context` has exactly `at` and `z`. It must target an existing terrain tile on the building’s own logical z, lie outside the footprint, be cardinally adjacent to one of its footprint cells, and have no room membership. It provides one explicitly authored external reference point without reusing runtime `areas`, inferring streets/yards, or changing terrain. It does not generate a tile, require a particular terrain material, reserve the cell, create an entrance, or alter runtime behavior.
+`exterior_context` tiene exactamente `at` y `z`Debe apuntar a una casilla de terreno existente en la propia z lógica del edificio, estar fuera de la huella, ser cardinalmente adyacente a una de sus celdas de huella y no pertenecer a ninguna habitación. Proporciona un punto de referencia externo creado explícitamente sin reutilizar el tiempo de ejecución. `areas`, infiriendo calles/patios o modificando el terreno. No genera una casilla, no requiere un material de terreno específico, no reserva la celda, no crea una entrada ni altera el comportamiento en tiempo de ejecución.
 
-A building may explicitly associate that external context with one existing semantic access connection:
+Un edificio puede asociar explícitamente ese contexto externo con una conexión de acceso semántico existente:
 
 ```json
 {"id": "office_building", "rooms": ["office", "garage_bay"], "footprint": {"x": 7, "y": 7, "width": 5, "height": 4}, "z": 0, "exterior_context": {"at": [6, 8], "z": 0}, "exterior_access_context": {"connection": "office_front_door"}}
 ```
 
-`exterior_access_context` has exactly `connection`. It requires `exterior_context` and names an existing same-z `room_connections` record for one of the building’s owned rooms whose other endpoint is `exterior`. The association is explicit—it does not infer a physical route, coordinate adjacency, door rotation, collision, navigation, or player traversal between the context tile and the referenced door.
+`exterior_access_context` tiene exactamente `connection`Requiere `exterior_context` y nombra un mismo-z existente `room_connections` registro de una de las habitaciones propiedad del edificio cuyo otro punto final es `exterior`La asociación es explícita; no infiere una ruta física, adyacencia de coordenadas, rotación de puerta, colisión, navegación o recorrido del jugador entre la casilla de contexto y la puerta referenciada.
 
-A building may author one data-only entrance semantic with `entrance`:
+Un edificio puede crear una entrada semántica de solo datos con `entrance`:
 
 ```json
 {"id": "office_building", "rooms": ["office", "garage_bay"], "footprint": {"x": 7, "y": 7, "width": 5, "height": 4}, "z": 0, "exterior_context": {"at": [6, 8], "z": 0}, "exterior_access_context": {"connection": "office_front_door"}, "entrance": {"connection": "office_front_door", "facing": "east"}}
 ```
 
-`entrance` has exactly `connection` and `facing`. It requires `exterior_context` and names an existing same-z `room_connections` record for one of the building’s owned rooms whose other endpoint is `exterior`, following the same contract as `exterior_access_context.connection`. When `exterior_access_context` is also present, `entrance.connection` must match it. `facing` is one of `north`, `east`, `south`, or `west` and must point from `exterior_context.at` toward the building footprint: stepping one cell in the facing direction from the context coordinate must land inside the footprint. This validates authored entrance orientation only—it does not generate a door, infer a physical route, require coordinate adjacency between the context tile and the referenced door, or alter collision, navigation, lighting, weather, or runtime behavior.
+`entrance` tiene exactamente `connection` y `facing`Requiere `exterior_context` y nombra un mismo-z existente `room_connections` registro de una de las habitaciones propiedad del edificio cuyo otro punto final es `exterior`, siguiendo el mismo contrato que `exterior_access_context.connection`. Cuando `exterior_access_context` también está presente, `entrance.connection` debe coincidir. `facing` es uno de `north`, `east`, `south`, o `west` y debe señalar desde `exterior_context.at` Hacia la huella del edificio: al avanzar una celda en la dirección de la vista desde la coordenada de contexto, se debe aterrizar dentro de la huella. Esto valida únicamente la orientación de entrada definida por el autor; no genera una puerta, no infiere una ruta física, no requiere adyacencia de coordenadas entre la celda de contexto y la puerta de referencia, ni altera la colisión, la navegación, la iluminación, el clima ni el comportamiento en tiempo de ejecución.
 
-A building may author multiple data-only entrance semantics with `entrances`:
+Un edificio puede crear múltiples semánticas de entrada solo de datos con `entrances`:
 
 ```json
 {"id": "office_building", "rooms": ["office", "garage_bay"], "footprint": {"x": 7, "y": 7, "width": 5, "height": 4}, "z": 0, "exterior_context": {"at": [6, 8], "z": 0}, "exterior_access_context": {"connection": "office_front_door"}, "entrances": [{"id": "front_entrance", "connection": "office_front_door", "facing": "east"}, {"id": "garage_entrance", "connection": "garage_opening", "facing": "west"}], "entrance_validation": "complete"}
 ```
 
-`entrances` is a non-empty array of entrance records. `entrance` and `entrances` are mutually exclusive. Each entry has exactly `id`, `connection`, and `facing`. `id` is unique within the building and follows the same naming pattern as other authored IDs. `connection` names an existing same-z `room_connections` record for one of the building's owned rooms whose other endpoint is `exterior`, following the same contract as the singular `entrance.connection`. Each connection may be referenced by at most one entrance. `facing` is one of `north`, `east`, `south`, or `west`. `entrances` requires `exterior_context`. When `exterior_access_context` is also present, its `connection` must match one of the entrance connections.
+`entrances` es una matriz no vacía de registros de entrada. `entrance` y `entrances` son mutuamente excluyentes. Cada entrada tiene exactamente `id`, `connection`, y `facing`. `id` Es único dentro del edificio y sigue el mismo patrón de nomenclatura que otros identificadores creados por el usuario. `connection` nombra un mismo-z existente `room_connections` registro de una de las habitaciones propiedad del edificio cuyo otro punto final es `exterior`, siguiendo el mismo contrato que el singular `entrance.connection`Cada conexión puede ser referenciada por un máximo de una entrada. `facing` es uno de `north`, `east`, `south`, o `west`. `entrances` requiere `exterior_context`. Cuando `exterior_access_context` también está presente, su `connection` debe coincidir con una de las conexiones de entrada.
 
-The primary entrance is the one whose `connection` matches `exterior_access_context.connection`, or the first entry when `exterior_access_context` is absent. Only the primary entrance is checked against `exterior_context.at`: stepping one cell in its `facing` direction from the context coordinate must land inside the footprint. Non-primary entrances are not checked against `exterior_context` because a single context tile cannot serve multiple approach directions.
+La entrada principal es aquella cuya `connection` partidos `exterior_access_context.connection`, o la primera entrada cuando `exterior_access_context` está ausente. Solo se comprueba la entrada principal. `exterior_context.at`: dando un paso en una celda en su `facing` La dirección desde la coordenada de contexto debe aterrizar dentro de la huella. Las entradas no principales no se comprueban contra `exterior_context` porque una única ficha de contexto no puede servir para múltiples direcciones de acceso.
 
-A building may opt into complete entrance orientation and approach validation with `entrance_validation: "complete"`:
+Un edificio puede optar por la validación completa de la orientación y el acceso a la entrada con `entrance_validation: "complete"`:
 
 ```json
 {"id": "office_building", "rooms": ["office", "garage_bay"], "footprint": {"x": 7, "y": 7, "width": 5, "height": 4}, "z": 0, "exterior_context": {"at": [6, 8], "z": 0}, "exterior_access_context": {"connection": "office_front_door"}, "entrance": {"connection": "office_front_door", "facing": "east"}, "entrance_validation": "complete"}
 ```
 
-For an opted-in building, `entrance_validation` requires `entrance` or `entrances` and then checks two authored constraints per entrance:
+Para un edificio que ha optado por participar, `entrance_validation` requiere `entrance` o `entrances` y luego verifica dos restricciones de autor por entrada:
 
-1. **Door orientation**: the `room_boundaries` record with `element: "door_furniture"` at the entrance connection's `at` and `z`, naming a building-owned room, must have a `side` equal to `OPPOSITE_SIDES[facing]`—the door opens toward the approaching direction. A missing door boundary, missing `side`, or wrong-facing door is rejected.
-2. **Approach alignment** (primary entrance only): `exterior_context.at` and the primary entrance connection's `at` must both fall within the footprint's perpendicular range. For `east`/`west` facing, both Y values must be within the footprint height; for `north`/`south` facing, both X values must be within the footprint width. This ensures the approach path from the context tile to the door runs along the correct building side.
+1. **Orientación de la puerta**: la `room_boundaries` registro con `element: "door_furniture"` en la conexión de entrada `at` y `z`, nombrando una habitación propiedad del edificio, debe tener una `side` igual a `OPPOSITE_SIDES[facing]`—la puerta se abre hacia la dirección de aproximación. Falta un límite de puerta, falta `side`o la puerta que no está orientada correctamente es rechazada.
+2. **Alineación de acceso** (solo entrada principal): `exterior_context.at` y la conexión de la entrada principal `at` ambos deben caer dentro del rango perpendicular de la huella. Para `east`/`west` Enfrentando, ambos valores Y deben estar dentro de la altura de la huella; para `north`/`south` En esta dirección, ambos valores X deben estar dentro del ancho de la huella. Esto garantiza que la ruta de acceso desde la loseta de contexto hasta la puerta discurra por el lado correcto del edificio.
 
-This validates authored orientation and alignment only: it does not generate or modify geometry, infer a walkable path, check collision or navigation, require the context tile and door to be cardinally adjacent, or alter runtime behavior.
+Esto valida únicamente la orientación y alineación definidas por el autor: no genera ni modifica la geometría, no infiere una ruta transitable, no comprueba colisiones ni navegación, no requiere que la casilla de contexto y la puerta sean cardinalmente adyacentes ni altera el comportamiento en tiempo de ejecución.
 
-`DMap` preserves building records through editor save/load and removes records whose room list, declared interior rooms, declared open-space rooms, malformed exterior context, stale exterior-access connection, stale entrance connection, malformed entrances array, stale entrance connection in the entrances array, malformed entrance validation, malformed furniture anchors, or malformed `reachability_validation` requirements becomes stale. The standalone validator performs strict shape, containment, same-level overlap, complete-enclosed-room, opted-in access, and authored interior/open-space/partition/overhead/exterior-context/exterior-access-context/entrance/entrances/entrance-validation/furniture-anchors checks.
+`DMap` conserva los registros de edificios a través de guardar/cargar del editor y elimina los registros cuya lista de habitaciones, habitaciones interiores declaradas, habitaciones de espacio abierto declaradas, contexto exterior mal formado, conexión de acceso exterior obsoleta, conexión de entrada obsoleta, matriz de entradas mal formada, conexión de entrada obsoleta en la matriz de entradas, validación de entrada mal formada, anclajes de muebles mal formados o mal formados `reachability_validation` Los requisitos se vuelven obsoletos. El validador independiente realiza comprobaciones estrictas de forma, contención, superposición del mismo nivel, habitación completamente cerrada, acceso optado y comprobaciones de interior/espacio abierto/partición/superior/contexto exterior/contexto de acceso exterior/entrada/entradas/validación de entrada/anclajes de muebles.
 
-A building may author named furniture anchor metadata with `furniture_anchors`:
+Un edificio puede tener un autor nombrado muebles ancla metadatos con `furniture_anchors`:
 
 ```json
 {"id": "office_building", "rooms": ["office", "garage_bay"], "footprint": {"x": 7, "y": 7, "width": 5, "height": 4}, "z": 0, "furniture_anchors": [{"id": "office_door_anchor", "at": [8, 9], "z": 0, "kind": "door"}, {"id": "garage_door_anchor", "at": [11, 8], "z": 0, "kind": "door"}]}
 ```
 
-`furniture_anchors` is a non-empty array of anchor records. Each entry has exactly `id`, `at`, `z`, and `kind`. `id` is unique within the building and follows the same naming pattern as other authored IDs. `at` is a two-integer `[x, y]` coordinate within map bounds. `z` is a logical level from `-10` through `10` and must match the building's own `z` or one of its declared `building_levels`. `kind` is a non-empty semantic label (e.g. `"door"`, `"storage"`, `"workstation"`) — it is free-form text, not an enumerated set, and carries no runtime behavior.
+`furniture_anchors` es una matriz no vacía de registros de anclaje. Cada entrada tiene exactamente `id`, `at`, `z`, y `kind`. `id` Es único dentro del edificio y sigue el mismo patrón de nomenclatura que otros identificadores creados por el usuario. `at` es un número entero de dos `[x, y]` Coordenadas dentro de los límites del mapa. `z` es un nivel lógico desde `-10` a través de `10` y debe coincidir con el propio edificio. `z` o uno de sus declarados `building_levels`. `kind` es una etiqueta semántica no vacía (por ejemplo `"door"`, `"storage"`, `"workstation"`) — es un texto de formato libre, no un conjunto enumerado, y no conlleva ningún comportamiento en tiempo de ejecución.
 
-Each anchor must reference a tile inside the building footprint that has an existing furniture feature at the authored `[x, y, z]`. The anchor does not generate furniture, modify terrain, infer walkability, check furniture category or function, or alter collision, navigation, lighting, weather, or runtime behavior. It is a data-only authored reference point — a named semantic label for existing furniture that future template composition and gameplay validation can use as an anchor.
+Cada anclaje debe hacer referencia a una baldosa dentro de la huella del edificio que tenga una característica de mobiliario existente en el autor. `[x, y, z]`El ancla no genera mobiliario, no modifica el terreno, no infiere la transitabilidad, no verifica la categoría ni la función del mobiliario, ni altera la colisión, la navegación, la iluminación, el clima ni el comportamiento en tiempo de ejecución. Es un punto de referencia creado exclusivamente a partir de datos: una etiqueta semántica con nombre para el mobiliario existente que la futura composición de plantillas y la validación del juego pueden usar como ancla.
 
-`Tools/examples/map_recipe_furniture_anchors.json` demonstrates the maintained office building with two furniture anchors: `office_door_anchor` and `garage_door_anchor`, each pointing to an existing `door_wood` feature inside the footprint.
+`Tools/examples/map_recipe_furniture_anchors.json` Muestra el edificio de oficinas mantenido con dos elementos de mobiliario principales: `office_door_anchor` y `garage_door_anchor`, cada uno apuntando a uno existente `door_wood` característica dentro de la huella.
 
 ### `reachability_validation`
 
-A building may opt in to static semantic reachability requirements with `reachability_validation`:
+Un edificio puede optar por cumplir con los requisitos de accesibilidad semántica estática con `reachability_validation`:
 
 ```json
 {
@@ -750,31 +750,31 @@ A building may opt in to static semantic reachability requirements with `reachab
 }
 ```
 
-The record is optional, must be an object, and must define at least one of exactly three keys:
+El registro es opcional, debe ser un objeto y debe definir al menos una de exactamente tres claves:
 
-- `required_entrances` names entries of the building's `entrances` array by their `id`. A singular `entrance` has no ID and cannot be referenced.
-- `required_furniture_anchors` names entries of the building's `furniture_anchors` by `id`.
-- `required_building_levels` names declared `building_levels` z values (or the building's own `z` when no `building_levels` are declared).
+- `required_entrances` nombres entradas del edificio `entrances` conjunto por su `id`. Un singular `entrance` No tiene ID y no se puede hacer referencia a él.
+- `required_furniture_anchors` nombres entradas del edificio `furniture_anchors` por `id`.
+- `required_building_levels` nombres declarados `building_levels` valores z (o los del propio edificio) `z` cuando no `building_levels` se declaran).
 
-Every requirement is a non-empty array without duplicate entries; entrance and anchor names are non-empty strings, and levels are integers. The record must not store coordinates, tile IDs, or precomputed paths — it names only existing entrances, anchors, and declared levels.
+Cada requisito es un array no vacío sin entradas duplicadas; los nombres de las entradas y los anclajes son cadenas no vacías, y los niveles son números enteros. El registro no debe almacenar coordenadas, identificadores de mosaicos ni rutas precalculadas; solo debe indicar las entradas, los anclajes y los niveles declarados existentes.
 
-Validation is a static breadth-first search over authored semantic facts, never a collision or navigation simulation. Graph nodes are `(room, level)` pairs; a room's level comes from its `building_levels` assignment, or the building `z` when levels are undeclared. Seed nodes are the rooms behind room-to-exterior connections whose connection `z` equals the room's level — restricted to the named entrances when `required_entrances` is declared, or all owned exterior connections otherwise. Same-level edges come from room-to-room `room_connections` where both rooms share the room's level and the connection `z` matches. Vertical edges are derived only from already-valid authored `staircases`: a validated staircase connects the declared `z: 0` and `z: 2` floor levels bidirectionally, and the connection is floor-granular because staircase slopes occupy the intentional open gap where no room membership exists. The search must reach the room behind every required entrance, the level of every required furniture anchor, and at least one room node on every required building level. Unknown targets, undeclared levels, and unreachable requirements are rejected; Python never simulates runtime collision or navigation — the Godot runtime navigation tests own that proof.
+La validación es una búsqueda estática en amplitud sobre hechos semánticos creados, nunca una simulación de colisión o navegación. Los nodos del grafo son `(room, level)` pares; el nivel de una habitación proviene de su `building_levels` asignación, o el edificio `z` cuando los niveles no están declarados. Los nodos semilla son las habitaciones detrás de las conexiones de habitación al exterior cuya conexión `z` iguala el nivel de la habitación, restringido a las entradas indicadas cuando `required_entrances` se declara, o todas las conexiones exteriores de propiedad de otro modo. Los bordes del mismo nivel provienen de habitación a habitación. `room_connections` donde ambas habitaciones comparten el nivel de la habitación y la conexión `z` coincidencias. Los bordes verticales se derivan únicamente de elementos ya válidos creados `staircases`: una escalera validada conecta lo declarado `z: 0` y `z: 2` Los niveles de piso se encuentran en ambas direcciones, y la conexión es granular porque las pendientes de las escaleras ocupan el espacio abierto intencional donde no existe pertenencia a ninguna habitación. La búsqueda debe llegar a la habitación detrás de cada entrada requerida, al nivel de cada anclaje de mueble requerido y al menos a un nodo de habitación en cada nivel de edificio requerido. Se rechazan los objetivos desconocidos, los niveles no declarados y los requisitos inalcanzables; Python nunca simula colisiones ni navegación en tiempo de ejecución: las pruebas de navegación en tiempo de ejecución de Godot son la prueba de ello.
 
-The generator validates the record shape, echoes it into the building record, and rejects unreachable requirements while authoring. `Tools/map_validator.py` performs the same checks independently on generated maps. `DMap` preserves valid records through editor save/load and removes buildings whose record references stale entrances, anchors, or undeclared levels, or whose requirements are malformed. The maintained `map_recipe_multi_level_building_foundation.json` demonstrates the full record across both storeys through its authored staircase, and the canonical two-storey semantic fixture now does the same through `workroom_staircase`.
+El generador valida la estructura del registro, la reproduce en el registro del edificio y rechaza los requisitos inalcanzables durante el proceso de creación. `Tools/map_validator.py` Realiza las mismas comprobaciones de forma independiente en los mapas generados. `DMap` conserva registros válidos mediante la función de guardar/cargar del editor y elimina edificios cuyos registros hacen referencia a entradas obsoletas, anclajes o niveles no declarados, o cuyos requisitos están mal formados. El mantenimiento `map_recipe_multi_level_building_foundation.json` demuestra el registro completo en ambos pisos a través de su escalera de autor, y el accesorio semántico canónico de dos pisos ahora hace lo mismo a través de `workroom_staircase`.
 
-### Canonical semantic-building fixtures
+### Elementos canónicos de construcción semántica
 
-`Tools/examples/map_recipe_semantic_single_storey_building.json` is the canonical complete one-storey profile. It combines physical `building_geometry`, one complete enclosed room, required z1 perimeter walls including every corner, a clear z1 headroom cell above its room-to-exterior door, dirt support beneath every remaining lower wall, per-floor room/anchor ownership, `access_validation`, interior/partition classification, exterior and entrance semantics, entrance validation, and a door furniture anchor. Its generated artifact is `Mods/Dimensionfall/Maps/generated_semantic_single_storey_building.json`.
+`Tools/examples/map_recipe_semantic_single_storey_building.json` es el perfil canónico completo de una sola planta. Combina características físicas. `building_geometry`, una habitación completamente cerrada, paredes perimetrales z1 requeridas que incluyen cada esquina, una celda de altura libre z1 por encima de su puerta de la habitación al exterior, soporte de tierra debajo de cada pared inferior restante, propiedad de habitación/anclaje por piso, `access_validation`, clasificación interior/partición, semántica exterior y de entrada, validación de entrada y un anclaje de herrajes de puerta. Su artefacto generado es `Mods/Dimensionfall/Maps/generated_semantic_single_storey_building.json`.
 
-`Tools/examples/map_recipe_semantic_two_storey_building.json` is the canonical ordinary two-storey profile. It assigns a complete `workroom` at z0 and a complete `loft` at z2, gives each one furniture-anchor ownership, explicitly paints the required z1/z3 perimeter walls of its 6×6 footprint, and authors a concrete roof at z4. The z1 cell above its lower door is deliberately empty; all other z1 walls, including the corners, are supported by `dirt_light_00` at z0. Its generated artifact is `Mods/Dimensionfall/Maps/generated_semantic_two_storey_building.json`. The fixture also authors `workroom_staircase` — a straight staircase with the lower slope at [10, 10] on z1 and the upper slope at [10, 9] on z2 — so its `reachability_validation` can require `loft_bench` and level z2. The loft is `enclosed` but intentionally not `boundary_validation: complete`: the stairwell opening breaks its perimeter, so the fixture mirrors the maintained multi-level foundation rather than forcing invalid complete-boundary records. The explicit z4 roof remains recipe geometry until a future generalized `wall_height` contract can derive a roof surface from the upper wall span.
+`Tools/examples/map_recipe_semantic_two_storey_building.json` es el perfil canónico ordinario de dos plantas. Asigna un perfil completo `workroom` en z0 y un completo `loft` En z2, otorga a cada uno la propiedad de anclaje de muebles, pinta explícitamente las paredes perimetrales z1/z3 requeridas de su huella de 6×6 y crea un techo de hormigón en z4. La celda z1 sobre su puerta inferior está deliberadamente vacía; todas las demás paredes z1, incluidas las esquinas, están sostenidas por `dirt_light_00` en z0. Su artefacto generado es `Mods/Dimensionfall/Maps/generated_semantic_two_storey_building.json`El accesorio también escribe `workroom_staircase` — una escalera recta con la pendiente inferior en [10, 10] en z1 y la pendiente superior en [10, 9] en z2 — por lo que su `reachability_validation` puede requerir `loft_bench` y nivel z2. El loft es `enclosed` pero intencionalmente no `boundary_validation: complete`: la abertura de la escalera rompe su perímetro, por lo que el accesorio refleja la base multinivel mantenida en lugar de forzar registros de límites completos no válidos. El techo z4 explícito sigue siendo geometría de receta hasta una futura generalizada `wall_height` El contrato puede derivar una superficie de techo a partir del tramo superior de la pared.
 
-The `access_validation` contract follows only same-z `room_connections`. The two-storey fixture therefore does not opt into it: generic cross-floor semantic routes are expressed by `reachability_validation`, which adds graph edges only through already-valid `staircases`. Neither contract replaces Godot navigation checks; collision and real traversal are proven at runtime by `Tests/Unit/test_semantic_single_storey_navigation.gd`, `Tests/Unit/test_semantic_two_storey_navigation.gd`, and `Tests/Unit/test_field_farmland_navigation.gd` through the reusable `Tests/Unit/helpers/map_navigation_fixture.gd` helper, which provides generic chunk navigation setup, baking, grid-to-world conversion, and path assertions for any map geometry without knowing room semantics.
+El `access_validation` El contrato sigue únicamente el mismo z `room_connections`Por lo tanto, el accesorio de dos pisos no opta por ello: las rutas semánticas genéricas entre pisos se expresan mediante `reachability_validation`, que agrega aristas al grafo solo a través de ya válidas `staircases`Ninguno de los contratos reemplaza las comprobaciones de navegación de Godot; la colisión y el recorrido real se demuestran en tiempo de ejecución mediante `Tests/Unit/test_semantic_single_storey_navigation.gd`, `Tests/Unit/test_semantic_two_storey_navigation.gd`, y `Tests/Unit/test_field_farmland_navigation.gd` a través del reutilizable `Tests/Unit/helpers/map_navigation_fixture.gd` Función auxiliar que proporciona configuración genérica de navegación de fragmentos, horneado, conversión de cuadrícula a mundo y aserciones de ruta para cualquier geometría de mapa sin conocer la semántica de la habitación.
 
-`Tools/examples/map_recipe_field_farmland.json` applies this generic profile to the legacy `field_farmland` acceptance footprint x3…18/y19…29. It deliberately keeps only a representative complete kitchen, connected ground room, upper room, doors, anchors, reachability requirements, and a z1→z2 staircase; it is not a farmland-specific generator path and does not attempt to reproduce every legacy room.
+`Tools/examples/map_recipe_field_farmland.json` aplica este perfil genérico al legado `field_farmland` Huella de aceptación x3…18/y19…29. Conserva deliberadamente solo una cocina completa representativa, una habitación conectada en la planta baja, una habitación en la planta superior, puertas, anclajes, requisitos de accesibilidad y una escalera z1→z2; no es una ruta de generador específica para terrenos agrícolas y no intenta reproducir todas las habitaciones heredadas.
 
 ### `building_surfaces`
 
-`building_surfaces` declares authored overhead semantics for an existing validated building footprint without creating roof or ceiling geometry:
+`building_surfaces` Declara la semántica de la cubierta superior creada para una huella de edificio validada existente sin crear geometría de techo o cielo raso:
 
 ```json
 {
@@ -785,11 +785,11 @@ The `access_validation` contract follows only same-z `room_connections`. The two
 }
 ```
 
-Each record has exactly `id`, `building`, `kind`, and `z`. `id` is unique; `building` must name a root `buildings` record; and `kind` is exactly `roof`, `ceiling`, or `floor`. A building may have at most one record of each kind at each `z`.
+Cada registro tiene exactamente `id`, `building`, `kind`, y `z`. `id` es único; `building` debe nombrar una raíz `buildings` registro; y `kind` es exactamente `roof`, `ceiling`, o `floor`. Un edificio puede tener como máximo un registro de cada tipo en cada `z`.
 
-For a single-level building (no `building_levels`), `z` is the logical level immediately above the building footprint (`building.z + 1`), and only `roof` and `ceiling` kinds are allowed. `roof` and `ceiling` are separate authored classifications and may both be present for one building.
+Para un edificio de una sola planta (no `building_levels`), `z` es el nivel lógico inmediatamente por encima de la huella del edificio (`building.z + 1`), y solo `roof` y `ceiling` Se permiten tipos. `roof` y `ceiling` Son clasificaciones independientes, elaboradas por autores distintos, y ambas pueden estar presentes en un mismo edificio.
 
-For a multi-level building (with `building_levels`), `z` must name a declared occupied building level. `floor` and `ceiling` may target declared occupied levels, while `roof` is allowed only at the highest declared occupied level. This models the top-down vertical story directly:
+Para un edificio de varios niveles (con `building_levels`), `z` debe indicar el nivel del edificio declarado como ocupado. `floor` y `ceiling` pueden apuntar a niveles declarados ocupados, mientras que `roof` Está permitido únicamente en el nivel de ocupación más alto declarado. Esto modela directamente la estructura vertical descendente:
 
 ```text
 z: 0  ground-floor surface      -> kind "floor"
@@ -798,13 +798,13 @@ z: 2  first-floor surface       -> kind "floor"
 z: 2  ground-floor ceiling      -> kind "ceiling"
 ```
 
-In the top-down game the player never sees the ceiling: a `ceiling` at `z: 2` is the underside of the first-floor slab that closes the air gap above the ground floor, and it is authored metadata only — it is never rendered. `ceiling` cannot be declared at the ground level itself.
+En el juego de arriba hacia abajo, el jugador nunca ve el techo: `ceiling` en `z: 2` es la parte inferior de la losa del primer piso que cierra el espacio de aire sobre la planta baja, y son solo metadatos de autoría; nunca se renderizan. `ceiling` no puede declararse a nivel del terreno.
 
-Surfaces do not place tiles on their `z`, create a roof/ceiling/floor mesh, imply collision/support, change lighting/weather, mark rooms indoors, or make overhead cells occupied. `DMap` preserves valid records and removes surfaces whose referenced building is deleted, whose kind is unsupported, or whose `z` no longer matches the building's declared levels; generator and standalone validation enforce the strict reference, uniqueness, and z relationship.
+Las superficies no colocan baldosas sobre sus `z`, crear una malla de techo/cielo/suelo, implicar colisión/soporte, cambiar la iluminación/clima, marcar habitaciones interiores o hacer que las celdas superiores estén ocupadas. `DMap` conserva registros válidos y elimina superficies cuyo edificio referenciado se ha eliminado, cuyo tipo no es compatible o cuyo `z` Ya no coincide con los niveles declarados del edificio; el generador y la validación independiente imponen la estricta relación de referencia, unicidad y z.
 
 ### `building_supports`
 
-`building_supports` authors structural support semantics for a multi-level building without generating columns, walls, beams, collision, or support geometry:
+`building_supports` Autores de la semántica de soporte estructural para un edificio de varios niveles sin generar columnas, muros, vigas, colisiones o geometría de soporte:
 
 ```json
 {
@@ -821,13 +821,13 @@ Surfaces do not place tiles on their `z`, create a roof/ceiling/floor mesh, impl
 }
 ```
 
-Each record has exactly `id`, `building`, `at`, `from_z`, `to_z`, and `kind`. `kind` is currently `column` or `wall`. The support coordinate must lie inside the building footprint; `from_z` and `to_z` must be ascending declared occupied building levels. This is an authored assertion that the upper-floor/roof semantics have a structural support path back to a lower occupied level. It does not infer support from tile presence or furniture and does not generate or alter runtime geometry.
+Cada registro tiene exactamente `id`, `building`, `at`, `from_z`, `to_z`, y `kind`. `kind` actualmente está `column` o `wall`. La coordenada de soporte debe estar dentro de la huella del edificio; `from_z` y `to_z` Debe ascender a los niveles declarados de edificios ocupados. Esta es una afirmación del autor que indica que la semántica de los pisos superiores/azoteas tiene una ruta de soporte estructural que regresa a un nivel inferior ocupado. No infiere soporte a partir de la presencia de baldosas o muebles y no genera ni modifica la geometría en tiempo de ejecución.
 
-`DMap` preserves valid support records and removes records with stale buildings, invalid coordinates, unsupported kinds, or undeclared/non-ascending levels.
+`DMap` Conserva los registros de soporte válidos y elimina los registros con edificios obsoletos, coordenadas no válidas, tipos no compatibles o niveles no declarados o no ascendentes.
 
 ### `building_compositions`
 
-`building_compositions` is an opt-in, data-only assertion that an existing building contains the named authored overhead classifications:
+`building_compositions` es una afirmación voluntaria, solo de datos, que indica que un edificio existente contiene las clasificaciones de gastos generales nombradas:
 
 ```json
 {
@@ -841,15 +841,15 @@ Each record has exactly `id`, `building`, `at`, `from_z`, `to_z`, and `kind`. `k
 }
 ```
 
-Each record has exactly `id`, `building`, and nonempty `required_surfaces`. `id` is unique; one composition may target each building; `building` must name an existing root `buildings` record; and every required surface kind must be unique and exactly `roof` or `ceiling`. Each named kind must have a matching valid `building_surfaces` record for the same building. This is opt-in: a building without a composition remains valid, and composition does not require all supported kinds unless its author lists them.
+Cada registro tiene exactamente `id`, `building`y no vacío `required_surfaces`. `id` es único; una composición puede estar dirigida a cada edificio; `building` debe nombrar una raíz existente `buildings` registro; y cada tipo de superficie requerida debe ser única y exactamente `roof` o `ceiling`Cada tipo nombrado debe tener un tipo válido coincidente `building_surfaces` Registro para el mismo edificio. Esto es opcional: un edificio sin composición sigue siendo válido, y la composición no requiere todos los tipos admitidos a menos que su autor los enumere.
 
-Compositions add no geometry or runtime behavior. They only validate authored cross-record consistency; they do not infer indoor status, surface coverage, support, or the presence of any roof/ceiling tiles or meshes. `DMap` preserves valid records and removes ones that reference deleted buildings.
+Las composiciones no añaden geometría ni comportamiento en tiempo de ejecución. Solo validan la coherencia entre registros; no infieren el estado interior, la cobertura de la superficie, el soporte ni la presencia de tejas o mallas de techo. `DMap` Conserva los registros válidos y elimina los que hacen referencia a edificios eliminados.
 
-No generalized templates, polygons, multi-level building records, furniture anchors, or generation operations are introduced.
+No se introducen plantillas generalizadas, polígonos, registros de edificios multinivel, anclajes de muebles ni operaciones de generación.
 
 ### `set`
 
-Places one tile. Fields: `type`, `x`, `y`, `tile`, and optional root-level `z`.
+Coloca una ficha. Campos: `type`, `x`, `y`, `tile`y nivel raíz opcional `z`.
 
 ```json
 {"type": "set", "x": 16, "y": 15, "tile": {"id": "grass_flowers_01"}}
@@ -857,7 +857,7 @@ Places one tile. Fields: `type`, `x`, `y`, `tile`, and optional root-level `z`.
 
 ### `rectangle`
 
-Fills a rectangle. Fields: `type`, `x`, `y`, positive `width`, positive `height`, `tile`, and optional root-level `z`.
+Rellena un rectángulo. Campos: `type`, `x`, `y`, positivo `width`, positivo `height`, `tile`y nivel raíz opcional `z`.
 
 ```json
 {"type": "rectangle", "x": 10, "y": 9, "width": 12, "height": 14, "tile": {"id": "grass_plain_01"}}
@@ -865,7 +865,7 @@ Fills a rectangle. Fields: `type`, `x`, `y`, positive `width`, positive `height`
 
 ### `rectangle_outline`
 
-Places only the rectangle border and uses the same fields as `rectangle`. If width or height is `1`, every cell in the resulting one-cell-wide shape is border.
+Coloca solo el borde rectangular y utiliza los mismos campos que `rectangle`. Si el ancho o la altura es `1`, cada celda en la forma resultante de una sola celda de ancho es un borde.
 
 ```json
 {"type": "rectangle_outline", "x": 10, "y": 9, "width": 12, "height": 14, "tile": {"id": "grass_dirt_00"}}
@@ -873,7 +873,7 @@ Places only the rectangle border and uses the same fields as `rectangle`. If wid
 
 ### `line`
 
-Places an inclusive, one-tile-wide line between integer `[x, y]` endpoints. Fields: `type`, `from`, `to`, `tile`, and optional root-level `z`. Lines use the integer Bresenham algorithm, so horizontal, vertical, diagonal, steep, and reversed lines are deterministic.
+Coloca una línea inclusiva de un cuadro de ancho entre números enteros `[x, y]` puntos finales. Campos: `type`, `from`, `to`, `tile`y nivel raíz opcional `z`Las líneas utilizan el algoritmo de Bresenham para números enteros, por lo que las líneas horizontales, verticales, diagonales, inclinadas y en sentido contrario son deterministas.
 
 ```json
 {"type": "line", "from": [0, 16], "to": [31, 16], "tile": {"id": "dirt_light_00"}}
@@ -881,12 +881,12 @@ Places an inclusive, one-tile-wide line between integer `[x, y]` endpoints. Fiel
 
 ### `scatter`
 
-Selects unique cells in a rectangular `region` using the recipe's seeded random-number generator. Fields: `type`, `region`, exactly one of `count` or `density`, `tile`, and optional root-level `z`.
+Selecciona celdas únicas en un rectángulo `region` utilizando el generador de números aleatorios con semilla de la receta. Campos: `type`, `region`, exactamente uno de `count` o `density`, `tile`y nivel raíz opcional `z`.
 
-- `count` is an integer from zero through the number of cells in the region.
-- `density` is a number from `0` through `1`; the placement count is `floor(region area × density)`.
-- Selected cells replace their existing tiles.
-- The same complete recipe and seed produce the same selection and output.
+- `count` es un número entero desde cero hasta el número de celdas en la región.
+- `density` es un número de `0` a través de `1`; el recuento de ubicaciones es `floor(region area × density)`.
+- Las celdas seleccionadas reemplazan a sus mosaicos existentes.
+- La misma receta completa y la misma semilla producen la misma selección y el mismo resultado.
 
 ```json
 {
@@ -899,9 +899,9 @@ Selects unique cells in a rectangular `region` using the recipe's seeded random-
 
 ### `pattern`
 
-Places every cell from a named pattern relative to an anchor. Fields: `type`, `pattern`, `at`, optional root-level `z`, and optional `rotation`. Rotation defaults to `0` and accepts fixed clockwise quarter turns: `0`, `90`, `180`, or `270`.
+Coloca cada celda de un patrón con nombre en relación con un ancla. Campos: `type`, `pattern`, `at`, opcional a nivel raíz `z`y opcional `rotation`. La rotación se establece por defecto en `0` y acepta giros de un cuarto de vuelta fijos en el sentido de las agujas del reloj: `0`, `90`, `180`, o `270`.
 
-Offsets rotate around the anchor: `90` maps `[x, y]` to `[-y, x]`. The generator preflights the complete expansion and rejects the operation if any resulting cell is outside the map; patterns are never clipped or partially applied.
+Los desplazamientos giran alrededor del punto de anclaje: `90` mapas `[x, y]` a `[-y, x]`El generador realiza una comprobación previa de la expansión completa y rechaza la operación si alguna celda resultante está fuera del mapa; los patrones nunca se recortan ni se aplican parcialmente.
 
 ```json
 {
@@ -914,7 +914,7 @@ Offsets rotate around the anchor: `90` maps `[x, y]` to `[-y, x]`. The generator
 
 ### `furniture`
 
-Embeds one known single-cell furniture feature in an existing terrain tile. Fields: `type`, `x`, `y`, `id`, optional root-level `z`, optional `rotation`, and optional `itemgroups`. Rotation defaults to `0` and accepts fixed editor-facing quarter turns: `0`, `90`, `180`, or `270`. When present, `itemgroups` must be a non-empty array of known IDs from the selected `Itemgroups/Itemgroups.json` catalog.
+Inserta una característica de mobiliario de una sola celda conocida en una loseta de terreno existente. Campos: `type`, `x`, `y`, `id`, opcional a nivel raíz `z`, opcional `rotation`y opcional `itemgroups`. La rotación se establece por defecto en `0` y acepta giros de un cuarto de vuelta fijos orientados hacia el editor: `0`, `90`, `180`, o `270`Cuando está presente, `itemgroups` debe ser una matriz no vacía de identificadores conocidos de la selección `Itemgroups/Itemgroups.json` catalogar.
 
 ```json
 {
@@ -928,7 +928,7 @@ Embeds one known single-cell furniture feature in an existing terrain tile. Fiel
 }
 ```
 
-The target cell must already contain a terrain tile on the selected logical level and must not already contain a feature. The generator validates `id` against the selected furniture database and writes the existing map/editor representation:
+La celda objetivo debe contener ya una casilla de terreno en el nivel lógico seleccionado y no debe contener ya una característica. El generador valida `id` compara con la base de datos de muebles seleccionada y escribe la representación del mapa/editor existente:
 
 ```json
 {
@@ -942,20 +942,20 @@ The target cell must already contain a terrain tile on the selected logical leve
 }
 ```
 
-The operation consumes no randomness. Repeating a furniture operation on the same cell is a conflict error. A later tile operation deliberately replaces the complete tile dictionary and therefore removes an earlier feature, following the established ordered tile-overwrite behavior. For container furniture, a non-empty recipe `itemgroups` list overrides the furniture definition's default container group; runtime chooses one listed group at random when the map instance first creates loot. Omit the field to retain the furniture definition's default group.
+La operación no consume aleatoriedad. Repetir una operación de muebles en la misma celda es un error de conflicto. Una operación de baldosa posterior reemplaza deliberadamente el diccionario de baldosas completo y, por lo tanto, elimina una característica anterior, siguiendo el comportamiento de sobrescritura de baldosas ordenado establecido. Para muebles de contenedor, una receta no vacía `itemgroups` Esta lista sobrescribe el grupo de contenedores predeterminado de la definición de muebles; el entorno de ejecución elige aleatoriamente uno de los grupos de la lista cuando la instancia del mapa crea botín por primera vez. Omita este campo para conservar el grupo predeterminado de la definición de muebles.
 
-The serialized feature has no logical-level, static/movable, state, or mode field. `Chunk.process_level_data()` derives world height from the containing level-array index, and runtime furniture data selects the static or physics spawner from the referenced furniture definition's `moveable` property. Blueprint `mode` belongs to saved runtime furniture state and is not part of a newly generated map feature.
+La función serializada no tiene campo de nivel lógico, estático/móvil, estado o modo. `Chunk.process_level_data()` deriva la altura del mundo del índice de la matriz de nivel contenedora, y los datos de mobiliario en tiempo de ejecución seleccionan el generador estático o físico de la definición de mobiliario referenciada. `moveable` Propiedad. Plano `mode` pertenece al estado de mobiliario guardado en tiempo de ejecución y no forma parte de una característica de mapa generada recientemente.
 
 ### `furniture_scatter`
 
-Places a bounded number of single-cell furniture features selected from a named `furniture_palette`. Fields: `type`, `region`, `palette`, exactly one of `count` or `density`, and optional root-level `z`.
+Coloca un número limitado de elementos de mobiliario de una sola celda seleccionados de una lista nombrada. `furniture_palette`. Campos: `type`, `region`, `palette`, exactamente uno de `count` o `density`y nivel raíz opcional `z`.
 
-- `count` is an integer from zero through the geometric region area.
-- `density` is a number from `0` through `1`; the requested placement count is `floor(region area × density)`.
-- Eligible cells must already contain terrain on the target logical level and must not already have a feature.
-- If the requested count exceeds the remaining eligible cells, generation fails before mutating the scatter operation's target cells.
-- Candidate coordinates are enumerated in row-major order, then sampled without replacement with the recipe RNG. Each sampled cell selects one weighted furniture entry and resolves its rotation in sample order.
-- Scatter embeds the same `feature` object as explicit `furniture`; it does not infer footprints, itemgroups, or adjacent-level occupancy.
+- `count` es un número entero desde cero a través del área de la región geométrica.
+- `density` es un número de `0` a través de `1`; el número de ubicaciones solicitadas es `floor(region area × density)`.
+- Las celdas elegibles deben contener terreno en el nivel lógico de destino y no deben tener ya ninguna característica.
+- Si el número solicitado supera el número de células elegibles restantes, la generación falla antes de mutar las células objetivo de la operación de dispersión.
+- Las coordenadas candidatas se enumeran en orden de filas, y luego se muestrean sin reemplazo con el generador de números aleatorios de la receta. Cada celda muestreada selecciona una entrada de mueble ponderada y resuelve su rotación en el orden de muestreo.
+- La dispersión incrusta lo mismo `feature` objeto como explícito `furniture`; no infiere huellas, grupos de elementos ni ocupación de niveles adyacentes.
 
 ```json
 {
@@ -967,25 +967,25 @@ Places a bounded number of single-cell furniture features selected from a named 
 }
 ```
 
-## Validation and limitations
+## Validación y limitaciones
 
-The generator rejects unknown fields at every recipe level, root-level dimension fields, malformed or out-of-bounds placements, logical levels outside `-10` through `10`, duplicate grouped levels, ambiguous root/grouped layouts, malformed tile or furniture databases, unknown tile and furniture IDs, malformed area definitions or memberships, duplicate area IDs or same-ID tile memberships, unsupported area cells, feature conflicts, scatter requests that exceed eligible cells, invalid rotations, invalid Unicode, and non-object recipes. It validates generated data with `Tools/map_validator.py` before publishing the output. The validator independently requires exactly 21 level arrays and exactly 1024 entries in every populated level, and structurally validates embedded furniture fields, IDs, rotations, itemgroup arrays, and area-reference arrays.
+El generador rechaza campos desconocidos en cada nivel de receta, campos de dimensión de nivel raíz, ubicaciones mal formadas o fuera de límites, niveles lógicos fuera de límites `-10` a través de `10`, niveles agrupados duplicados, diseños raíz/agrupados ambiguos, bases de datos de mosaicos o muebles mal formadas, ID de mosaicos y muebles desconocidos, definiciones o membresías de área mal formadas, ID de área duplicados o membresías de mosaicos con el mismo ID, celdas de área no compatibles, conflictos de características, solicitudes de dispersión que exceden las celdas elegibles, rotaciones no válidas, Unicode no válido y recetas que no son de objetos. Valida los datos generados con `Tools/map_validator.py` antes de publicar el resultado. El validador requiere de forma independiente exactamente 21 matrices de nivel y exactamente 1024 entradas en cada nivel poblado, y valida estructuralmente los campos de muebles incrustados, los ID, las rotaciones, las matrices de grupos de elementos y las matrices de referencia de área.
 
-The output uses 21 levels; logical `z: 0` is row-major grid index `10`. It sets `categories` to `[]`, `weight` to `1000`, and all four connections to `"ground"`. It omits `areas`, matching `DMap.get_data()` when the area list is empty.
+La salida utiliza 21 niveles; lógico `z: 0` es un índice de cuadrícula por filas `10`. Establece `categories` a `[]`, `weight` a `1000`y las cuatro conexiones a `"ground"`Omite `areas`, coincidiendo `DMap.get_data()` cuando la lista de áreas está vacía.
 
-The generator currently creates explicit, known, single-cell furniture features, deterministic weighted furniture scatter over eligible terrain, strict runtime-compatible rectangular area memberships at explicit logical levels, and authored room labels through terrain-backed `room_rectangle` operations. Areas can additionally declare catalog-validated weighted runtime `furniture`, `mob`, `mobgroup`, and `itemgroup` entities; selection occurs when the map is instanced rather than during Python generation. Room labels are semantic only and do not yet create or infer geometry. The core mod defines `rock_field_00` and `wild_vegetation_00` for outdoor composition, using the dedicated AI-generated sprites `ai_rock_32_32.png` and `ai_vegetation_32_32.png`. It does not yet support furniture itemgroup contents, multiple features per cell, multi-tile or tall-object occupancy, automatic support inference, polygonal areas, walls, doors, buildings, roads as semantic objects, towns, nested or multi-level patterns, or shape-based templates.
+El generador actualmente crea características de mobiliario explícitas, conocidas y de una sola celda, dispersión determinista ponderada de mobiliario sobre terreno elegible, membresías de área rectangular estrictas compatibles con el tiempo de ejecución en niveles lógicos explícitos y etiquetas de habitaciones creadas a través de terreno respaldado. `room_rectangle` operaciones. Las áreas pueden declarar adicionalmente un tiempo de ejecución ponderado validado por catálogo. `furniture`, `mob`, `mobgroup`, y `itemgroup` entidades; la selección ocurre cuando se instancia el mapa en lugar de durante la generación de Python. Las etiquetas de las habitaciones son solo semánticas y aún no crean ni infieren geometría. El mod principal define `rock_field_00` y `wild_vegetation_00` para composición en exteriores, utilizando los sprites generados por IA específicos `ai_rock_32_32.png` y `ai_vegetation_32_32.png`Todavía no admite contenido de grupos de elementos de muebles, múltiples características por celda, ocupación de objetos altos o de múltiples casillas, inferencia de soporte automático, áreas poligonales, paredes, puertas, edificios, carreteras como objetos semánticos, ciudades, patrones anidados o de varios niveles, o plantillas basadas en formas.
 
-The maintained area examples are `Tools/examples/map_recipe_area_meadow.json` and `Tools/examples/map_recipe_area_entity_clearing.json`; the maintained room example is `Tools/examples/map_recipe_room_semantics.json`. The maintained furniture example is `Tools/examples/map_recipe_furniture_outdoor.json`. Maintained structural examples are available at `Tools/examples/map_recipe_two_level_hill.json` and `Tools/examples/map_recipe_two_level_depression.json`. They use `grass_ramp_00`, whose tile definition has `shape: "slope"`.
+Los ejemplos de áreas mantenidas son: `Tools/examples/map_recipe_area_meadow.json` y `Tools/examples/map_recipe_area_entity_clearing.json`; el ejemplo de habitación mantenida es `Tools/examples/map_recipe_room_semantics.json`. El ejemplo de mobiliario mantenido es `Tools/examples/map_recipe_furniture_outdoor.json`Ejemplos estructurales mantenidos están disponibles en `Tools/examples/map_recipe_two_level_hill.json` y `Tools/examples/map_recipe_two_level_depression.json`Ellos usan `grass_ramp_00`, cuya definición de baldosa tiene `shape: "slope"`.
 
-Slope rotations in recipes use the same values shown by the map editor:
+Las rotaciones de pendiente en las recetas utilizan los mismos valores que muestra el editor de mapas:
 
-| Rotation | High edge |
+| Rotación | Borde alto |
 |---:|---|
-| `0` | north |
-| `90` | east |
-| `180` | south |
-| `270` | west |
+| `0` | norte |
+| `90` | este |
+| `180` | sur |
+| `270` | oeste |
 
-The generator preserves these editor-facing values in map JSON. When a newly generated map is loaded, `Chunk.get_block_rotation()` applies the slope's shape-specific conversion before rendered mesh, collision, and navigation geometry use the internal orientation. Do not pre-convert recipe rotations to the internal `calculate_slope_vertices()` mapping.
+El generador conserva estos valores visibles para el editor en el JSON del mapa. Cuando se carga un mapa recién generado, `Chunk.get_block_rotation()` Aplica la conversión específica de la forma de la pendiente antes de que la malla renderizada, la colisión y la geometría de navegación utilicen la orientación interna. No convierta previamente las rotaciones de la receta a la interna. `calculate_slope_vertices()` cartografía.
 
-`Tests/Unit/test_chunk_slope_rotation.gd` verifies all four editor rotations against the converted runtime rotation and confirms matching high edges in rendered mesh vertices, convex collision geometry, and navigation-source faces. `Tests/Unit/test_chunk_slope_navigation.gd` performs the real asynchronous bake and confirms that every orientation has a queryable path from low to high and from high to low. The Python example test separately confirms that the authored high-side tile and lower-level low-side tile are occupied. Manual playtesting of both maintained maps has also confirmed that the real player controller walks up and down all four slope orientations without traversal or invisible-collision problems.
+`Tests/Unit/test_chunk_slope_rotation.gd` Verifica las cuatro rotaciones del editor con respecto a la rotación de tiempo de ejecución convertida y confirma que los bordes altos coinciden en los vértices de la malla renderizada, la geometría de colisión convexa y las caras de origen de navegación. `Tests/Unit/test_chunk_slope_navigation.gd` Realiza el horneado asíncrono real y confirma que cada orientación tiene una ruta consultable de baja a alta y de alta a baja. La prueba de ejemplo en Python confirma por separado que la casilla de lado alto creada y la casilla de lado bajo de nivel inferior están ocupadas. Las pruebas de juego manuales de ambos mapas mantenidos también han confirmado que el controlador del jugador real camina hacia arriba y hacia abajo por las cuatro orientaciones de pendiente sin problemas de recorrido ni colisiones invisibles.
