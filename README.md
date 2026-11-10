@@ -75,7 +75,7 @@ Additional features before our first release:
 - ~~Recoil/sway/spread/aiming~~
 
 ## Contribuir
-Si te gusta Godot y quieres contribuir, no dudes en enviar una solicitud de extracción o un informe de error con tus ideas, o unirte a nosotros en Discord. Para realizar ediciones, comienza leyendo la [guía de inicio].(https://github.com/Khaligufzel/Dimensionfall/blob/main/Documentation/Game_development/Getting_started.md).
+Si te gusta Godot y quieres contribuir, no dudes en enviar una solicitud de extracción o un informe de error con tus ideas, o unirte a nosotros en Discord. Para realizar ediciones, comienza leyendo la [guía de inicio](https://github.com/Khaligufzel/Dimensionfall/blob/main/Documentation/Game_development/Getting_started.md).
 
 This will always be a hobby project and will not be for sale. However, if you want to, you can donate to the developers:
 
