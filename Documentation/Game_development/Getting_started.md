@@ -1,103 +1,103 @@
-# Getting started with game development
+# Cómo empezar con el desarrollo de videojuegos
 
-This guide is intended for new contributors. It will teach you the basics of contributing to the project. Use your skillset to make changes in the area you enjoy working on. It can be coding, modding, graphics, music, testing, and many other ways. If you're a player reading this page, you can contribute by [submitting an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue) to report bugs!
-
-
-## Basic setup
-These steps will help you set up Godot and GitHub so you can start contributing to this repository:
-1. Download [Godot](https://godotengine.org/download/) from their website or from [Steam](https://store.steampowered.com/app/404790/Godot_Engine/).
-2. Create a [GitHub account](https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github) if you do not already have one.
-3. Install [git](https://docs.github.com/en/get-started/getting-started-with-git/set-up-git) for a command line interface or [GitHub Desktop](https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop) for a graphical interface (recommended).
-4. Fork this repository. See [this guide](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo?tool=webui) if you use git or [this guide](https://docs.github.com/en/desktop/adding-and-cloning-repositories/cloning-and-forking-repositories-from-github-desktop) if you use GitHub Desktop (recommended).
-5. Clone your fork to your local computer if you haven't already. You can now launch Godot and [open the project](https://docs.godotengine.org/en/stable/tutorials/editor/project_manager.html#opening-and-importing-projects). Once it's open, press the *Play* button in the top-right to try it out. If you're new to Godot, read their [getting started](https://docs.godotengine.org/en/stable/getting_started/step_by_step/index.html) guide.
+Esta guía está dirigida a nuevos colaboradores. Te enseñará los conceptos básicos para contribuir al proyecto. Usa tus habilidades para realizar cambios en el área que más te guste. Puede ser programación, modificación, gráficos, música, pruebas y muchas otras cosas. Si eres un jugador que lee esta página, puedes contribuir de la siguiente manera: [submitting an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue) ¡Para informar de errores!
 
 
-## Make your first change
-These steps show you how to make a simple change to the game without any coding
-1. Before you can start making changes, make a branch using [git](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-and-deleting-branches-within-your-repository) or [GitHub Desktop](https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop#making-changes-in-a-branch) (recommended)
-2. Open the project in Godot if you haven't already
-3. Press the play button in the top-right to start the game
-4. Press 'Content editor' from the main menu and then 'Content manager'.
-5. Find the 'item groups' list in the left part of the content manager. You can collapse the other lists by clicking on their name
-6. Click on the + button next to 'Item Groups' to add a new itemgroup. A pop-up will show, asking for an id. You have to make it unique, for example `basic_mob_loot_00`.
-7. The new itemgroup is added to the list. Scroll down the list and double click the `basic_mob_loot_00` itemgroup to edit it.
-8. A new editor is opened in a tab that allows you to change the properties of the itemgroup. Click the image next to `Sprite:` to select a sprite for this itemgroup. It can be any sprite, for example the machete.
-9. Enter a name and description, for example `Mob loot` and `Some loot the player can find in mobs`.
-10. You don't need to change the Group type, but you can hover over the drop-down menu to read what it does
-11. In the left list, expand the 'items' list if it is collapsed. Drag items from the list into the 'items' area of the itemgroup editor. This allows you to compose a list of items you want to spawn when this itemgroup is used.
-12. You don't need to edit the probability or min and max count, but you can hover the cursor on the controls to see what they do.
-13. Press 'Save' and 'Close' to finish your changes. Now that we are done, close the game and let's commit your changes to the branch.
-14. To commit your changes to your branch, read [this guide](https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop#making-changes-in-a-branch) for Github Desktop (recommended) or [this guide](https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository) for git
-15. Lastly, [create a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request#creating-the-pull-request). Someone with the rights to merge your request will review it and merge it if accepted. A message about your pull request will also appear in the Discord server, so someone will review it soon.
+## Configuración básica
+Estos pasos te ayudarán a configurar Godot y GitHub para que puedas empezar a contribuir a este repositorio:
+1. Descargar [Godot](https://godotengine.org/download/) desde su sitio web o desde [Steam](https://store.steampowered.com/app/404790/Godot_Engine/).
+2. Crear un [GitHub account](https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github) Si aún no tienes uno.
+3. Instalar [git](https://docs.github.com/en/get-started/getting-started-with-git/set-up-git) para una interfaz de línea de comandos o [GitHub Desktop](https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop) para una interfaz gráfica (recomendado).
+4. Haz un fork de este repositorio. Ver [this guide](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo?tool=webui) si usa git o [this guide](https://docs.github.com/en/desktop/adding-and-cloning-repositories/cloning-and-forking-repositories-from-github-desktop) Si utilizas GitHub Desktop (recomendado).
+5. Clona tu bifurcación en tu ordenador local si aún no lo has hecho. Ahora puedes iniciar Godot y [open the project](https://docs.godotengine.org/en/stable/tutorials/editor/project_manager.html#opening-and-importing-projects)Una vez abierto, pulsa el botón *Reproducir* en la esquina superior derecha para probarlo. Si eres nuevo en Godot, lee su [getting started](https://docs.godotengine.org/en/stable/getting_started/step_by_step/index.html) guía.
 
 
-# Add/edit content
-Anyone can add or edit content for the game. You do not need to know anything about programming to start working on content. If you haven't worked on a GitHub project before, make sure to do the [basic setup](basic-setup) and read the [make your first change](make-your-first-change) guide.
+## Haz tu primer cambio
+Estos pasos te muestran cómo realizar un cambio sencillo en el juego sin necesidad de programar.
+1. Antes de que puedas comenzar a hacer cambios, crea una rama usando [git](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-and-deleting-branches-within-your-repository) o [GitHub Desktop](https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop#making-changes-in-a-branch) (recomendado)
+2. Abre el proyecto en Godot si aún no lo has hecho.
+3. Pulsa el botón de reproducción en la esquina superior derecha para comenzar el juego.
+4. Pulsa «Editor de contenido» en el menú principal y, a continuación, «Gestor de contenido».
+5. Encuentra la lista de "grupos de elementos" en la parte izquierda del gestor de contenido. Puedes contraer las demás listas haciendo clic en su nombre.
+6. Haz clic en el botón + junto a 'Grupos de artículos' para añadir un nuevo grupo de artículos. Aparecerá una ventana emergente que te pedirá un ID. Tienes que hacerlo único, por ejemplo `basic_mob_loot_00`.
+7. El nuevo grupo de elementos se agrega a la lista. Desplácese hacia abajo en la lista y haga doble clic en el `basic_mob_loot_00` itemgroup para editarlo.
+8. Se abre un nuevo editor en una pestaña que le permite cambiar las propiedades del grupo de elementos. Haga clic en la imagen que está al lado de `Sprite:` Para seleccionar un sprite para este grupo de objetos. Puede ser cualquier sprite, por ejemplo, el machete.
+9. Introduzca un nombre y una descripción, por ejemplo `Mob loot` y `Some loot the player can find in mobs`.
+10. No es necesario cambiar el tipo de grupo, pero puede pasar el cursor sobre el menú desplegable para leer lo que hace.
+11. En la lista de la izquierda, expanda la lista de "elementos" si está contraída. Arrastre los elementos de la lista al área de "elementos" del editor de grupos de elementos. Esto le permite crear una lista de elementos que desea generar cuando se utilice este grupo de elementos.
+12. No es necesario editar la probabilidad ni el recuento mínimo y máximo, pero puedes colocar el cursor sobre los controles para ver qué hacen.
+13. Pulsa «Guardar» y «Cerrar» para finalizar los cambios. Ahora que hemos terminado, cierra el juego y confirma los cambios en la rama.
+14. Para confirmar tus cambios en tu rama, lee [this guide](https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop#making-changes-in-a-branch) para Github Desktop (recomendado) o [this guide](https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository) para git
+15. Por último, [create a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request#creating-the-pull-request)Alguien con permisos para fusionar tu solicitud la revisará y la fusionará si es aceptada. También aparecerá un mensaje sobre tu solicitud de extracción en el servidor de Discord, por lo que alguien la revisará pronto.
 
-## Working with the content editor
-To edit content, start the game first. From the main menu, click 'Content editor' and then 'Content manager'. You will now see the main window of the content manager. On the left side, you can see types of content to add or edit.
 
-### Basic controls
-The basic controls are as follows:
-- Click on the name of the list to collapse/expand it
-- Double-click an item in the list to edit it. An editor will open in a new tab.
-- Click the `+` sign next to a list name to add a brand new item to that list. A pop-up will show where you can enter the id of this new item. It has to be unique. Once you have entered the id, click `Ok` and the new item will be at the bottom of the list.
-- Click the `D` to duplicate an item in the list. A pop-up will appear with the id of the item you duplicated. Edit the id to make it unique and press `Ok` to add it to the list. It will have the same properties as the item you duplicated from. Only the id has changed.
-- Click the `-` to delete an item from the list.
+# Agregar/editar contenido
+Cualquiera puede agregar o editar contenido para el juego. No necesitas saber nada sobre programación para empezar a trabajar en el contenido. Si no has trabajado antes en un proyecto de GitHub, asegúrate de hacer lo siguiente: [basic setup](basic-setup) y lee el [make your first change](make-your-first-change) guía.
 
-### Adding/updating sprites
-If you're an artist and want to update or add sprites, you will need to use Godot or the file browser to browse to `Mods/Dimensionfall/` and one of the sub-folders. From there, you can edit, replace, or add a sprite. The TacticalMaps and Maps folders are excluded from this because TacticalMaps do not have a sprite (yet) and the sprite for maps is generated by the content editor.
-- If you edited/replaced a sprite, it will be loaded into the game on the next launch
-- If you added a sprite, it will be loaded, but you have to assign it to one of the entities in the content editor. For example, go to the item list and double-click one of the items to edit it. The item editor will open in a new tab. Next, click the image next to `Sprite:` and select the sprite you added. Lastly, press `Save` to save your changes
+## Trabajar con el editor de contenido
+Para editar el contenido, primero inicia el juego. En el menú principal, haz clic en «Editor de contenido» y luego en «Gestor de contenido». Verás la ventana principal del gestor de contenido. En el lado izquierdo, podrás ver los tipos de contenido que puedes añadir o editar.
+
+### Controles básicos
+Los controles básicos son los siguientes:
+- Haz clic en el nombre de la lista para contraerla/expandirla.
+- Haz doble clic en un elemento de la lista para editarlo. Se abrirá un editor en una nueva pestaña.
+- Haz clic en el `+` Haz clic en el signo junto al nombre de una lista para agregar un nuevo elemento a esa lista. Aparecerá una ventana emergente donde podrás ingresar el ID de este nuevo elemento. Debe ser único. Una vez que hayas ingresado el ID, haz clic en el botón correspondiente. `Ok` y el nuevo artículo estará al final de la lista.
+- Haz clic en el `D` Para duplicar un elemento de la lista, aparecerá una ventana emergente con el ID del elemento duplicado. Edite el ID para que sea único y pulse `Ok` Para agregarlo a la lista, tendrá las mismas propiedades que el elemento original. Solo ha cambiado el ID.
+- Haz clic en el `-` para eliminar un elemento de la lista.
+
+### Agregar/actualizar sprites
+Si eres artista y quieres actualizar o añadir sprites, tendrás que usar Godot o el explorador de archivos para navegar hasta `Mods/Dimensionfall/` y una de las subcarpetas. Desde allí, puedes editar, reemplazar o añadir un sprite. Las carpetas TacticalMaps y Maps están excluidas de esto porque TacticalMaps aún no tiene un sprite y el sprite para los mapas lo genera el editor de contenido.
+- Si editaste o reemplazaste un sprite, se cargará en el juego en el próximo lanzamiento.
+- Si agregaste un sprite, se cargará, pero debes asignarlo a una de las entidades en el editor de contenido. Por ejemplo, ve a la lista de elementos y haz doble clic en uno de los elementos para editarlo. El editor de elementos se abrirá en una nueva pestaña. Luego, haz clic en la imagen que está al lado de `Sprite:` y selecciona el sprite que añadiste. Por último, pulsa `Save` para guardar tus cambios
 
 
-## Modifying the game code
-First, do the [basic setup](basic-setup). Also, read the [game architecture](https://github.com/Khaligufzel/CataX/blob/main/Documentation/Game_design/Game_architecture.md) document to get a basic understanding of the structure of the game's code.
+## Modificar el código del juego
+Primero, haz el [basic setup](basic-setup). Lea también el [game architecture](https://github.com/Khaligufzel/CataX/blob/main/Documentation/Game_design/Game_architecture.md) Documento para obtener una comprensión básica de la estructura del código del juego.
 
-### Navigating the project
-- Most of the game's scripts are in `/Scripts`. For the content editor, they will be in `/Scenes/ContentManager`.
-- Get familiar with the [autoloads](https://docs.godotengine.org/en/stable/tutorials/scripting/singletons_autoload.html) as described in the [game architecture](https://github.com/Khaligufzel/CataX/blob/main/Documentation/Game_design/Game_architecture.md) document since they will provide central access to functions you can use anywhere.
-- You can also look at what [pull requests](https://github.com/Khaligufzel/CataX/pulls?q=is%3Apr) have been opened previously. From there, you can open one of the pull requests and see what element of the game was changed and the files associated with it. If you spot a pull request that modified part of the map generation, click it and go to `files changed` in the pull request to see the files that were changed.
-- In Godot, use `ctrl+shift+f` to find text in files. For example, if you want to know what scripts alter or read the player node, search for player.
+### Navegando el proyecto
+- La mayoría de los scripts del juego están en `/Scripts`Para el editor de contenido, estarán en `/Scenes/ContentManager`.
+- Familiarícese con el [autoloads](https://docs.godotengine.org/en/stable/tutorials/scripting/singletons_autoload.html) como se describe en el [game architecture](https://github.com/Khaligufzel/CataX/blob/main/Documentation/Game_design/Game_architecture.md) documenta esto, ya que te proporcionará acceso centralizado a funciones que puedes usar en cualquier lugar.
+- También puedes mirar qué [pull requests](https://github.com/Khaligufzel/CataX/pulls?q=is%3Apr) se han abierto previamente. Desde allí puedes abrir una de las solicitudes de extracción y ver qué elemento del juego se cambió y los archivos asociados con él. Si ves una solicitud de extracción que modificó parte de la generación del mapa, haz clic en ella y ve a `files changed` en la solicitud de extracción para ver los archivos que se modificaron.
+- En Godot, usa `ctrl+shift+f` para encontrar texto en archivos. Por ejemplo, si quieres saber qué scripts modifican o leen el nodo del jugador, busca "player".
 
-### Choose what to modify
-Maybe you have some ideas about what to work on, or perhaps you want to fix a bug. Here are some tips to get started:
-- Look at what [issues](https://github.com/Khaligufzel/CataX/issues) are open and assign one to your name.
-- In the Discord, look at the roadmap channel and pick a subject to work on from there.
-- Also in the Discord, browse the channels and see what ideas have been shared, for example in the `your-ideas` channel.
+### Elige qué modificar
+Quizás tengas algunas ideas sobre en qué trabajar, o tal vez quieras corregir un error. Aquí tienes algunos consejos para empezar:
+- Mira qué [issues](https://github.com/Khaligufzel/CataX/issues) Están abiertos y asigna uno a tu nombre.
+- En Discord, consulta el canal de la hoja de ruta y elige un tema en el que trabajar.
+- También en Discord, explore los canales y vea qué ideas se han compartido, por ejemplo en el `your-ideas` canal.
 
-### Game data and game play
-The content editor and game are closely related. Data that you need in-game needs to be defined in the content editor. It also goes the other way around. If you define something in the content editor, make sure it is also implemented in-game.
+### Datos del juego y jugabilidad
+El editor de contenido y el juego están estrechamente relacionados. Los datos que necesitas en el juego deben definirse en el editor de contenido. Y viceversa: si defines algo en el editor de contenido, asegúrate de que también se implemente en el juego.
 
-Here is a small example of a change you can make. We will add `weight` to moveable furniture.
-1. Open `FurnitureEditor.tscn` in Godot and go to the 2D view. In the form, add two controls in a place that makes sense. We will add a label and a spinbox.
-2. Name the label `WeightLabel` and the spinbox `WeightSpinbox`.
-3. Select the `WeightSpinbox` in the editor and go to the inspector. Find the `Tooltip` property and enter the description for this control. For example: `Specify the weight in kg for this furniture. A larger number means it will be heavier and harder to push. A smaller number means it will be lighter and easier to push. Only applies to moveable furniture`.
-4. Go to the `FurnitureEditor.gd` script. Assign the spinbox control to an export variable like so: `@export var weight_spinbox: SpinBox = null`.
-5. In the `load_furniture_data` function we add the lines:
+Aquí tienes un pequeño ejemplo de un cambio que puedes hacer. Añadiremos `weight` a muebles móviles.
+1. Abierto `FurnitureEditor.tscn` En Godot, ve a la vista 2D. En el formulario, agrega dos controles en un lugar apropiado. Agregaremos una etiqueta y un control numérico.
+2. Nombra la etiqueta `WeightLabel` y la caja giratoria `WeightSpinbox`.
+3. Seleccione el `WeightSpinbox` en el editor y ve al inspector. Encuentra el `Tooltip` propiedad e ingrese la descripción para este control. Por ejemplo: `Specify the weight in kg for this furniture. A larger number means it will be heavier and harder to push. A smaller number means it will be lighter and easier to push. Only applies to moveable furniture`.
+4. Ve al `FurnitureEditor.gd` script. Asigne el control spinbox a una variable de exportación de la siguiente manera: `@export var weight_spinbox: SpinBox = null`.
+5. En el `load_furniture_data` función a la que añadimos las líneas:
    ```
        if weight_spinbox:
                weight_spinbox.value = dfurniture.weight
    ```
-6. In the `_on_save_button_button_up` function we add the line `dfurniture.weight = weight_spinbox.value`. Now the property will get saved and loaded from JSON.
-7. In the `FurniturePhysics.gd` script, in the `construct_self` function, we add the line `mass = furnitureJSONData.get("weight", 0)` to set the mass according to the weight.
-8. Open the content editor and open one of the moveable furniture and set the weight property and save it. Now the furniture will use the weight property you implemented.
-9. The mass will get read in the `player.gd` script when the player starts to push the furniture.
-10. Follow steps 14 and 15 of the [make your first change](make-your-first-change) paragraph to commit your changes.
+6. En el `_on_save_button_button_up` función agregamos la línea `dfurniture.weight = weight_spinbox.value`Ahora la propiedad se guardará y se cargará desde JSON.
+7. En el `FurniturePhysics.gd` guion, en el `construct_self` función, agregamos la línea `mass = furnitureJSONData.get("weight", 0)` ajustar la masa según el peso.
+8. Abre el editor de contenido, selecciona uno de los muebles móviles, establece la propiedad de peso y guarda los cambios. Ahora, el mueble utilizará la propiedad de peso que has implementado.
+9. La misa se leerá en el `player.gd` script cuando el jugador comienza a empujar los muebles.
+10. Siga los pasos 14 y 15 del [make your first change](make-your-first-change) párrafo para confirmar tus cambios.
 
-This was a simple change. Of course, the practical application of json data will vary each time and some may be more complicated then others. To make what you want, ask for help and read guides about the topic you want to work on.
+Fue un cambio sencillo. Por supuesto, la aplicación práctica de los datos JSON variará en cada caso y algunos serán más complejos que otros. Para lograr lo que deseas, pide ayuda y consulta guías sobre el tema en el que quieres trabajar.
 
-### UI development
-UI is another area that is somewhat accessible to contributors starting out. This means menus, windows, and status indicators. The main scenes are in `/Scenes/UI`. These scenes are added to the `HUD` node in `level_generation.tscn` to have them displayed to the player when a button is pressed.
+### desarrollo de interfaz de usuario
+La interfaz de usuario es otra área que es algo accesible para los colaboradores que comienzan. Esto significa menús, ventanas e indicadores de estado. Las escenas principales están en `/Scenes/UI`Estas escenas se añaden a la `HUD` nodo en `level_generation.tscn` para que se muestren al jugador cuando se presione un botón.
 
-Keep in mind that the UI communicates with the game world through autoloads. For example, the Inventory menu works together with the `ItemManager` (`/Scripts/item_manager.gd`). Some game elements like the player and some windows communicate through `Helper.signal_broker`. To find out what connects to what, press `ctrl+shift+f` in Godot and search for `Helper.signal_broker` and a list will come up.
+Ten en cuenta que la interfaz de usuario se comunica con el mundo del juego a través de cargas automáticas. Por ejemplo, el menú de inventario funciona junto con el `ItemManager` (`/Scripts/item_manager.gd`). Algunos elementos del juego, como el jugador y algunas ventanas, se comunican a través de `Helper.signal_broker`Para saber qué se conecta con qué, pulse `ctrl+shift+f` en Godot y buscar `Helper.signal_broker` y aparecerá una lista.
 
-Icons used in the UI can be found in `/Textures` and `/Images/Icons`. Sometimes you don't need to use an icon, and a button with an `x` or arrow `->` will suffice. In the case of the character menu, the icons are loaded from the mod data in `/Mods/Core/Stats` and `/Mods/Core/Stats`.
-## Running tests
-The project uses the [GUT](https://github.com/bitwes/Gut) addon for unit testing. Tests are managed inside the Godot editor.
+Los iconos utilizados en la interfaz de usuario se pueden encontrar en `/Textures` y `/Images/Icons`. A veces no necesitas usar un icono, y un botón con un `x` o flecha `->` será suficiente. En el caso del menú de personajes, los iconos se cargan desde los datos del mod en `/Mods/Core/Stats` y `/Mods/Core/Stats`.
+## Ejecutando pruebas
+El proyecto utiliza el [GUT](https://github.com/bitwes/Gut) Complemento para pruebas unitarias. Las pruebas se gestionan dentro del editor de Godot.
 
-Open the project in Godot and look at the bottom panel of the window. Next to `Output` and `Debugger` you will find the `GUT` tab. Click it to open the control panel where you can run all tests or filter them by directory or file.
+Abre el proyecto en Godot y mira el panel inferior de la ventana. Junto a `Output` y `Debugger` encontrarás el `GUT` Pestaña. Haga clic en ella para abrir el panel de control, donde podrá ejecutar todas las pruebas o filtrarlas por directorio o archivo.
 
 
-## Develop using OpenAI's Codex:
-See [Documentation/Game_development/Working_with_codex.md](https://github.com/Dimensionfall/Dimensionfall/blob/main/Documentation/Game_development/Working_with_codex.md).
+## Desarrollar utilizando el Codex de OpenAI:
+Ver [Documentation/Game_development/Working_with_codex.md](https://github.com/Dimensionfall/Dimensionfall/blob/main/Documentation/Game_development/Working_with_codex.md).
