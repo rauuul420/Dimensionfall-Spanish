@@ -1,124 +1,124 @@
-# Game architecture
-This page includes information about the overall game architecture.
+# Arquitectura de juegos
+Esta página incluye información sobre la arquitectura general del juego.
 
-There are several key parts that will be described on this page
-|   |
+En esta página se describirán varias partes clave.
+| |
 
-# Main scene
-The main scene is scene_selector.tscn. From here, you can navigate to playing the game, modifying the content or opening the help menu.
-
-
-# Game scene
-When you press the 'play demo' button:
-1. All active mods from Gamedata.mods get merged into Runtimedata according to their load order.
-2. The game switches to 'level_generation.tscn'. Each entity will run their script on their _ready function:
-3. The LevelGenerator will check if there is any save data for the location and load that. If there isn't it will ask the `overmap_manager` for the terrain round the player's spawn position. The data from the `overmap_manager` will be a grid of maps determined by the map_seed. For each chunk in the grid that is close to the player, the LevelGenerator will call Chunk.gd to create a new chunk based on the mapdata for that position. Chunk.gd will process all the blocks in the map (max 32x32x21 blocks) and instantiate them, as well as the furniture and enemies.
-4. The player will have his stats, health and equipment initialized. If this is a new game, the defaults will be applied. Otherwise the data will be loaded from memory.
-5. If the player holds any weapons, the weapon controllers called EquippedLeft and EquippedRight will initialize the weapon. It will check if it's a melee or ranged weapon and set it's stats accordingly
-6. The HUD will initialize all the menus like the crafting menu, inventory, quest journal and overmap.
-7. The overmap will, when opened, show the area around the player that can be explored. The overmap displays an infinite terrain around the player based on the map seed. The player can use this overmap to determine his next move.
+# Escena principal
+La escena principal es scene_selector.tscn. Desde aquí, puedes navegar para jugar, modificar el contenido o abrir el menú de ayuda.
 
 
-# Autoloads
-The game has the following [autoloads](https://docs.godotengine.org/en/stable/tutorials/scripting/singletons_autoload.html). These will initialize when the game is started and are accessible from every script and will persist even after switching a scene:
+# Escena del juego
+Cuando pulses el botón 'reproducir demostración':
+1. Todos los mods activos de Gamedata.mods se fusionan con Runtimedata según su orden de carga.
+2. El juego cambia a 'level_generation.tscn'. Cada entidad ejecutará su script en su función _ready:
+3. El Generador de niveles comprobará si hay datos guardados para la ubicación y los cargará. Si no los hay, preguntará al `overmap_manager` para el terreno alrededor de la posición de aparición del jugador. Los datos de la `overmap_manager` Será una cuadrícula de mapas determinada por map_seed. Para cada fragmento de la cuadrícula que esté cerca del jugador, LevelGenerator llamará a Chunk.gd para crear un nuevo fragmento basado en los datos del mapa para esa posición. Chunk.gd procesará todos los bloques del mapa (máximo 32x32x21 bloques) y los instanciará, así como los muebles y los enemigos.
+4. El jugador tendrá sus estadísticas, salud y equipo inicializados. Si se trata de una partida nueva, se aplicarán los valores predeterminados. De lo contrario, los datos se cargarán desde la memoria.
+5. Si el jugador lleva algún arma, los controladores de armas llamados EquippedLeft y EquippedRight inicializarán el arma. Comprobarán si es un arma cuerpo a cuerpo o a distancia y ajustarán sus estadísticas en consecuencia.
+6. La interfaz de usuario inicializará todos los menús, como el menú de creación, el inventario, el diario de misiones y el mapa general.
+7. Al abrirse, el mapa general mostrará el área que rodea al jugador y que puede explorarse. Este mapa muestra un terreno infinito alrededor del jugador, basado en la semilla del mapa. El jugador puede usar este mapa general para determinar su próximo movimiento.
 
-| Autoload | Description |
+
+# Cargas automáticas
+El juego tiene lo siguiente [autoloads](https://docs.godotengine.org/en/stable/tutorials/scripting/singletons_autoload.html)Estos se inicializarán cuando se inicie el juego, serán accesibles desde cualquier script y persistirán incluso después de cambiar de escena:
+
+| Carga automática | Descripción |
 | ------------- | ------------- |
-| ItemManager | Runtime item manipulation happens here. It handles things like inventory, reloading, equipment and crafting |
-| Helper | General autoload with generic helper functions. Also contains the sub-helpers listed in the table below |
-| Gamedata | Loads data from the /mods folder and allows any script to access it |
-| Runtimedata | Loads mods according to the mod load order and merges them for use in-game |
-| Gloot | An addon that provides functionality for the inventory. We do not access this directly, only through the classes provided by the addon. |
-| General | A general autoload script for functions that do not fit anywhere else |
-| CraftingRecipesmanager | Manages visibility and availability of crafting recipes and performs checks on requirements |
-| QuestManager | Autoload of the [QuestManager](https://github.com/Chevifier/QuestManager) addon. It handles quest tracking on the backend. |
+| ItemManager | Aquí se realiza la manipulación de objetos en tiempo de ejecución. Gestiona aspectos como el inventario, la recarga, el equipamiento y la fabricación.
+| Ayudante | Carga automática general con funciones auxiliares genéricas. También contiene las subfunciones auxiliares que se enumeran en la tabla siguiente |
+| Datos del juego | Carga los datos de la carpeta /mods y permite que cualquier script acceda a ellos |
+| Datos de ejecución | Carga los mods según el orden de carga de mods y los combina para su uso en el juego |
+| Gloot | Un complemento que proporciona funcionalidad para el inventario. No accedemos a él directamente, solo a través de las clases proporcionadas por el complemento. |
+| General | Un script de carga automática general para funciones que no encajan en ningún otro lugar |
+| Gestor de recetas de elaboración | Gestiona la visibilidad y disponibilidad de las recetas de elaboración y realiza comprobaciones de los requisitos |
+| QuestManager | Carga automática de la [QuestManager](https://github.com/Chevifier/QuestManager) Complemento. Gestiona el seguimiento de misiones en el backend.
 
 ## Nakama
 
-Multiplayer addon for Godot. See documentation on [Github](https://github.com/heroiclabs/nakama-godot)
+Complemento multijugador para Godot. Consulte la documentación en [Github](https://github.com/heroiclabs/nakama-godot)
 
 
-## Helper
+## Ayudante
 
-A general helper autoload that provides generic functions used in many other scripts. It also includes several sub-helpers:
-| Sub-Autoload | Description |
+Una función auxiliar general de carga automática que proporciona funciones genéricas utilizadas en muchos otros scripts. También incluye varias subfunciones auxiliares:
+| Subcarga automática | Descripción |
 | ------------- | ------------- |
-| json_helper | Can be accessed through `Helper.json_helper`. Provides functions for manipulating json files and data |
-| map_manager | Can be accessed through `Helper.map_manager`. Provides functions for accessing and manipulating map data. For example, finding out what's around the player and constructing and destructing blocks and furniture. |
-| overmap_manager | Can be accessed through `Helper.overmap_manager`. Creates the overmap based on the map_seed. Defines regions and fills the overmap grids with the terrain that the player will explore. Provides data about the terrain to the `levelgenerator` and the overmap gui. |
-| quest_helper | Can be accessed through `Helper.quest_helper`. Provides functions for accessing and manipulating quests. It will translate quest json data into actual ScriptedQuests for the player to complete. It responds to signals from all over the game in order to track the quest progress. |
-| time_helper | Can be accessed through `Helper.time_helper`. Provides functions for accessing the time that has passed in-game. This can be used for time-based events, food rot, day/night cycle and other things. |
-| save_helper | Can be accessed through `Helper.save_helper`. Provides functions for saving and loading data. |
-| signal_broker | Can be accessed through `Helper.signal_broker`. This is a central point through which to send signals for other scripts to react to. The most important use case is allowing signals between game entities (blocks, enemies, containers) and the player's UI. |
-| task_manager | Can be accessed through `Helper.task_manager`. Provides functions to offload tasks onto a separate thread. A simple example would be `my_data = await Helper.task_manager.create_task(process_my_file.bind(filecontents)).completed`. We only need to use this for functions that show spikes in the profiler and dropping the FPS. See Chunk.gd for the current application |
+| json_helper | Se puede acceder a través de `Helper.json_helper`Proporciona funciones para manipular archivos y datos JSON |
+| map_manager | Se puede acceder a través de `Helper.map_manager`Proporciona funciones para acceder y manipular los datos del mapa. Por ejemplo, para descubrir qué hay alrededor del jugador y para construir y destruir bloques y muebles.
+| overmap_manager | Se puede acceder a través de `Helper.overmap_manager`. Crea el mapa general basado en la semilla del mapa. Define regiones y llena las cuadrículas del mapa general con el terreno que el jugador explorará. Proporciona datos sobre el terreno al `levelgenerator` y la interfaz gráfica de usuario del mapa general. |
+| ayudante de la misión | Se puede acceder a través de `Helper.quest_helper`Proporciona funciones para acceder y manipular misiones. Traducirá los datos JSON de las misiones en ScriptedQuests reales para que el jugador las complete. Responde a señales de todo el juego para realizar un seguimiento del progreso de la misión.
+| time_helper | Se puede acceder a través de `Helper.time_helper`Proporciona funciones para acceder al tiempo transcurrido en el juego. Esto se puede utilizar para eventos basados ​​en el tiempo, deterioro de la comida, ciclo día/noche y otras cosas.
+| save_helper | Se puede acceder a través de `Helper.save_helper`Proporciona funciones para guardar y cargar datos.
+| signal_broker | Se puede acceder a través de `Helper.signal_broker`Este es un punto central a través del cual enviar señales para que otros scripts reaccionen. El caso de uso más importante es permitir señales entre las entidades del juego (bloques, enemigos, contenedores) y la interfaz de usuario del jugador.
+| administrador_de_tareas | Se puede acceder a través de `Helper.task_manager`. Proporciona funciones para descargar tareas a un hilo separado. Un ejemplo sencillo sería: `my_data = await Helper.task_manager.create_task(process_my_file.bind(filecontents)).completed`. Solo necesitamos usar esto para funciones que muestren picos en el perfilador y caídas de FPS. Consulte Chunk.gd para la aplicación actual |
 
 
-## Gamedata
-Central management of game data. Data is loaded from the `/mods` folder. This includes all entity data and sprites. All data can be accessed through this autoload. Ties heavily into the Content Editor. When data is changed using the content editor, the Gamedata autoload will update related entities if needed and save the data. The data is stored in its own class, accessible through `Gamedata.mods.by_id("Dimensionfall").items` or `Gamedata.mods.by_id("Dimensionfall").furnitures` or `Gamedata.mods.by_id("Dimensionfall").maps`, and so on. Each mod in Gamedata.mods has its own list of items, furniture, mobs etc.
+## datos del juego
+Gestión centralizada de los datos del juego. Los datos se cargan desde el `/mods` carpeta. Esto incluye todos los datos de entidades y sprites. Se puede acceder a todos los datos a través de esta carga automática. Está estrechamente vinculado al Editor de contenido. Cuando se modifican los datos mediante el editor de contenido, la carga automática de Gamedata actualizará las entidades relacionadas si es necesario y guardará los datos. Los datos se almacenan en su propia clase, accesible a través de `Gamedata.mods.by_id("Dimensionfall").items` o `Gamedata.mods.by_id("Dimensionfall").furnitures` o `Gamedata.mods.by_id("Dimensionfall").maps`y así sucesivamente. Cada mod en Gamedata.mods tiene su propia lista de objetos, muebles, criaturas, etc.
 
-## Runtimedata
-All enabled mods get merged according to the mod load order when the game starts. This means that items that were added through mods get added to Runtimedata.items. Items with the same id will overwrite the previously loaded items. This allows you to actually apply any change you want through mods! Runtimedata is not supposed to be altered or saved and mods get re-merged each time a game is started. It has no concept of mods since it's all one big mod.
+## datos de tiempo de ejecución
+Todos los mods activados se combinan según el orden de carga al iniciar el juego. Esto significa que los elementos añadidos mediante mods se agregan a Runtimedata.items. Los elementos con el mismo ID sobrescribirán los elementos cargados previamente. ¡Esto te permite aplicar cualquier cambio que desees mediante mods! Runtimedata no debe modificarse ni guardarse, y los mods se vuelven a combinar cada vez que se inicia el juego. No tiene concepto de mods, ya que se trata de un único mod.
 
 ## Gloot
-An autoload that is provided by the [Gloot addon](https://github.com/peter-kish/gloot). We do not access this directly, just through the addon's classes. It provides functionality for the inventory.
+Una carga automática proporcionada por el [Gloot addon](https://github.com/peter-kish/gloot)No accedemos a esto directamente, sino a través de las clases del complemento. Proporciona funcionalidad para el inventario.
 
-## ItemManager
-Manages creation, destruction and movement of items in the player's inventory and elsewhere
+## Administrador de elementos
+Gestiona la creación, destrucción y movimiento de objetos en el inventario del jugador y en otros lugares.
 
 ## General
-A general autoload script for functions that do not fit anywhere else
+Un script de carga automática general para funciones que no encajan en ningún otro lugar.
 
-## CraftingRecipesmanager
-Manages visibility and availability of crafting recipes and performs checks on requirements
+## Gestor de recetas artesanales
+Gestiona la visibilidad y disponibilidad de las recetas de elaboración y realiza comprobaciones de los requisitos.
 
-## QuestManager
-Autoload of the [QuestManager](https://github.com/Chevifier/QuestManager) addon. It handles quest tracking on the backend.
-
-
-# Map generation
-The game world is generated by the `overmap_manager` as `OvermapGrid`s filled with `map_cell`s. This is just data to be used by the `level_generation` script, which will instantiate the `maps` as `chunks` in-game so the player has terrain to walk on.
-
-## Overmap
-The `overmap_manager` uses these steps to produce the final overmap:
-1. A noisemap is used to generate the base layer of fields and forests
-2. The `overmap areas` are placed on the map. An example of an `overmap area` is a city
-3. If cities are placed on the grid, they will be connected by roads
-4. Tacticalmaps are placed on the grid randomly, avoiding the existing roads and areas
-5. The final product will be a 100x100 grid filled with cells that have an id of a map
-
-The overmap window in-game is a UI element that generates a grid of tiles to represent the overmap. It aids the player in exploring the world and can point to quest targets.
-
-## Tacticalmap
-A tacticalmap is a manually created grid of maps. This grid can have any dimension, from 1x1 to 64x64 or bigger. It is made up of maps. In-game, the `overmap_manager` will read a tacticalmap and for each of the cells in a tacticalmap, it will put the associated map on the overmap. This allows for static areas inside the procedural terrain. When making a Tacticalmap, enter the dimensions to set the size you want to use. A grid will be displayed, and you can select one of the maps to paint onto the grid. Using a combination of maps, you can create a town, forest, mountain or anything you like.
-
-## Map editing
-Maps are edited in the Content Editor and contain data for a maximum of 32x32x21 blocks. When editing a map, a fixed grid of 32 tiles is presented. You can pick tiles from the palette in the editor to paint onto the grid to make anything you want. You can also add enemies and furniture. Use areas to enable random generation when the map is instanced into the game. For example, randomized floors or mob positions. To have a map spawn in-game, it has to be added to a `tacticalmap` or an `overmap area`
-
-## Overmap areas
-Can be used to create areas on the overmap, like biomes. The area can be modified in the content editor and is made up or regions. When generated onto the overmap, it will define a center point and draw a circle around it, then warp the shape in a random way. Each region in the area will cover a set %. This allows you to create a center, middle and outer rings. For example, a city is made up of an inner `urban` region, a middle `suburban` region and an outer `field` region. You can specify the size of the area in the editor.
-
-Each region contains a list of maps. You can add maps to the regions by dragging them from the maps list. You can then assign a weight to each map, which will control the chances of it spawning. The editor also has a `generation` tab to assist in easy visualization of the final product. The `overmap_manager` will spawn 10 areas on the overmap, trying to keep them separate.
+## Administrador de misiones
+Carga automática del [QuestManager](https://github.com/Chevifier/QuestManager) Complemento. Gestiona el seguimiento de misiones en el servidor.
 
 
-# Content editor
-Content for the game is created and modified in the content editor. You could make content in Godot itself, but when the game is exported and the end-user does not have Godot, they can still open the game and add content from there using mods. Mods can be added through the menus: `content editor -> mod manager -> add/remove mods`.
+# Generación de mapas
+El mundo del juego es generado por el `overmap_manager` como `OvermapGrid`s lleno de `map_cell`s. Estos son solo datos para ser utilizados por el `level_generation` script, que instanciará el `maps` como `chunks` dentro del juego, de modo que el jugador tenga terreno sobre el que caminar.
 
-Content in the content editor is represented in lists, where each item has it's own ID. The UI allows you to add, duplicate, modify and delete items in the lists. Maps and tacticalmaps are each stored in their own json files. Everything else is stored in one json file per type. So all items are in one json file and furniture is in another etc. The JSON files are loaded by Gamedata and that is what will be manipulated using the content editor. Nothing is saved to disk until the user presses the save button.
+## Mapa general
+El `overmap_manager` Utiliza estos pasos para producir el mapa general final:
+1. Se utiliza un mapa de ruido para generar la capa base de campos y bosques.
+2. El `overmap areas` se colocan en el mapa. Un ejemplo de un `overmap area` es una ciudad
+3. Si las ciudades se ubican en una cuadrícula, estarán conectadas por carreteras.
+4. Los mapas tácticos se colocan en la cuadrícula de forma aleatoria, evitando las carreteras y áreas existentes.
+5. El producto final será una cuadrícula de 100x100 rellena con celdas que tienen un ID de mapa.
 
-Each type has it's own kind of editor. Most of the editors are just forms for the user to manipulate the json behind it. You could also use an external editor to edit the json directly. However, the content editor also manages references between entities. So when an itemgroup has it's items configured, the items will get a reference to the itemgroup. When an item form that itemgroup is deleted, it will also disappear from the itemgroup. This prevents non-exisiting items from spawning. Multiple references are established in different relationships between entities.
+La ventana del mapa general del juego es un elemento de la interfaz de usuario que genera una cuadrícula de casillas para representar el mapa general. Ayuda al jugador a explorar el mundo y puede señalar los objetivos de las misiones.
 
-Sprites are stored in the same folder as the JSON data for each type. Each item can be assigned a sprite. Some items might even share the same sprite. To add new sprites, you can drop them in the appropriate folder in the /mods folder. 
+## Mapa táctico
+Un mapa táctico es una cuadrícula de mapas creada manualmente. Esta cuadrícula puede tener cualquier dimensión, desde 1x1 hasta 64x64 o más grande. Está compuesta por mapas. En el juego, el `overmap_manager` El programa leerá un mapa táctico y, para cada una de sus celdas, colocará el mapa asociado en el mapa superpuesto. Esto permite crear áreas estáticas dentro del terreno generado proceduralmente. Al crear un mapa táctico, introduzca las dimensiones para establecer el tamaño deseado. Se mostrará una cuadrícula y podrá seleccionar uno de los mapas para dibujar sobre ella. Combinando mapas, puede crear una ciudad, un bosque, una montaña o cualquier otra cosa que desee.
+
+## Edición de mapas
+Los mapas se editan en el Editor de contenido y contienen datos para un máximo de 32x32x21 bloques. Al editar un mapa, se presenta una cuadrícula fija de 32 casillas. Puedes elegir casillas de la paleta en el editor para pintarlas en la cuadrícula y crear lo que quieras. También puedes añadir enemigos y muebles. Usa áreas para habilitar la generación aleatoria cuando el mapa se instancia en el juego. Por ejemplo, pisos aleatorios o posiciones de mobs. Para que un mapa aparezca en el juego, debe añadirse a un `tacticalmap` o un `overmap area`
+
+## Áreas superpuestas
+Se puede usar para crear áreas en el mapa general, como biomas. El área se puede modificar en el editor de contenido y está compuesta por regiones. Al generarse en el mapa general, definirá un punto central y dibujará un círculo a su alrededor, luego deformará la forma de manera aleatoria. Cada región del área cubrirá un porcentaje determinado. Esto permite crear un centro, un anillo intermedio y anillos exteriores. Por ejemplo, una ciudad está compuesta por un anillo interior. `urban` región, una zona media `suburban` región y un exterior `field` región. Puede especificar el tamaño del área en el editor.
+
+Cada región contiene una lista de mapas. Puedes agregar mapas a las regiones arrastrándolos desde la lista de mapas. Luego puedes asignar un peso a cada mapa, que controlará las probabilidades de que aparezca. El editor también tiene una `generation` pestaña para facilitar la visualización del producto final. `overmap_manager` Se generarán 10 áreas en el mapa general, intentando mantenerlas separadas.
+
+
+# Editor de contenido
+El contenido del juego se crea y modifica en el editor de contenido. Se puede crear contenido en Godot, pero si el juego se exporta y el usuario final no tiene Godot, aún puede abrirlo y agregar contenido desde allí mediante mods. Los mods se pueden agregar a través de los menús: `content editor -> mod manager -> add/remove mods`.
+
+El contenido del editor se presenta en listas, donde cada elemento tiene su propio ID. La interfaz permite añadir, duplicar, modificar y eliminar elementos de las listas. Los mapas y los mapas tácticos se almacenan en archivos JSON independientes. El resto se almacena en un archivo JSON por tipo. Por ejemplo, todos los objetos están en un archivo JSON, los muebles en otro, etc. Los archivos JSON son cargados por Gamedata, y estos son los que se manipulan mediante el editor. No se guarda nada en el disco hasta que el usuario pulsa el botón de guardar.
+
+Cada tipo tiene su propio editor. La mayoría de los editores son simplemente formularios para que el usuario manipule el JSON subyacente. También se puede usar un editor externo para editar el JSON directamente. Sin embargo, el editor de contenido también gestiona las referencias entre entidades. Así, cuando un grupo de elementos tiene sus elementos configurados, estos obtienen una referencia al grupo. Cuando se elimina un elemento de ese grupo, también desaparece del mismo. Esto evita que se creen elementos inexistentes. Se establecen múltiples referencias en diferentes relaciones entre entidades.
+
+Los sprites se almacenan en la misma carpeta que los datos JSON de cada tipo. A cada elemento se le puede asignar un sprite. Algunos elementos incluso pueden compartir el mismo sprite. Para añadir nuevos sprites, puedes colocarlos en la carpeta correspondiente dentro de la carpeta /mods. 
 
 
 
-# Saving and loading
-The Helper.save_helper will save and load data when the scene changes or a game is loaded. The saved data is stored in the user data folder. In Godot, go to the menu buttons in the top and click Project -> Open user data folder to open the user data folder. This might be `C:\Users\User\AppData\Roaming\Godot\app_userdata\Dimensionfall` on windows.
+# Guardando y cargando
+El Helper.save_helper guardará y cargará datos cuando cambie la escena o se cargue un juego. Los datos guardados se almacenan en la carpeta de datos del usuario. En Godot, ve a los botones del menú en la parte superior y haz clic en Proyecto -> Abrir carpeta de datos del usuario para abrir la carpeta de datos del usuario. Esto podría ser `C:\Users\User\AppData\Roaming\Godot\app_userdata\Dimensionfall` en ventanas.
 
-When the player presses escape and clicks on `save game` or `return to main menu`, all relevant data is stored. 
-- The overmap seed is generated once and saved when the game starts. After that the overmap state is saved and loaded
-- The player inventory is serialized through the Gloot addon and de-serialized when a game is loaded
-- The game is keeping track of the player's equipment in ItemManager.player_equipment, which is then saved and loaded into json
-- The player's stats are just read from the player's node and saved as a dictionary into a json file which is loaded at a later moment.
-- The map that the player is currently playing on is saved when returning to the main menu. Each chunk is unloaded and saved to a dictionary called Helper.loaded_chunk_data. This dictionary is then saved into a JSON file for the current coordinate on the overmap, which will be stored in a file like `C:\Users\User\AppData\Roaming\Godot\app_userdata\Dimensionfall\save\2024-05-25T213346\map_x1_y4\map.json`
+Cuando el jugador presiona escape y hace clic en `save game` o `return to main menu`Todos los datos relevantes se almacenan. 
+- La semilla del mapa general se genera una sola vez y se guarda al iniciar el juego. Después de eso, el estado del mapa general se guarda y se carga.
+- El inventario del jugador se serializa mediante el complemento Gloot y se deserializa cuando se carga el juego.
+- El juego realiza un seguimiento del equipo del jugador en ItemManager.player_equipment, que luego se guarda y se carga en json.
+- Las estadísticas del jugador se leen directamente desde el nodo del jugador y se guardan como un diccionario en un archivo JSON que se carga posteriormente.
+- El mapa en el que el jugador está jugando actualmente se guarda al regresar al menú principal. Cada fragmento se descarga y se guarda en un diccionario llamado Helper.loaded_chunk_data. Este diccionario se guarda luego en un archivo JSON para la coordenada actual en el mapa general, que se almacenará en un archivo como `C:\Users\User\AppData\Roaming\Godot\app_userdata\Dimensionfall\save\2024-05-25T213346\map_x1_y4\map.json`
 
-When the player presses the load game button on the main menu, the `_on_load_game_button_pressed` function in scene_selector is called and all the previously saved data is loaded. 
+Cuando el jugador presiona el botón de cargar juego en el menú principal, `_on_load_game_button_pressed` Se llama a la función en scene_selector y se cargan todos los datos guardados previamente. 
