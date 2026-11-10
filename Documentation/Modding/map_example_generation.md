@@ -1,16 +1,16 @@
-# Manual example-map generation
+# Generación manual de mapas de ejemplo
 
-`Tools/generate_map_examples.py` generates deterministic variants of maintained map recipes for manual inspection. It delegates map construction, validation, overwrite protection, and atomic publication to `Tools/map_generator.py`; it does not contain a second generator implementation.
+`Tools/generate_map_examples.py` genera variantes deterministas de recetas de mapas mantenidas para inspección manual. Delega la construcción del mapa, validación, protección contra sobrescritura y publicación atómica a `Tools/map_generator.py`; no contiene una segunda implementación de generador.
 
-Run all commands from the repository root. On the standard Hermes host checkout:
+Ejecute todos los comandos desde la raíz del repositorio. En el servidor Hermes estándar, realice la siguiente comprobación:
 
 ```bash
 cd ~/local/dimensionfall/repository
 ```
 
-## Generate one maintained recipe directly into the mod
+## Genera una receta mantenida directamente en el mod.
 
-Use `Tools/map_generator.py` when you want to select one recipe, preserve its map ID, and publish exactly one map directly into the Dimensionfall mod:
+Usar `Tools/map_generator.py` Cuando quieras seleccionar una receta, conservar su ID de mapa y publicar exactamente un mapa directamente en el mod Dimensionfall:
 
 ```bash
 python3 Tools/map_generator.py \
@@ -18,35 +18,35 @@ python3 Tools/map_generator.py \
   Mods/Dimensionfall/Maps/generated_two_level_hill.json
 ```
 
-The maintained recipe examples are:
+Los ejemplos de recetas que se mantienen son:
 
-| Recipe | Output map | Purpose |
+| Receta | Mapa de resultados | Propósito |
 |---|---|---|
-| `Tools/examples/map_recipe.json` | `Mods/Dimensionfall/Maps/generated_meadow_prototype.json` | Ground-level palettes, placement operations, scatter, and reusable patterns. |
-| `Tools/examples/map_recipe_furniture_outdoor.json` | `Mods/Dimensionfall/Maps/generated_furnished_clearing.json` | Explicit decor plus weighted, conflict-aware tree, rock, and wild-vegetation scatter on supported terrain at logical `z: 0`. |
-| `Tools/examples/map_recipe_area_meadow.json` | `Mods/Dimensionfall/Maps/generated_area_meadow.json` | One runtime area definition and a `12×12` terrain-backed `area_rectangle` membership boundary at logical `z: 0`. |
-| `Tools/examples/map_recipe_area_entity_clearing.json` | `Mods/Dimensionfall/Maps/generated_area_entity_clearing.json` | A `12×12` terrain-backed area whose weighted stump entity is selected anew by the runtime each time the map is instanced. |
-| `Tools/examples/map_recipe_room_semantics.json` | `Mods/Dimensionfall/Maps/generated_room_semantics.json` | Authored `enclosed`, `covered_open`, and `ruin` room labels on terrain without generated walls, doors, roofs, or indoor runtime behavior. |
-| `Tools/examples/map_recipe_room_connections.json` | `Mods/Dimensionfall/Maps/generated_room_connections.json` | Existing `door_wood` features with explicit room-to-exterior and room-to-room semantic links, without inferred topology or new runtime door behavior. |
-| `Tools/examples/map_recipe_room_boundaries.json` | `Mods/Dimensionfall/Maps/generated_room_boundaries.json` | A complete opt-in `enclosed` office with directional existing `brick_wall_00`/`door_wood` evidence, plus deliberately partial `covered_open` and `ruin` room references. |
-| `Tools/examples/map_recipe_single_level_building.json` | `Mods/Dimensionfall/Maps/generated_single_level_building.json` | One data-only rectangular `office_building` footprint containing the complete authored office and its existing wall/door evidence at logical `z: 0`. |
-| `Tools/examples/map_recipe_building_surfaces.json` | `Mods/Dimensionfall/Maps/generated_building_surfaces.json` | One validated building with complete owned-room, overhead, external-context, and exterior-access metadata: its office is interior, garage is open space, roof/ceiling classifications exist at logical `z: 1`, room-free terrain west of the footprint is the authored external context, and `office_front_door` explicitly associates that context with owned exterior access. It retains an opt-in composition without generated overhead geometry. |
-| `Tools/examples/map_recipe_furniture_anchors.json` | `Mods/Dimensionfall/Maps/generated_furniture_anchors.json` | A validated building with authored furniture-anchor metadata pointing at existing furniture inside its footprint. |
-| `Tools/examples/map_recipe_multi_entrance_building.json` | `Mods/Dimensionfall/Maps/generated_multi_entrance_building.json` | A validated building with two authored entrances: the office front door facing east and the garage opening facing west. |
-| `Tools/examples/map_recipe_multi_level_building_foundation.json` | `Mods/Dimensionfall/Maps/generated_multi_level_building_foundation.json` | A generated two-floor building with physical floors and walls, authored supports, per-floor surfaces, stairs, a ground floor at `z: 0`, an open gap at `z: 1`, and a first floor at `z: 2`. |
-| `Tools/examples/map_recipe_field_farmland.json` | `Mods/Dimensionfall/Maps/generated_field_farmland.json` | A representative semantic `field_farmland` farmhouse on the legacy x3…18/y19…29 footprint. Its compact kitchen declaration uses `boundary_generation: "walls"` to generate a complete corner-capped wall ring while its exterior and interior `room_connections` remain the only openings; it also includes per-floor ownership, anchors, `reachability_validation`, and an authored z1→z2 staircase. |
-| `Tools/examples/map_recipe_road_connections.json` | `Mods/Dimensionfall/Maps/generated_road_connections.json` | A simple outdoor map demonstrating authored map-edge connection metadata with roads entering from east and west. |
-| `Tools/examples/map_recipe_road_endpoints.json` | `Mods/Dimensionfall/Maps/generated_road_endpoints.json` | An outdoor map with authored road-endpoint anchors at the east and west edges, identifying where roads enter the map. |
-| `Tools/examples/map_recipe_two_level_hill.json` | `Mods/Dimensionfall/Maps/generated_two_level_hill.json` | Ground level `z: 0`, raised terrain at `z: 1`, and all four slope rotations. |
-| `Tools/examples/map_recipe_two_level_depression.json` | `Mods/Dimensionfall/Maps/generated_two_level_depression.json` | Ground level `z: 0`, lowered terrain at `z: -1`, and all four slope rotations. |
-| `Tools/examples/map_recipe_small_cabin_template.json` | `Mods/Dimensionfall/Maps/generated_small_cabin_template.json` | A reusable nested cabin template with relative levels, rotations, anchors, and composed placement. |
-| `Tools/examples/map_recipe_village_square_composition.json` | `Mods/Dimensionfall/Maps/generated_village_square_composition.json` | A maintained village square composed from reusable plaza and cabin templates. |
-| `Tools/examples/map_recipe_pine_hollow_outpost.json` | `Mods/Dimensionfall/Maps/generated_pine_hollow_outpost.json` | A new rural field survival outpost acceptance fixture with a short pedestrian/service path; its loft floor and padded roof use room-derived `room_surface` operations. |
-| `Tools/recipes/pine_hollow_outpost.json` | `Mods/Dimensionfall/Maps/pine_hollow_outpost.json` | The published playable Pine Hollow Outpost map generated from the production recipe. |
+| `Tools/examples/map_recipe.json` | `Mods/Dimensionfall/Maps/generated_meadow_prototype.json` | Paletas a nivel del suelo, operaciones de colocación, dispersión y patrones reutilizables. |
+| `Tools/examples/map_recipe_furniture_outdoor.json` | `Mods/Dimensionfall/Maps/generated_furnished_clearing.json` | Decoración explícita más árboles, rocas y vegetación silvestre ponderados y conscientes del conflicto dispersos en terreno soportado en lógica `z: 0`. |
+| `Tools/examples/map_recipe_area_meadow.json` | `Mods/Dimensionfall/Maps/generated_area_meadow.json` | Una definición de área de tiempo de ejecución y una `12×12` respaldado por el terreno `area_rectangle` límite de pertenencia en el límite lógico `z: 0`. |
+| `Tools/examples/map_recipe_area_entity_clearing.json` | `Mods/Dimensionfall/Maps/generated_area_entity_clearing.json` | A `12×12` Área con respaldo de terreno cuya entidad de tocón ponderada es seleccionada de nuevo por el entorno de ejecución cada vez que se instancia el mapa.
+| `Tools/examples/map_recipe_room_semantics.json` | `Mods/Dimensionfall/Maps/generated_room_semantics.json` | Autor `enclosed`, `covered_open`, y `ruin` Etiquetas de habitaciones en terrenos sin paredes, puertas, techos generados ni comportamiento de ejecución en interiores.
+| `Tools/examples/map_recipe_room_connections.json` | `Mods/Dimensionfall/Maps/generated_room_connections.json` | Existente `door_wood` Características con enlaces semánticos explícitos de habitación a exterior y de habitación a habitación, sin topología inferida ni nuevo comportamiento de puerta en tiempo de ejecución.
+| `Tools/examples/map_recipe_room_boundaries.json` | `Mods/Dimensionfall/Maps/generated_room_boundaries.json` | Una suscripción completa `enclosed` oficina con dirección existente `brick_wall_00`/`door_wood` evidencia, más parcialidad deliberada `covered_open` y `ruin` Referencias de la habitación. |
+| `Tools/examples/map_recipe_single_level_building.json` | `Mods/Dimensionfall/Maps/generated_single_level_building.json` | Un rectángulo solo para datos `office_building` Huella que contiene la oficina completa diseñada y su evidencia de pared/puerta existente en un plano lógico. `z: 0`. |
+| `Tools/examples/map_recipe_building_surfaces.json` | `Mods/Dimensionfall/Maps/generated_building_surfaces.json` | Un edificio validado con metadatos completos de habitaciones propias, techos superiores, contexto externo y acceso exterior: su oficina es interior, el garaje es espacio abierto, existen clasificaciones de techo/cielo en niveles lógicos `z: 1`, el terreno libre de habitaciones al oeste de la huella es el contexto externo creado, y `office_front_door` Asocia explícitamente ese contexto con el acceso exterior propio. Mantiene una composición de participación voluntaria sin geometría superior generada.
+| `Tools/examples/map_recipe_furniture_anchors.json` | `Mods/Dimensionfall/Maps/generated_furniture_anchors.json` | Un edificio validado con metadatos de anclaje de mobiliario creados por el autor que apuntan al mobiliario existente dentro de su perímetro. |
+| `Tools/examples/map_recipe_multi_entrance_building.json` | `Mods/Dimensionfall/Maps/generated_multi_entrance_building.json` | Un edificio validado con dos entradas autorizadas: la puerta principal de la oficina orientada al este y la entrada del garaje orientada al oeste. |
+| `Tools/examples/map_recipe_multi_level_building_foundation.json` | `Mods/Dimensionfall/Maps/generated_multi_level_building_foundation.json` | Un edificio generado de dos plantas con pisos y paredes físicas, soportes creados, superficies por planta, escaleras, una planta baja en `z: 0`, una brecha abierta en `z: 1`y un primer piso en `z: 2`. |
+| `Tools/examples/map_recipe_field_farmland.json` | `Mods/Dimensionfall/Maps/generated_field_farmland.json` | Un semántico representativo `field_farmland` casa de campo en la huella del legado x3…18/y19…29. Su declaración de cocina compacta utiliza `boundary_generation: "walls"` para generar un anillo de pared completo con esquinas rematadas mientras que su exterior e interior `room_connections` siguen siendo las únicas vacantes; también incluye propiedad por piso, anclas, `reachability_validation`y una escalera z1→z2 de autoría propia. |
+| `Tools/examples/map_recipe_road_connections.json` | `Mods/Dimensionfall/Maps/generated_road_connections.json` | Un mapa sencillo para exteriores que muestra los metadatos de conexión de los bordes del mapa, con carreteras que entran desde el este y el oeste. |
+| `Tools/examples/map_recipe_road_endpoints.json` | `Mods/Dimensionfall/Maps/generated_road_endpoints.json` | Un mapa exterior con puntos de referencia definidos en los extremos de las carreteras, en los bordes este y oeste, que indican dónde entran las carreteras al mapa. |
+| `Tools/examples/map_recipe_two_level_hill.json` | `Mods/Dimensionfall/Maps/generated_two_level_hill.json` | Nivel del suelo `z: 0`, terreno elevado en `z: 1`y las cuatro rotaciones de pendiente. |
+| `Tools/examples/map_recipe_two_level_depression.json` | `Mods/Dimensionfall/Maps/generated_two_level_depression.json` | Nivel del suelo `z: 0`, terreno rebajado en `z: -1`y las cuatro rotaciones de pendiente. |
+| `Tools/examples/map_recipe_small_cabin_template.json` | `Mods/Dimensionfall/Maps/generated_small_cabin_template.json` | Una plantilla de cabaña anidada reutilizable con niveles relativos, rotaciones, anclajes y colocación compuesta. |
+| `Tools/examples/map_recipe_village_square_composition.json` | `Mods/Dimensionfall/Maps/generated_village_square_composition.json` Una plaza de pueblo bien conservada, compuesta por plantillas reutilizables de plazas y cabañas.
+| `Tools/examples/map_recipe_pine_hollow_outpost.json` | `Mods/Dimensionfall/Maps/generated_pine_hollow_outpost.json` | Un nuevo puesto de avanzada de supervivencia rural con un corto sendero peatonal/de servicio; su piso tipo loft y techo acolchado utilizan materiales derivados de habitaciones. `room_surface` operaciones. |
+| `Tools/recipes/pine_hollow_outpost.json` | `Mods/Dimensionfall/Maps/pine_hollow_outpost.json` | El mapa jugable publicado de Pine Hollow Outpost generado a partir de la receta de producción. |
 
-## Publish the production Pine Hollow Outpost
+## Publicar la producción Pine Hollow Outpost
 
-Production recipes live under `Tools/recipes/`; generated runtime maps live under `Mods/Dimensionfall/Maps/`. The game loads maps from the latter directory through `DMaps`/`RMaps`. The production recipe uses the stable map ID `pine_hollow_outpost` and does not replace the legacy `field_outpost` map.
+Las recetas de producción se encuentran bajo `Tools/recipes/`; los mapas generados en tiempo de ejecución viven bajo `Mods/Dimensionfall/Maps/`El juego carga los mapas desde este último directorio a través de `DMaps`/`RMaps`La receta de producción utiliza el ID de mapa estable `pine_hollow_outpost` y no reemplaza el legado `field_outpost` mapa.
 
 ```bash
 python3 Tools/map_generator.py \
@@ -56,21 +56,21 @@ python3 Tools/map_generator.py \
 python3 Tools/map_validator.py Mods/Dimensionfall/Maps/pine_hollow_outpost.json
 ```
 
-`Tools/examples/map_recipe_pine_hollow_outpost.json` remains a maintained regression fixture. It intentionally retains the `generated_pine_hollow_outpost` ID so fixture output and the published map remain independently testable.
+`Tools/examples/map_recipe_pine_hollow_outpost.json` sigue siendo un accesorio de regresión mantenido. Conserva intencionalmente el `generated_pine_hollow_outpost` El ID permite que la salida del dispositivo y el mapa publicado se puedan probar de forma independiente.
 
-For multi-level examples, slope rotations use the map editor convention: `0` has its high edge north, `90` east, `180` south, and `270` west. The generator writes those values directly; Godot performs the slope-specific runtime conversion when loading a newly generated map.
+Para ejemplos de varios niveles, las rotaciones de pendiente utilizan la convención del editor de mapas: `0` tiene su borde más alto al norte, `90` este, `180` sur y `270` oeste. El generador escribe esos valores directamente; Godot realiza la conversión en tiempo de ejecución específica para la pendiente al cargar un mapa recién generado.
 
-When manually testing either multi-level example, check every slope from both directions:
+Al probar manualmente cualquiera de los ejemplos de varios niveles, verifique cada pendiente desde ambas direcciones:
 
-1. approach from the lower-level side;
-2. walk up the visible slope and onto the high-side tile;
-3. turn around and walk back down;
-4. confirm there is no invisible wall or collision plane with a different orientation;
-5. repeat for north, east, south, and west high edges.
+1. acercarse desde el lado de nivel inferior;
+2. Suba por la pendiente visible hasta llegar a la baldosa del lado más alto;
+3. date la vuelta y baja caminando;
+4. Confirme que no existe ninguna pared invisible ni plano de colisión con una orientación diferente;
+5. Repita el procedimiento para los bordes altos norte, este, sur y oeste.
 
-Automated GUT coverage verifies that conversion, rendering vertices, collision geometry, and navigation-source faces agree on each high edge. A focused integration test also performs the asynchronous bake and verifies bidirectional navigation paths across every orientation. Manual playtesting of the maintained hill and depression has confirmed that the real player controller can walk up and down all four orientations without traversal or invisible-collision problems. Repeat the checklist after changing slope geometry, collision, navigation settings, or player movement behavior.
+La cobertura GUT automatizada verifica que la conversión, los vértices de renderizado, la geometría de colisión y las caras de origen de navegación coincidan en cada arista alta. Una prueba de integración específica también realiza el horneado asíncrono y verifica las rutas de navegación bidireccionales en todas las orientaciones. Las pruebas de juego manuales de la colina y la depresión mantenidas han confirmado que el controlador del jugador real puede caminar hacia arriba y hacia abajo en las cuatro orientaciones sin problemas de recorrido o colisión invisible. Repita la lista de verificación después de cambiar la geometría de la pendiente, la colisión, la configuración de navegación o el comportamiento de movimiento del jugador.
 
-Copy the corresponding command for the map you want to inspect:
+Copia el comando correspondiente al mapa que deseas inspeccionar:
 
 ```bash
 # Ground-level meadow
@@ -164,7 +164,7 @@ python3 Tools/map_generator.py \
   Mods/Dimensionfall/Maps/generated_two_level_depression.json
 ```
 
-The output filename should match the recipe's `id`, followed by `.json`. The generator validates the map before publishing it and refuses to replace an existing file. To deliberately regenerate the same map after editing its recipe, add `--overwrite`:
+El nombre del archivo de salida debe coincidir con el de la receta. `id`, seguido de `.json`El generador valida el mapa antes de publicarlo y se niega a reemplazar un archivo existente. Para regenerar deliberadamente el mismo mapa después de editar su receta, agregue `--overwrite`:
 
 ```bash
 python3 Tools/map_generator.py \
@@ -173,9 +173,9 @@ python3 Tools/map_generator.py \
   --overwrite
 ```
 
-## Generate all maintained examples with overwrite
+## Generar todos los ejemplos mantenidos con sobrescritura
 
-`map_generator.py` accepts exactly one input recipe and one output path per invocation. To regenerate the whole set of maintained example maps in a single terminal command, loop over every recipe and call it once per recipe with `--overwrite`:
+`map_generator.py` acepta exactamente una receta de entrada y una ruta de salida por invocación. Para regenerar todo el conjunto de mapas de ejemplo mantenidos en un solo comando de terminal, recorra cada receta y llámela una vez por receta con `--overwrite`:
 
 ```bash
 for recipe in \
@@ -207,9 +207,9 @@ for recipe in \
 done
 ```
 
-The loop reads each recipe's `id` (which the examples keep in sync with their canonical output filename), then regenerates that map in `Mods/Dimensionfall/Maps/` with `--overwrite`. Use this for a quick end-to-end smoke test that every maintained recipe still generates and passes validation. If a recipe has been added or renamed, the loop covers whatever recipes you list, and the output filename always follows the recipe's `id`.
+El bucle lee cada receta `id` (que los ejemplos mantienen sincronizados con su nombre de archivo de salida canónico), luego regenera ese mapa en `Mods/Dimensionfall/Maps/` con `--overwrite`. Utilice esto para una prueba de humo rápida de extremo a extremo que cada receta mantenida aún genera y pasa la validación. Si se ha agregado o renombrado una receta, el bucle cubre todas las recetas que liste, y el nombre del archivo de salida siempre sigue el de la receta. `id`.
 
-After generating a map, start or restart Godot and follow the content-editor steps below. Files created directly with `map_generator.py` are not registered in the example runner's cleanup manifest. Remove them explicitly when manual testing is complete:
+Después de generar un mapa, inicie o reinicie Godot y siga los pasos del editor de contenido que se indican a continuación. Los archivos creados directamente con `map_generator.py` No están registrados en el manifiesto de limpieza del ejecutor de ejemplo. Elimínelos explícitamente cuando finalicen las pruebas manuales:
 
 ```bash
 rm Mods/Dimensionfall/Maps/generated_meadow_prototype.json
@@ -234,32 +234,32 @@ rm Mods/Dimensionfall/Maps/generated_small_cabin_template.json
 rm Mods/Dimensionfall/Maps/generated_village_square_composition.json
 ```
 
-Only run the removal command for a file you actually generated. These maintained IDs are intended for development examples; do not overwrite a map with the same ID if it has been repurposed as project content.
+Ejecute el comando de eliminación únicamente para los archivos que usted haya generado. Estos identificadores (ID) se utilizan como ejemplos de desarrollo; no sobrescriba un mapa con el mismo ID si ya se ha reutilizado como contenido del proyecto.
 
-## Safe first run
+## Primera carrera segura
 
-Generate three variants in a temporary directory:
+Genera tres variantes en un directorio temporal:
 
 ```bash
 python3 Tools/generate_map_examples.py \
   --output-dir /tmp/dimensionfall-map-examples
 ```
 
-The default recipe is `Tools/examples/map_recipe.json`. Each variant receives:
+La receta predeterminada es `Tools/examples/map_recipe.json`Cada variante recibe:
 
-- a unique ID and matching filename ending in `_example_001`, `_example_002`, and so on;
-- a sequential seed, beginning with the recipe's seed unless `--seed` is supplied;
-- complete 32 x 32 map data validated before publication.
+- un ID único y un nombre de archivo coincidente que termina en `_example_001`, `_example_002`, etcétera;
+- una semilla secuencial, comenzando con la semilla de la receta a menos que `--seed` se suministra;
+- Los datos completos del mapa de 32 x 32 fueron validados antes de su publicación.
 
-Inspect the generated files with the validator if desired:
+Si lo desea, puede inspeccionar los archivos generados con el validador:
 
 ```bash
 python3 Tools/map_validator.py /tmp/dimensionfall-map-examples
 ```
 
-## Choose the number of variants and starting seed
+## Elige el número de variantes y la semilla inicial.
 
-Generate five reproducible variants using seeds `1000` through `1004`:
+Generar cinco variantes reproducibles utilizando semillas `1000` a través de `1004`:
 
 ```bash
 python3 Tools/generate_map_examples.py \
@@ -268,11 +268,11 @@ python3 Tools/generate_map_examples.py \
   --seed 1000
 ```
 
-Running the same complete recipe with the same starting seed produces the same map JSON. Changing the seed changes seeded tile scatter, furniture scatter, palette selection, and random rotations.
+Al ejecutar la misma receta completa con la misma semilla inicial, se obtiene el mismo archivo JSON del mapa. Cambiar la semilla modifica la distribución de las baldosas, la distribución de los muebles, la selección de la paleta de colores y las rotaciones aleatorias.
 
-## Inspect generated maps in the content editor
+## Inspeccione los mapas generados en el editor de contenido.
 
-Place examples in the core mod's map directory:
+Coloca los ejemplos en el directorio de mapas del mod principal:
 
 ```bash
 python3 Tools/generate_map_examples.py \
@@ -281,8 +281,8 @@ python3 Tools/generate_map_examples.py \
   --seed 1000
 ```
 
-Launch Godot after generation and run the Dimensionfall project.
-In the running project, navigate to:
+Inicia Godot después de la generación y ejecuta el proyecto Dimensionfall.
+En el proyecto en ejecución, navegue a:
 
 ```text
 Content Manager
@@ -293,29 +293,29 @@ Content Manager
   → View Map in the editor, click `save and test` to test it manually
 ```
 
-If Godot was already running when files were generated, restart it so mod content is loaded again. The existing map-editor preview displays generated map JSON; the Python tool does not create a separate image or HTML preview.
+Si Godot ya estaba en ejecución cuando se generaron los archivos, reinícielo para que se cargue de nuevo el contenido del mod. La vista previa del editor de mapas existente muestra el JSON del mapa generado; la herramienta de Python no crea una imagen ni una vista previa HTML por separado.
 
-For the maintained furnished clearing, confirm that the editor shows a garden bench at `[16, 16]`, an unlit campfire at `[15, 16]`, and a potted plant at `[17, 16]`. It deterministically scatters 24 trees or burned stumps, then 16 rocks or wild-vegetation features, over the 16×16 clearing while leaving those three authored features untouched. The maintainer inspected the clearing in the editor with `save and test` after the dedicated AI sprites were installed and confirmed that the rock and wild-vegetation furniture spawn without issues. `rock_field_00` uses `ai_rock_32_32.png`, and `wild_vegetation_00` uses `ai_vegetation_32_32.png`. The recipe intentionally leaves `itemgroups` empty and does not exercise container contents, multi-cell occupancy, or cross-level support rules.
+Para el claro amueblado mantenido, confirme que el editor muestra un banco de jardín en `[16, 16]`, una fogata sin encender en `[15, 16]`y una planta en maceta en `[17, 16]`. Dispersa de forma determinista 24 árboles o tocones quemados, luego 16 rocas o elementos de vegetación silvestre, sobre el claro de 16×16 mientras deja intactos esos tres elementos creados por el autor. El mantenedor inspeccionó el claro en el editor con `save and test` Una vez instalados los sprites de IA específicos, se confirmó que los muebles de roca y vegetación silvestre se generaban sin problemas. `rock_field_00` usos `ai_rock_32_32.png`, y `wild_vegetation_00` usos `ai_vegetation_32_32.png`La receta deja intencionalmente `itemgroups` Está vacío y no aplica reglas de contenido de contenedores, ocupación de múltiples celdas ni soporte entre niveles.
 
-For the maintained area meadow, confirm that the area list contains `meadow_clearing` and the editor highlights exactly the `12×12` rectangle from `[10, 10]` through `[21, 21]` at logical `z: 0`. The definition has a `100` percent spawn chance and replaces that connected membership cluster with `grass_dirt_00`; use `save and test` to confirm the runtime applies the area without affecting outside terrain. The example deliberately contains no entities, rooms, walls, doors, or building semantics.
+Para el área de pradera mantenida, confirme que la lista de áreas contiene `meadow_clearing` y el editor destaca exactamente el `12×12` rectángulo de `[10, 10]` a través de `[21, 21]` en lógica `z: 0`. La definición tiene una `100` porcentaje de probabilidad de aparición y reemplaza ese grupo de miembros conectados con `grass_dirt_00`; usar `save and test` Para confirmar que el entorno de ejecución aplica el área sin afectar el terreno exterior. El ejemplo no contiene deliberadamente entidades, habitaciones, paredes, puertas ni semántica de edificios.
 
-For the maintained area entity clearing, confirm the same `[10, 10]` through `[21, 21]` membership boundary for `stump_clearing`. The JSON deliberately contains no pre-baked furniture features: every instancing uses the established area rule to make a fresh weighted selection between its `burned_tree_stump` entry and the implicit no-spawn weight. Restart and instance the map multiple times with **save and test**; confirm stump positions can vary between runs, remain inside the membership boundary, preserve the membership rotation when spawned, and never alter outside terrain. Do not commit the generated inspection map unless it is explicitly promoted to project content.
+Para la eliminación de entidades del área mantenida, confirme lo mismo. `[10, 10]` a través de `[21, 21]` límite de membresía para `stump_clearing`. El JSON deliberadamente no contiene características de muebles precalculadas: cada instancia utiliza la regla de área establecida para hacer una selección ponderada nueva entre sus `burned_tree_stump` entrada y el peso implícito de no aparición. Reinicia y crea instancias del mapa varias veces con **guardar y probar**; confirma que las posiciones de los tocones pueden variar entre ejecuciones, permanecen dentro del límite de membresía, conservan la rotación de membresía cuando aparecen y nunca alteran el terreno exterior. No confirmes el mapa de inspección generado a menos que se promueva explícitamente a contenido del proyecto.
 
-For the maintained room-semantics map, inspect `generated_room_semantics` in the content editor, save it, close it, and re-open it. Confirm that `office` (`enclosed`), `garage_bay` (`covered_open`), and `ruined_store` (`ruin`) labels persist without load errors. The office and garage intentionally share adjacent `concrete_00` terrain, so do not infer room boundaries from floor material. Map preview and **save and test** should only be used to confirm persistence and normal loading in this slice: it does not yet create walls, roofs, doors, lighting, weather, or indoor gameplay behavior.
+Para el mapa de semántica de salas mantenido, inspeccione `generated_room_semantics` En el editor de contenido, guárdelo, ciérrelo y vuelva a abrirlo. Confirme que `office` (`enclosed`), `garage_bay` (`covered_open`), y `ruined_store` (`ruin`Las etiquetas persisten sin errores de carga. La oficina y el garaje comparten intencionalmente espacios adyacentes. `concrete_00` El terreno no permite deducir los límites de las habitaciones a partir del material del suelo. La vista previa del mapa y la opción **guardar y probar** solo deben usarse para confirmar la persistencia y la carga normal en esta versión: aún no crea paredes, techos, puertas, iluminación, clima ni comportamiento de juego en interiores.
 
-For the maintained room-connections map, open `generated_room_connections`, save it, close it, and re-open it. Confirm that `office_front_door` remains an `office`→`exterior` link and `office_to_garage` remains an `office`→`garage_bay` link. In map preview and **save and test**, verify both existing `door_wood` features load and retain normal open/close interaction. This metadata must not create walls, roofs, lighting, weather, automatic enclosure, or a different door runtime behavior.
+Para ver el mapa de conexiones de habitaciones mantenidas, abra `generated_room_connections`, guárdalo, ciérralo y vuelve a abrirlo. Confirma que `office_front_door` sigue siendo un `office`→`exterior` enlace y `office_to_garage` sigue siendo un `office`→`garage_bay` enlace. En la vista previa del mapa y **guardar y probar**, verifique ambos existentes `door_wood` Las funciones se cargan y conservan la interacción normal de apertura/cierre. Estos metadatos no deben crear paredes, techos, iluminación, condiciones climáticas, cerramientos automáticos ni un comportamiento diferente de la puerta en tiempo de ejecución.
 
-For the maintained room-boundaries map, open `generated_room_boundaries`, save it, close it, and re-open it. Confirm that `office` retains `boundary_validation: "complete"`, its eight directed boundary records retain their cardinal `side`, and the office’s eleven existing `brick_wall_00` tiles plus one existing `door_wood` feature remain present. The partial garage and ruin records deliberately have no completeness requirement. **Save and test** should confirm normal loading and existing door interaction only: this validation adds no geometry, collision, navigation, lighting, weather, or indoor behavior.
+Para ver el mapa de límites de habitaciones mantenidos, abra `generated_room_boundaries`, guárdalo, ciérralo y vuelve a abrirlo. Confirma que `office` conserva `boundary_validation: "complete"`, sus ocho registros de límites dirigidos conservan su cardinalidad `side`y los once existentes de la oficina `brick_wall_00` baldosas más una existente `door_wood` La función permanece presente. Los registros parciales del garaje y las ruinas no tienen requisitos de completitud. **Guardar y probar** solo debe confirmar la carga normal y la interacción con la puerta existente: esta validación no agrega geometría, colisión, navegación, iluminación, clima ni comportamiento en interiores.
 
-For the maintained single-level building map, open `generated_single_level_building`, save it, close it, and re-open it. Confirm the root `buildings` array retains `office_building` with its `office` room list, `[7, 7]` `4×4` footprint, and logical `z: 0`. Confirm the existing eleven `brick_wall_00` tiles and one `door_wood` opening still load and retain normal interaction. The footprint is metadata only: **save and test** must not produce new terrain, walls, roofs, collision, navigation, lighting, weather, or indoor behavior.
+Para ver el mapa del edificio de una sola planta que se mantiene, abra `generated_single_level_building`Guárdalo, ciérralo y vuelve a abrirlo. Confirma la raíz. `buildings` El array retiene `office_building` con su `office` lista de habitaciones, `[7, 7]` `4×4` huella y lógica `z: 0`Confirmar los once existentes `brick_wall_00` baldosas y una `door_wood` La apertura aún carga y mantiene la interacción normal. La huella es solo metadatos: **guardar y probar** no debe generar terreno nuevo, paredes, techos, colisiones, navegación, iluminación, clima ni comportamiento en interiores.
 
-For the maintained building-surfaces map, open `generated_building_surfaces`, save it, close it, and re-open it. Confirm `office_building` retains `access_validation: "complete"`, `interior_rooms: ["office"]`, `open_space_rooms: ["garage_bay"]`, `room_partition_validation: "complete"`, `overhead_validation: "complete"`, `exterior_context: {"at": [6, 8], "z": 0}`, and `exterior_access_context: {"connection": "office_front_door"}`. The external tile remains room-free terrain west of the footprint; the access context explicitly names the existing owned office-to-exterior connection without asserting a physical path between the two coordinates. The office and garage remain the exact authored partition of the building’s owned rooms, and roof/ceiling remain required classifications at `z: 1`. Their existing `office_front_door` and `garage_opening` room-to-exterior links independently satisfy authored access completeness. Confirm `office_roof` (`roof`) and `office_ceiling` (`ceiling`) retain their building references and logical `z: 1`, while `building_compositions` retains `office_complete_overhead` requiring both kinds. The eleven `brick_wall_00` tiles plus both existing `door_wood` features must remain unchanged. **Save and test** must not add terrain, roof/ceiling tiles, meshes, collision, support, lighting, weather, indoor state, pathfinding, roads, or any runtime behavior; this slice verifies authored metadata persistence and cross-record consistency only.
+Para ver el mapa de superficies de edificios mantenidas, abra `generated_building_surfaces`Guárdalo, ciérralo y vuelve a abrirlo. Confirmar `office_building` conserva `access_validation: "complete"`, `interior_rooms: ["office"]`, `open_space_rooms: ["garage_bay"]`, `room_partition_validation: "complete"`, `overhead_validation: "complete"`, `exterior_context: {"at": [6, 8], "z": 0}`, y `exterior_access_context: {"connection": "office_front_door"}`. El terreno exterior de baldosas permanece libre de habitaciones al oeste de la huella; el contexto de acceso nombra explícitamente la conexión existente de oficina propiedad al exterior sin afirmar una ruta física entre las dos coordenadas. La oficina y el garaje siguen siendo la partición exacta creada por el autor de las habitaciones propiedad del edificio, y el techo/cielo siguen siendo clasificaciones requeridas en `z: 1`. Su existencia `office_front_door` y `garage_opening` Los enlaces entre la habitación y el exterior satisfacen de forma independiente la integridad del acceso autorizado. Confirmar `office_roof` (`roof`) y `office_ceiling` (`ceiling`) conservan sus referencias de construcción y lógica `z: 1`, mientras `building_compositions` conserva `office_complete_overhead` que requieren ambos tipos. Los once `brick_wall_00` baldosas más las existentes `door_wood` Las características deben permanecer sin cambios. **Guardar y probar** no debe agregar terreno, tejas de techo/cielo, mallas, colisiones, soporte, iluminación, clima, estado interior, búsqueda de rutas, carreteras ni ningún comportamiento en tiempo de ejecución; esta sección verifica únicamente la persistencia de los metadatos creados y la coherencia entre registros.
 
-Dimensionfall also looks for a same-named `.png` map sprite during startup. The runner intentionally generates map JSON only, so Godot currently logs a non-fatal missing-resource error for that sprite. This does not prevent the JSON map from loading or the map editor's tile-grid preview from rendering it.
+Dimensionfall también busca un personaje con el mismo nombre. `.png` El sprite del mapa se genera durante el inicio. El ejecutor genera intencionadamente solo el JSON del mapa, por lo que Godot registra un error no crítico de recurso faltante para ese sprite. Esto no impide que el mapa JSON se cargue ni que la vista previa de la cuadrícula de mosaicos del editor de mapas lo muestre.
 
-## Generate from specific recipes
+## Generar a partir de recetas específicas
 
-Pass one or more recipe paths before the options. The runner generates the requested number of variants for every recipe:
+Pase una o más rutas de recetas antes de las opciones. El ejecutor genera el número solicitado de variantes para cada receta:
 
 ```bash
 python3 Tools/generate_map_examples.py \
@@ -325,7 +325,7 @@ python3 Tools/generate_map_examples.py \
   --seed 500
 ```
 
-For example, generate one cleanup-managed hill and one cleanup-managed depression directly in the mod folder:
+Por ejemplo, genere una colina con limpieza gestionada y una depresión con limpieza gestionada directamente en la carpeta del mod:
 
 ```bash
 python3 Tools/generate_map_examples.py \
@@ -335,16 +335,16 @@ python3 Tools/generate_map_examples.py \
   --variants 1
 ```
 
-This produces:
+Esto produce:
 
 ```text
 Mods/Dimensionfall/Maps/generated_two_level_hill_example_001.json
 Mods/Dimensionfall/Maps/generated_two_level_depression_example_001.json
 ```
 
-Use `map_generator.py` for one exact recipe output. Use `generate_map_examples.py` when you want multiple seeds, multiple recipes in one command, or manifest-based cleanup.
+Usar `map_generator.py` para obtener un resultado de receta exacto. Utilice `generate_map_examples.py` cuando se necesitan varias semillas, varias recetas en un solo comando o una limpieza basada en el manifiesto.
 
-Use different tile and furniture databases when testing another mod's furniture recipe:
+Utiliza diferentes bases de datos de baldosas y muebles al probar la receta de muebles de otro mod:
 
 ```bash
 python3 Tools/generate_map_examples.py \
@@ -353,13 +353,13 @@ python3 Tools/generate_map_examples.py \
   --tiles path/to/Tiles.json
 ```
 
-The example runner infers `Furniture/Furniture.json` beside the selected `Tiles` directory. For a one-map invocation whose furniture database lives elsewhere, use `Tools/map_generator.py --furniture path/to/Furniture.json`.
+El ejemplo del corredor infiere `Furniture/Furniture.json` junto a los seleccionados `Tiles` directorio. Para una invocación de un solo mapa cuya base de datos de muebles se encuentra en otro lugar, utilice `Tools/map_generator.py --furniture path/to/Furniture.json`.
 
-## Overwrite protection
+## Protección contra sobrescritura
 
-Existing output files are protected by default. A repeated command using the same IDs reports an error instead of replacing them.
+Los archivos de salida existentes están protegidos de forma predeterminada. Si se repite un comando con los mismos identificadores, se generará un error en lugar de reemplazarlos.
 
-To deliberately regenerate those files, add `--overwrite`:
+Para regenerar deliberadamente esos archivos, agregue `--overwrite`:
 
 ```bash
 python3 Tools/generate_map_examples.py \
@@ -369,17 +369,17 @@ python3 Tools/generate_map_examples.py \
   --overwrite
 ```
 
-An overwritten file that was not originally created by this runner is not claimed by its cleanup manifest and will not be deleted by `--clean`.
+Un archivo sobrescrito que no fue creado originalmente por este ejecutor no es reclamado por su manifiesto de limpieza y no será eliminado por `--clean`.
 
-## Safe cleanup
+## Limpieza segura
 
-The runner records newly created output filenames and SHA-256 digests in:
+El ejecutor registra los nombres de archivo de salida recién creados y los resúmenes SHA-256 en:
 
 ```text
 .dimensionfall-map-examples-manifest
 ```
 
-The manifest has no `.json` extension, so it is not treated as a map. Cleanup removes only recorded map files whose contents still match their generated SHA-256 digest:
+El manifiesto no tiene `.json` extensión, por lo que no se trata como un mapa. La limpieza elimina solo los archivos de mapa registrados cuyo contenido aún coincide con su resumen SHA-256 generado:
 
 ```bash
 python3 Tools/generate_map_examples.py \
@@ -387,7 +387,7 @@ python3 Tools/generate_map_examples.py \
   --clean
 ```
 
-Remove examples installed for editor inspection with:
+Elimine los ejemplos instalados para la inspección del editor con:
 
 ```bash
 python3 Tools/generate_map_examples.py \
@@ -395,33 +395,33 @@ python3 Tools/generate_map_examples.py \
   --clean
 ```
 
-Unrelated maps in the output directory are left untouched. A generated path that has since been changed or replaced is also preserved. If the manifest is missing, cleanup removes nothing. If it is malformed, cleanup stops rather than guessing which files are safe to delete.
+Los mapas no relacionados en el directorio de salida permanecen intactos. También se conserva una ruta generada que haya sido modificada o reemplazada posteriormente. Si falta el manifiesto, la limpieza no elimina nada. Si está mal formado, la limpieza se detiene en lugar de intentar adivinar qué archivos se pueden eliminar sin riesgo.
 
-## Useful checks
+## Comprobaciones útiles
 
-Show all command options:
+Mostrar todas las opciones de comando:
 
 ```bash
 python3 Tools/generate_map_examples.py --help
 ```
 
-Run the focused Godot farmhouse runtime navigation regression suite from the repository root:
+Ejecute el conjunto de pruebas de regresión de navegación en tiempo de ejecución de Godot farmhouse desde la raíz del repositorio:
 
 ```bash
 godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://Tests/Unit -gprefix=test_field_farmland_navigation -gexit
 ```
 
-This verifies the migrated automatic kitchen wall ring with real Chunk baking and `NavigationServer3D`: declared farmhouse routes remain traversable through the authored west door, interior connection, and staircase, while bounded checks reject north/south wall, non-door east partition, and both generated corner-cap crossings.
+Esto verifica el anillo de pared de cocina automático migrado con horneado real de Chunk y `NavigationServer3D`: las rutas declaradas de la granja siguen siendo transitables a través de la puerta oeste, la conexión interior y la escalera creadas, mientras que las comprobaciones delimitadas rechazan la pared norte/sur, la partición este que no es una puerta y ambos cruces de la tapa de la esquina generados.
 
-Run the focused Pine Hollow Outpost runtime navigation acceptance from the repository root:
+Ejecuta la aceptación de navegación en tiempo de ejecución de Pine Hollow Outpost enfocada desde la raíz del repositorio:
 
 ```bash
 godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://Tests/Unit -gprefix=test_pine_hollow_outpost_navigation -gexit
 ```
 
-This bakes the new outpost geometry through real `Chunk` and `NavigationServer3D` code. It verifies the service-path-to-cabin, cabin-to-open-lean-to, and bidirectional cabin-to-loft traversal, and rejects an isolated north-wall crossing. Generate `generated_pine_hollow_outpost.json` with the command above and review it in the content editor for the remaining visual-composition acceptance.
+Esto hornea la nueva geometría del puesto avanzado a través de datos reales. `Chunk` y `NavigationServer3D` código. Verifica el camino de servicio a la cabaña, de la cabaña al cobertizo abierto y el recorrido bidireccional de la cabaña al desván, y rechaza un cruce aislado de la pared norte. Generar `generated_pine_hollow_outpost.json` con el comando anterior y revíselo en el editor de contenido para la aceptación de la composición visual restante.
 
-Run the focused Godot slope geometry and baked-navigation regression suites:
+Ejecuta los conjuntos de regresión de geometría de pendiente y navegación precalculada de Godot enfocados:
 
 ```bash
 godot --headless --path . \
@@ -431,13 +431,13 @@ godot --headless --path . \
   -gexit
 ```
 
-Validate all generated maps in a temporary output directory:
+Validar todos los mapas generados en un directorio de salida temporal:
 
 ```bash
 python3 Tools/map_validator.py /tmp/dimensionfall-map-examples
 ```
 
-Confirm generated map dimensions and populated levels:
+Confirme las dimensiones del mapa generado y los niveles poblados:
 
 ```bash
 python3 - <<'PY'
@@ -456,9 +456,9 @@ for path in sorted(Path("/tmp/dimensionfall-map-examples").glob("*.json")):
 PY
 ```
 
-## Current limitations
+## Limitaciones actuales
 
-- Variants change the recipe seed; they do not synthesize new recipe operations.
-- Generated maps support terrain, explicit known single-cell furniture, deterministic weighted furniture scatter, and runtime-compatible rectangular area memberships at explicit logical levels. Areas can also declare weighted runtime `furniture`, `mob`, `mobgroup`, or `itemgroup` entities, so an area field can vary each time its map is instanced. The maintained clearing uses dedicated AI-generated rock and wild-vegetation sprites. Itemgroup contents, multi-tile or tall features, automatic support inference, polygonal areas, rooms, buildings, semantic roads, and multi-level templates are not supported yet.
-- The maps can be inspected with the existing content-editor preview, but the runner does not launch Godot or inject maps into an already-running editor session.
-- Installing examples under `Mods/Dimensionfall/Maps` makes them available to the content editor, but does not automatically reference them from overmap-area generation.
+- Las variantes modifican la base de la receta; no sintetizan nuevas operaciones de receta.
+- Los mapas generados admiten terreno, mobiliario explícito conocido de una sola celda, dispersión determinista ponderada del mobiliario y pertenencias de áreas rectangulares compatibles con el tiempo de ejecución en niveles lógicos explícitos. Las áreas también pueden declarar tiempo de ejecución ponderado `furniture`, `mob`, `mobgroup`, o `itemgroup` entidades, por lo que un campo de área puede variar cada vez que se instancia su mapa. El claro mantenido utiliza sprites de roca y vegetación silvestre generados por IA. El contenido de grupos de elementos, las características de múltiples casillas o altas, la inferencia de soporte automático, las áreas poligonales, las habitaciones, los edificios, las carreteras semánticas y las plantillas multinivel aún no son compatibles.
+- Los mapas se pueden inspeccionar con la vista previa del editor de contenido existente, pero el ejecutor no inicia Godot ni inyecta mapas en una sesión de editor que ya esté en ejecución.
+- Instalando ejemplos en `Mods/Dimensionfall/Maps` Las pone a disposición del editor de contenido, pero no las referencia automáticamente desde la generación del área del mapa general.
