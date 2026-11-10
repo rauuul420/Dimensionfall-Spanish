@@ -1,8 +1,8 @@
-You have now completed the **foundation, minimal generator, general placement-primitives, manual evaluation-harness, features/furniture, and building-geometry milestones**. The project can generate and batch-test structurally valid, visually recognizable 32×32 outdoor Dimensionfall maps from compact recipes, and it can now place furniture features and physically enclosed multi-level buildings; it cannot yet compose towns, roads-as-semantic-networks beyond map-local routes, or complete gameplay locations.
+Ahora has completado los hitos **fundamento, generador mínimo, primitivas de colocación general, evaluación manual, características/muebles y geometría de edificios**. El proyecto puede generar y probar por lotes mapas de Dimensionfall de 32x32 exteriores, estructuralmente válidos y visualmente reconocibles, a partir de recetas compactas, y ahora puede colocar elementos de mobiliario y edificios multinivel físicamente cerrados; aún no puede componer ciudades, carreteras como redes semánticas más allá de las rutas locales del mapa, ni ubicaciones de juego completas.
 
-## Overall goal
+## Objetivo general
 
-The long-term objective is a map-authoring pipeline where an agent describes a map at a meaningful design level rather than manually writing thousands of JSON entries.
+El objetivo a largo plazo es un sistema de creación de mapas en el que un agente describa un mapa a un nivel de diseño significativo, en lugar de escribir manualmente miles de entradas JSON.
 
 ```text
 Map concept
@@ -20,7 +20,7 @@ Godot/editor smoke test
 Playable map
 ```
 
-For example, the eventual recipe should express concepts such as:
+Por ejemplo, la receta final debería expresar conceptos como:
 
 ```text
 Create a forest settlement with:
@@ -31,70 +31,70 @@ Create a forest settlement with:
 - indoor and outdoor areas
 ```
 
-The generator should handle the mechanical work:
+El generador debe encargarse del trabajo mecánico:
 
-* converting top-down coordinates and logical z values to level and tile-array indices;
-* producing all 1024 entries per populated level;
-* inserting valid tile and furniture IDs;
-* generating metadata;
-* creating areas and connections;
-* enforcing horizontal and vertical bounds;
-* creating and validating transitions between logical levels;
-* producing deterministic output;
-* rejecting invalid designs before they reach Godot.
+* convertir coordenadas de arriba hacia abajo y valores lógicos z en índices de nivel y de matriz de mosaicos;
+* generando las 1024 entradas por nivel poblado;
+* insertar identificadores válidos para baldosas y muebles;
+* generación de metadatos;
+* creando áreas y conexiones;
+* imponiendo límites horizontales y verticales;
+* crear y validar transiciones entre niveles lógicos;
+* produciendo resultados deterministas;
+* rechazar diseños inválidos antes de que lleguen a Godot.
 
-The agent remains responsible for map intent and composition. The generator remains responsible for correctness.
+El agente sigue siendo responsable de la intención y la composición del mapa. El generador sigue siendo responsable de su corrección.
 
 ---
 
-# Current state
+# Estado actual
 
-## 1. Agent guidance: complete
+## 1. Guía del agente: completa
 
-`AGENTS.md` was revised to work well with Hermes rather than relying on Codex-specific or TaskMaster-specific behavior.
+`AGENTS.md` Se revisó para que funcionara bien con Hermes en lugar de depender de un comportamiento específico de Codex o TaskMaster.
 
-The repository guidance is now intended to be:
+Las directrices del repositorio ahora pretenden ser las siguientes:
 
-* tool-independent;
-* repository-specific;
-* suitable for multiple Hermes profiles;
-* focused on project structure, coding standards, validation, and safe editing;
-* free of personal Docker, worktree, Kanban, and model configuration details.
+* independiente de la herramienta;
+* específico del repositorio;
+* Adecuado para múltiples perfiles de Hermes;
+* centrado en la estructura del proyecto, los estándares de codificación, la validación y la edición segura;
+* Libre de detalles de configuración personal de Docker, worktree, Kanban y modelos.
 
-This gives the map-making agents a stable set of repository instructions.
+Esto proporciona a los agentes cartográficos un conjunto estable de instrucciones de repositorio.
 
-## 2. Existing-map sanitation: complete
+## 2. Saneamiento del mapa existente: completo
 
-The project now sanitizes malformed tile data when maps are serialized.
+El proyecto ahora desinfecta los datos de mosaicos mal formados cuando se serializan los mapas.
 
-Corrupt or incomplete tile dictionaries—particularly entries missing a valid tile ID—are converted to the established empty-tile representation:
+Los diccionarios de teselas corruptos o incompletos, en particular las entradas que carecen de un ID de tesela válido, se convierten a la representación de tesela vacía establecida:
 
 ```json
 {}
 ```
 
-A GUT test was added around this behavior.
+Se añadió una prueba de intuición en torno a este comportamiento.
 
-This protects existing and generated maps from lingering malformed tile entries.
+Esto protege los mapas existentes y generados de las entradas de mosaicos mal formadas que puedan quedar.
 
-## 3. Map validator improvements: complete
+## 3. Mejoras en el validador de mapas: completas
 
-`Tools/map_validator.py` now understands the fixed Dimensionfall map dimensions.
+`Tools/map_validator.py` Ahora comprende las dimensiones fijas del mapa Dimensionfall.
 
-It rejects:
+Rechaza:
 
-* `mapwidth` values other than `32`;
-* `mapheight` values other than `32`;
-* populated levels with fewer than 1024 entries;
-* populated levels with more than 1024 entries.
+* `mapwidth` valores distintos de `32`;
+* `mapheight` valores distintos de `32`;
+* niveles poblados con menos de 1024 entradas;
+* niveles poblados con más de 1024 entradas.
 
-It continues accepting unused levels represented as:
+Continúa aceptando niveles no utilizados representados como:
 
 ```json
 []
 ```
 
-The validator successfully caught the original invalid generated prototype:
+El validador detectó correctamente el prototipo generado originalmente que no era válido:
 
 ```text
 width: 12
@@ -102,11 +102,11 @@ height: 8
 level 10 entries: 96
 ```
 
-That is an important milestone because the validator now independently enforces the structural assumptions used by the generator.
+Se trata de un hito importante, ya que el validador ahora aplica de forma independiente los supuestos estructurales utilizados por el generador.
 
-## 4. Recipe-driven generator prototype: complete
+## 4. Prototipo de generador basado en recetas: completo
 
-The merged work added:
+El trabajo fusionado añadió:
 
 ```text
 Tools/map_generator.py
@@ -115,36 +115,36 @@ Tools/tests/test_map_generator.py
 Documentation/Modding/map_recipe_generator.md
 ```
 
-The generator currently supports:
+El generador actualmente admite:
 
-* map ID;
-* display name;
-* description;
-* deterministic integer seed;
-* legacy-compatible ground-level generation at level-array index 10;
-* explicit logical levels from `z: -10` through `z: 10`;
-* multiple populated levels using per-placement `z` or grouped `levels` definitions;
-* a base tile covering the entire legacy ground level or an explicit grouped level;
-* ordered rectangular regions;
-* ordered, level-aware `set`, `rectangle`, `rectangle_outline`, `line`, and `scatter` operations;
-* inclusive Bresenham line rasterization;
-* deterministic scatter by count or density;
-* root-level reusable cell-pattern definitions;
-* ordered, level-aware pattern placement at an anchor with fixed quarter-turn rotation;
-* root-level weighted tile palettes referenced by base tiles and placement operations;
-* fixed tile rotations;
-* deterministic random rotations;
-* `null` region tiles that produce `{}`;
-* tile-ID validation against the tile database;
-* strict rejection of unknown recipe fields;
-* region bounds validation;
-* output filename validation;
-* overwrite protection;
-* generation to a temporary file;
-* validation before publication;
-* atomic replacement of the target file.
+* ID del mapa;
+* nombre para mostrar;
+* descripción;
+* semilla entera determinista;
+* Generación de nivel de tierra compatible con versiones anteriores en el índice 10 de la matriz de niveles;
+* niveles lógicos explícitos de `z: -10` a través de `z: 10`;
+* Múltiples niveles poblados utilizando colocación por `z` o agrupados `levels` definiciones;
+* una loseta base que cubre todo el nivel del suelo existente o un nivel agrupado explícito;
+* regiones rectangulares ordenadas;
+* ordenado, consciente del nivel `set`, `rectangle`, `rectangle_outline`, `line`, y `scatter` operaciones;
+* rasterización de la línea de Bresenham inclusiva;
+* dispersión determinista por conteo o densidad;
+* definiciones de patrones celulares reutilizables a nivel raíz;
+* Colocación de patrones ordenada y con nivelación en un punto de anclaje con rotación fija de un cuarto de vuelta;
+* paletas de mosaicos ponderados de nivel raíz a las que hacen referencia los mosaicos base y las operaciones de colocación;
+* rotaciones de baldosas fijas;
+* rotaciones aleatorias deterministas;
+* `null` baldosas de región que producen `{}`;
+* Validación del ID de la baldosa con respecto a la base de datos de baldosas;
+* rechazo estricto de campos de recetas desconocidos;
+* validación de los límites de la región;
+* validación del nombre del archivo de salida;
+* protección contra sobrescritura;
+* generación en un archivo temporal;
+* validación antes de la publicación;
+* reemplazo atómico del archivo de destino.
 
-It always produces:
+Siempre produce:
 
 ```text
 mapwidth: 32
@@ -155,53 +155,53 @@ logical z range: -10 through +10
 level-array index: logical z + 10
 ```
 
-## 5. Generator and validator tests: complete for version 1
+## 5. Pruebas del generador y del validador: completadas para la versión 1
 
-The current Python test suite contains 156 tests and passes. Focused GUT suites verify slope rotation and baked connectivity across Godot runtime geometry paths.
+El conjunto actual de pruebas de Python contiene 156 pruebas y las supera. Los conjuntos de pruebas GUT específicos verifican la rotación de pendientes y la conectividad precalculada a través de las rutas de geometría de ejecución de Godot.
 
-Coverage includes:
+La cobertura incluye:
 
-* fixed 32×32 dimensions;
-* exactly 1024 entries;
-* deterministic generation;
-* rectangular overlays;
-* single-cell placement;
-* filled and outlined rectangles, including thin outlines;
-* horizontal, vertical, and diagonal lines;
-* deterministic scatter by count and density;
-* operation ordering and overwrite behavior;
-* operation field, type, coordinate, bounds, and scatter-argument validation;
-* empty-tile representation;
-* unknown fields;
-* invalid IDs;
-* unknown tile IDs;
-* palette references, weighted deterministic selection, and malformed palette rejection;
-* reusable pattern expansion, rotation, ordering, determinism, compatibility, and validation;
-* logical-z conversion and bounds;
-* legacy per-placement z targeting across every operation type;
-* grouped multi-level generation, declaration order, local overwrite order, and RNG order;
-* duplicate, ambiguous, malformed, and nested z-definition rejection;
-* exact 21-level output and validator rejection of incorrect level counts;
-* maintained two-level hill and depression recipes with structurally supported slope endpoints;
-* editor-facing slope rotation conversion and rendered-mesh high edges in Godot;
-* matching collision high edges for all four slope rotations;
-* matching navigation-source high edges for all four slope rotations;
-* asynchronously baked, bidirectional navigation paths across all four slope rotations;
-* invalid metadata;
-* malformed tile databases;
-* out-of-bounds placement;
-* output filename mismatch;
-* overwrite protection;
-* validator rejection of bad dimensions;
-* validator rejection of short and long levels;
-* acceptance of unused empty levels;
-* acceptance of correctly generated maps.
+* Dimensiones fijas de 32×32;
+* exactamente 1024 entradas;
+* generación determinista;
+* superposiciones rectangulares;
+* colocación de células individuales;
+* rectángulos rellenos y delineados, incluidos los contornos finos;
+* líneas horizontales, verticales y diagonales;
+* dispersión determinista por conteo y densidad;
+* Ordenación de operaciones y comportamiento de sobrescritura;
+* Validación del campo de operación, tipo, coordenada, límites y argumento de dispersión;
+* representación de casillas vacías;
+* campos desconocidos;
+* identificaciones no válidas;
+* Identificadores de mosaico desconocidos;
+* referencias de paleta, selección determinista ponderada y rechazo de paletas mal formadas;
+* Expansión, rotación, ordenación, determinismo, compatibilidad y validación de patrones reutilizables;
+* Conversión y límites de tipo lógico-z;
+* Segmentación Z heredada por ubicación en todos los tipos de operaciones;
+* Generación multinivel agrupada, orden de declaración, orden de sobrescritura local y orden del generador de números aleatorios;
+* Rechazo de definiciones z duplicadas, ambiguas, mal formadas y anidadas;
+* Salida exacta de 21 niveles y rechazo por parte del validador de recuentos de niveles incorrectos;
+* Se mantuvieron recetas de colinas y depresiones de dos niveles con extremos de pendiente estructuralmente soportados;
+* Conversión de rotación de pendiente orientada al editor y bordes altos de malla renderizada en Godot;
+* Coincidencia de bordes altos de colisión para las cuatro rotaciones de pendiente;
+* Coincidencia de los bordes altos de la fuente de navegación para las cuatro rotaciones de pendiente;
+* Rutas de navegación bidireccionales generadas de forma asíncrona a través de las cuatro rotaciones de pendiente;
+* metadatos no válidos;
+* bases de datos de mosaicos mal formadas;
+* colocación fuera de límites;
+* El nombre del archivo de salida no coincide;
+* protección contra sobrescritura;
+* Rechazo del validador por dimensiones incorrectas;
+* Rechazo del validador de niveles cortos y largos;
+* aceptación de niveles vacíos no utilizados;
+* aceptación de mapas generados correctamente.
 
-This is sufficient coverage for the prototype’s present capabilities.
+Esta cobertura es suficiente para las capacidades actuales del prototipo.
 
-## 6. Repository ownership and remotes: complete
+## 6. Propiedad del repositorio y repositorios remotos: completo
 
-Your working repository is now your fork:
+Tu repositorio de trabajo ahora es tu bifurcación:
 
 ```text
 origin:
@@ -211,17 +211,17 @@ upstream:
 https://github.com/Dimensionfall/Dimensionfall.git
 ```
 
-That gives you control over the generator roadmap without depending on every experimental stage being accepted upstream immediately.
+Eso te da control sobre la hoja de ruta del generador sin depender de que cada etapa experimental sea aceptada inmediatamente por la dirección principal.
 
-Your working directory remains:
+Su directorio de trabajo permanece:
 
 ```bash
 ~/hermes/dimensionfall/workspace/Dimensionfall-test-runner
 ```
 
-## 7. Manual example generation and evaluation: complete
+## 7. Generación y evaluación de ejemplos manuales: completa
 
-The project now includes:
+El proyecto ahora incluye:
 
 ```text
 Tools/generate_map_examples.py
@@ -229,147 +229,147 @@ Tools/tests/test_generate_map_examples.py
 Documentation/Modding/map_example_generation.md
 ```
 
-The runner generates one or more deterministic seed variants from maintained recipes, delegates validation and atomic publication to the existing generator, and can place outputs directly in a mod's `Maps` directory for content-editor inspection. It validates the complete batch and rejects duplicate output paths before publication. Newly created outputs and their SHA-256 digests are recorded in a non-JSON manifest so cleanup removes only unchanged runner-owned files.
+El ejecutor genera una o más variantes de semillas deterministas a partir de recetas mantenidas, delega la validación y la publicación atómica al generador existente y puede colocar las salidas directamente en un mod. `Maps` Directorio para la inspección del editor de contenido. Valida el lote completo y rechaza las rutas de salida duplicadas antes de la publicación. Las salidas recién creadas y sus resúmenes SHA-256 se registran en un manifiesto que no es JSON, de modo que la limpieza elimina solo los archivos del ejecutor que no han sufrido cambios.
 
-Ten focused tests cover variant IDs, complete map shape, determinism, CLI generation and cleanup, overwrite ownership, changed-file preservation, malformed recipes, duplicate outputs, and failed-publication safety.
-
----
-
-# What the generator cannot do yet
-
-The current recipe language is intentionally minimal. It cannot yet express most meaningful maps.
-
-It does not currently support:
-
-* nested, shape-based, or multi-level pattern composition;
-* circles or irregular regions;
-* terrain blending;
-* features or furniture;
-* areas or rooms;
-* doors;
-* buildings;
-* roads as semantic objects;
-* map-edge connection placement;
-* reusable templates;
-* towns or settlements;
-* biome rules;
-* general walkability checks beyond the Phase 7 road-route navigation test;
-* accessibility or connectivity checks;
-* encounters, creatures, items, or spawn points;
-* standalone image or HTML previews outside Godot; generated map JSON can already be opened with the existing content-editor map preview;
-* importing an existing map into a recipe;
-* regeneration while preserving hand-authored changes.
-
-At present, it can create a recognizable outdoor terrain layout with paths, bounded clearings, and scattered variation. It cannot yet create a credible playable location because it has no furniture, semantic areas, buildings, or gameplay content.
+Diez pruebas específicas abarcan los identificadores de variantes, la forma completa del mapa, el determinismo, la generación y limpieza de la interfaz de línea de comandos, la sobrescritura de la propiedad, la preservación de archivos modificados, las recetas mal formadas, las salidas duplicadas y la seguridad ante fallos de publicación.
 
 ---
 
-# Progress tracking
+# Lo que el generador aún no puede hacer
 
-This document is the roadmap source of truth. Keep it current at milestone boundaries rather than recording a chronological activity log:
+El lenguaje de recetas actual es intencionadamente minimalista. Todavía no puede expresar la mayoría de los mapas significativos.
 
-* use `planned`, `next`, `in progress`, or `complete` for each phase;
-* mark a phase complete only after its success criterion and listed validation pass;
-* when a phase changes, update its delivered list, current capabilities and limitations, test count, recommended next task, and the one-view summary together;
-* keep temporary implementation notes and command output out of this document;
-* preserve detailed operation contracts in `Documentation/Modding/map_recipe_generator.md` and tests rather than duplicating them here.
+Actualmente no es compatible con:
+
+* composición de patrones anidados, basados ​​en formas o de varios niveles;
+* círculos o regiones irregulares;
+* mezcla de terrenos;
+* elementos o muebles;
+* áreas o habitaciones;
+* puertas;
+* edificios;
+* carreteras como objetos semánticos;
+* ubicación de la conexión del borde del mapa;
+* plantillas reutilizables;
+* pueblos o asentamientos;
+* reglas del bioma;
+* comprobaciones generales de transitabilidad que van más allá de la prueba de navegación por carretera de la Fase 7;
+* comprobaciones de accesibilidad o conectividad;
+* encuentros, criaturas, objetos o puntos de aparición;
+* Vistas previas de imágenes o HTML independientes fuera de Godot; el JSON del mapa generado ya se puede abrir con la vista previa del mapa del editor de contenido existente;
+* importar un mapa existente a una receta;
+* regeneración conservando los cambios realizados manualmente.
+
+Actualmente, puede crear un diseño de terreno exterior reconocible con caminos, claros delimitados y variaciones dispersas. Sin embargo, aún no puede crear un escenario jugable creíble porque carece de mobiliario, áreas semánticas, edificios o contenido de juego.
 
 ---
 
-# Roadmap
+# Seguimiento del progreso
 
-## Phase 1 — Structural safety
+Este documento es la fuente de información fidedigna de la hoja de ruta. Manténgalo actualizado en los hitos clave en lugar de registrar un historial cronológico de actividades:
 
-**Status: complete**
+* usar `planned`, `next`, `in progress`, o `complete` para cada fase;
+* Una fase se considerará completada únicamente después de que cumpla con sus criterios de éxito y la validación indicada;
+* Cuando una fase cambia, actualice su lista de entregas, capacidades y limitaciones actuales, recuento de pruebas, tarea siguiente recomendada y el resumen de vista única en conjunto;
+* Mantenga las notas de implementación temporales y la salida de comandos fuera de este documento;
+* conservar contratos operativos detallados en `Documentation/Modding/map_recipe_generator.md` y realizar pruebas en lugar de duplicarlas aquí.
 
-Goals:
+---
 
-* sanitize malformed map data;
-* understand the real map structure;
-* improve validator coverage;
-* establish agent guidance.
+# Hoja de ruta
 
-Delivered:
+## Fase 1 — Seguridad estructural
 
-* sanitation in `DMap`;
-* GUT sanitation test;
-* improved validator;
-* Hermes-oriented `AGENTS.md`.
+**Estado: completado**
 
-## Phase 2 — Minimal deterministic generator
+Objetivos:
 
-**Status: complete**
+* desinfectar datos de mapas con formato incorrecto;
+* comprender la estructura real del mapa;
+* mejorar la cobertura de los validadores;
+* establecer la orientación del agente.
 
-Goals:
+Entregado:
 
-* define a compact recipe;
-* generate one valid ground level;
-* validate before writing;
-* test determinism and failure cases.
+* saneamiento en `DMap`;
+* prueba de saneamiento intestinal;
+* validador mejorado;
+* Orientado a Hermes `AGENTS.md`.
 
-Delivered:
+## Fase 2 — Generador determinista mínimo
 
-* recipe format version 1;
-* generator CLI;
-* fixed 32×32 output;
-* base tile plus rectangular overlays;
-* tile validation;
-* 16 Python tests;
-* documentation and example.
+**Estado: completado**
 
-## Phase 3 — General placement primitives
+Objetivos:
 
-**Status: complete**
+* definir una receta compacta;
+* generar un nivel de suelo válido;
+* validar antes de escribir;
+* Determinismo de las pruebas y casos de fallo.
 
-Delivered:
+Entregado:
 
-* ordered `operations` applied after legacy `regions`;
-* `set`, filled `rectangle`, and `rectangle_outline` placement;
-* inclusive one-cell-wide lines using the integer Bresenham algorithm;
-* deterministic scatter using exactly one of `count` or `density`;
-* strict bounds with no silent clipping;
-* unknown-field and unknown-operation rejection;
-* shared placement logic for legacy regions and rectangle operations;
-* an outdoor example with a path, bounded clearing, and scattered flowers;
-* focused tests and recipe documentation.
+* Formato de receta versión 1;
+* Generador de CLI;
+* Salida fija de 32×32;
+* Baldosa base más superposiciones rectangulares;
+* validación de baldosas;
+* 16 pruebas de Python;
+* documentación y ejemplo.
 
-### Success criterion
+## Fase 3 — Primitivas de colocación general
 
-A recipe can generate a visually recognizable outdoor layout containing:
+**Estado: completado**
 
-* a base terrain;
-* one path;
-* one bounded clearing;
-* some deterministic scattered variation.
+Entregado:
 
-No furniture or buildings yet. This criterion is met by `Tools/examples/map_recipe.json`.
+* ordenado `operations` aplicado después del legado `regions`;
+* `set`, completado `rectangle`, y `rectangle_outline` colocación;
+* Líneas inclusivas de una sola célula de ancho utilizando el algoritmo de Bresenham entero;
+* dispersión determinista usando exactamente uno de `count` o `density`;
+* límites estrictos sin recorte silencioso;
+* rechazo de campo desconocido y operación desconocida;
+* Lógica de ubicación compartida para regiones heredadas y operaciones rectangulares;
+* un ejemplo al aire libre con un sendero, un claro delimitado y flores dispersas;
+* Pruebas específicas y documentación de recetas.
 
-## Phase 4A — Manual example generation and evaluation harness
+### Criterio de éxito
 
-**Status: complete**
+Una receta puede generar un diseño exterior visualmente reconocible que contenga:
 
-Delivered:
+* un terreno base;
+* un camino;
+* un claro delimitado;
+* alguna variación dispersa determinista.
 
-* a Python CLI that reuses the existing generator rather than duplicating it;
-* one-command generation of multiple deterministic seed variants;
-* unique map IDs and matching filenames;
-* configurable recipe, tile database, output directory, variant count, and starting seed;
-* overwrite protection inherited from the generator;
-* a non-JSON ownership manifest with SHA-256 identity checks and exact-file cleanup;
-* direct output to a mod's `Maps` directory for inspection in the existing content-editor preview;
-* focused tests and a manual tester guide with example commands.
+Aún no hay muebles ni edificios. Este criterio se cumple por `Tools/examples/map_recipe.json`.
 
-### Success criterion
+## Fase 4A: Generador de ejemplos manuales y herramienta de evaluación
 
-A developer can run one documented command, launch Godot, and inspect at least three deterministic generated variants in the content editor without manually editing recipes or renaming output files. Cleanup leaves unrelated maps untouched.
+**Estado: completado**
 
-## Phase 4B — Tile palettes and reusable patterns
+Entregado:
 
-**Status: complete**
+* una interfaz de línea de comandos de Python que reutiliza el generador existente en lugar de duplicarlo;
+* Generación con un solo comando de múltiples variantes de semillas deterministas;
+* Identificadores de mapa únicos y nombres de archivo coincidentes;
+* Receta configurable, base de datos de mosaicos, directorio de salida, número de variantes y semilla inicial;
+* protección contra sobrescritura heredada del generador;
+* un manifiesto de propiedad que no es JSON con comprobaciones de identidad SHA-256 y limpieza exacta de archivos;
+* salida directa a un mod `Maps` directorio para su inspección en la vista previa del editor de contenido existente;
+* Pruebas específicas y una guía para probadores manuales con ejemplos de comandos.
 
-Raw tile IDs are cumbersome and encourage agents to invent invalid identifiers. Introduce semantic recipe-level palettes.
+### Criterio de éxito
 
-Example:
+Un desarrollador puede ejecutar un comando documentado, iniciar Godot e inspeccionar al menos tres variantes generadas de forma determinista en el editor de contenido sin editar manualmente las recetas ni renombrar los archivos de salida. La limpieza no modifica los mapas no relacionados.
+
+## Fase 4B: Paletas de azulejos y patrones reutilizables
+
+**Estado: completado**
+
+Los identificadores de mosaico sin procesar son engorrosos y fomentan que los agentes inventen identificadores no válidos. Introduzca paletas semánticas a nivel de receta.
+
+Ejemplo:
 
 ```json
 {
@@ -398,72 +398,72 @@ Example:
 }
 ```
 
-Delivered:
+Entregado:
 
-* root-level semantic tile palettes;
-* weighted deterministic selection;
-* palette references from `base_tile`, legacy `regions`, and every placement operation;
-* strict palette validation and known tile-ID checking;
-* updated example recipe using palettes for ground, clearing, paths, and flowers.
-* named reusable cell patterns with signed offsets;
-* anchored pattern operations with fixed quarter-turn rotation;
-* strict pattern-definition, reference, field, and expanded-bounds validation;
-* deterministic cell-order expansion using existing tile and palette semantics;
-* updated example recipe reusing one flower-cluster pattern at three orientations.
+* paletas de mosaicos semánticos de nivel raíz;
+* selección determinista ponderada;
+* referencias de paleta de `base_tile`, legado `regions`y cada operación de colocación;
+* Validación estricta de la paleta de colores y comprobación de la identificación de los mosaicos conocidos;
+* Ejemplo de receta actualizada que utiliza paletas de colores para el suelo, la limpieza, los caminos y las flores.
+* patrones de celdas reutilizables con nombre y desplazamientos con signo;
+* operaciones de patrón anclado con rotación fija de un cuarto de vuelta;
+* validación estricta de definición de patrones, referencias, campos y límites expandidos;
+* Expansión determinista del orden de las celdas utilizando la semántica de mosaicos y paletas existente;
+* Receta de ejemplo actualizada que reutiliza un patrón de grupo de flores en tres orientaciones.
 
-### Success criterion
+### Criterio de éxito
 
-The generator can create terrain that looks varied without requiring a recipe entry for every cell.
+El generador puede crear terrenos con apariencia variada sin necesidad de introducir una receta para cada celda.
 
-This criterion is met by weighted palettes, deterministic scatter, and reusable cell patterns. Richer nested and shape-based composition belongs in Phase 8 rather than extending this foundation phase indefinitely.
+Este criterio se cumple con paletas ponderadas, dispersión determinista y patrones de celdas reutilizables. La composición más rica, anidada y basada en formas, corresponde a la Fase 8, en lugar de extender esta fase fundamental indefinidamente.
 
-## Phase 4C — Vertical levels and 3D placement foundations
+## Fase 4C — Niveles verticales y cimentaciones para la colocación en 3D
 
-**Status: complete**
+**Estado: completado**
 
-Dimensionfall maps already contain 21 level arrays. Level-array index `10` is logical elevation `0`, with valid logical elevations from `-10` through `+10`:
+Los mapas de Dimensionfall ya contienen 21 matrices de niveles. Índice de la matriz de niveles. `10` es una elevación lógica `0`, con elevaciones lógicas válidas desde `-10` a través de `+10`:
 
 ```text
 level-array index = logical z + 10
 logical z = level-array index - 10
 ```
 
-Existing maps use this structure for hills, holes, craters, underground locations, and multi-story buildings. The generator needs a shared vertical-coordinate contract before features, rooms, buildings, and templates are added.
+Los mapas existentes utilizan esta estructura para colinas, agujeros, cráteres, ubicaciones subterráneas y edificios de varios pisos. El generador necesita un contrato de coordenadas verticales compartidas antes de que se puedan agregar elementos, habitaciones, edificios y plantillas.
 
-Goals:
+Objetivos:
 
-* add recipe-level logical `z` coordinates while preserving top-down `[x, y]` coordinates;
-* default omitted `z` to `0` so existing recipes remain compatible;
-* support multiple populated level arrays;
-* allow every placement operation and pattern invocation to target a logical level;
-* investigate a per-level recipe structure for substantial multi-level maps;
-* define per-level base-tile and empty-level behavior;
-* map logical elevations `-10` through `+10` to level-array indices `0` through `20`;
-* preserve exactly 1024 entries in every populated level and `[]` for unused levels;
-* define deterministic operation and RNG ordering across levels;
-* validate horizontal bounds, vertical bounds, duplicate level definitions, and complete pattern expansion;
-* investigate slope, stair, support, collision, and traversal semantics before enforcing gameplay rules.
+* agregar lógica a nivel de receta `z` coordenadas manteniendo el enfoque de arriba hacia abajo `[x, y]` coordenadas;
+* valor predeterminado omitido `z` a `0` para que las recetas existentes sigan siendo compatibles;
+* admite múltiples matrices de niveles pobladas;
+* permitir que cada operación de colocación e invocación de patrón se dirija a un nivel lógico;
+* investigar una estructura de recetas por nivel para mapas multinivel sustanciales;
+* definir el comportamiento de los niveles base y vacíos por nivel;
+* Mapa de elevaciones lógicas `-10` a través de `+10` a índices de matriz de nivel `0` a través de `20`;
+* conservar exactamente 1024 entradas en cada nivel poblado y `[]` para niveles no utilizados;
+* definir el funcionamiento determinista y el ordenamiento del generador de números aleatorios en todos los niveles;
+* Validar los límites horizontales, los límites verticales, las definiciones de niveles duplicados y completar la expansión del patrón;
+* Investigar la semántica de pendientes, escaleras, soportes, colisiones y recorridos antes de aplicar las reglas del juego.
 
-Delivered:
+Entregado:
 
-* logical `z` validation from `-10` through `+10` and conversion to the fixed 21 level-array indices;
-* backwards-compatible root placement where omitted `z` remains logical level `0`;
-* optional `z` on legacy regions and every root placement operation, including pattern invocation;
-* strict grouped `levels` definitions with unique `z`, optional per-level base tiles, regions, and operations;
-* rejection of ambiguous mixing between grouped levels and root `base_tile`, `regions`, or `operations`;
-* declaration-order RNG consumption across grouped levels and existing region-before-operation ordering within each level;
-* automatic preservation of all-empty levels as `[]` and exactly 1024 entries for every populated level;
-* independent validator enforcement of exactly 21 level arrays;
-* maintained two-level hill and depression recipes using known `shape: "slope"` transition tiles;
-* focused tests for vertical bounds, compatibility, every placement type, deterministic ordering, malformed schemas, exact level shape, and slope endpoint support;
-* focused GUT tests for editor-to-runtime slope conversion and matching mesh, collider, and navigation-source high edges;
-* robust convex slope-collider construction that initializes the shape before assigning it to a collision node;
-* an explicit `navigation_mesh_baked` completion signal for deterministic asynchronous verification;
-* safe handling of stale asynchronous bake callbacks when a chunk has already begun unloading;
-* focused Godot integration coverage that bakes one chunk navigation map and verifies low-to-high and high-to-low paths for every slope orientation;
-* manual player-controller verification on the maintained two-level hill and depression maps, covering all four slope orientations in both directions without traversal or invisible-collision problems.
+* lógico `z` validación de `-10` a través de `+10` y conversión a los índices fijos de la matriz de niveles 21;
+* ubicación raíz compatible con versiones anteriores donde se omitió `z` permanece a nivel lógico `0`;
+* opcional `z` en regiones heredadas y en cada operación de ubicación raíz, incluida la invocación de patrones;
+* agrupado estricto `levels` definiciones con características únicas `z`, losetas base, regiones y operaciones opcionales por nivel;
+* rechazo de la mezcla ambigua entre niveles agrupados y raíz `base_tile`, `regions`, o `operations`;
+* Consumo de RNG en orden de declaración a través de niveles agrupados y ordenación regional previa a la operación existente dentro de cada nivel;
+* preservación automática de todos los niveles vacíos como `[]` y exactamente 1024 entradas por cada nivel poblado;
+* Aplicación de validación independiente de matrices de exactamente 21 niveles;
+* Mantuvieron recetas de colinas y depresiones de dos niveles utilizando recetas conocidas `shape: "slope"` baldosas de transición;
+* Pruebas específicas para límites verticales, compatibilidad, todos los tipos de ubicación, ordenación determinista, esquemas mal formados, forma exacta del nivel y compatibilidad con puntos finales de pendiente;
+* Pruebas GUT específicas para la conversión de pendientes del editor al tiempo de ejecución y la coincidencia de bordes altos de malla, colisionador y fuente de navegación;
+* Construcción robusta de colisionador de pendiente convexa que inicializa la forma antes de asignarla a un nodo de colisión;
+* un explícito `navigation_mesh_baked` señal de finalización para verificación asíncrona determinista;
+* Manejo seguro de las devoluciones de llamada de horneado asíncronas obsoletas cuando un fragmento ya ha comenzado a descargarse;
+* Cobertura de integración de Godot enfocada que genera un mapa de navegación de un fragmento y verifica las rutas de baja a alta y de alta a baja para cada orientación de pendiente;
+* Verificación manual del controlador del jugador en los mapas de colinas y depresiones de dos niveles mantenidos, que cubren las cuatro orientaciones de la pendiente en ambas direcciones sin problemas de desplazamiento o colisiones invisibles.
 
-Recommended compatibility form for individual placement:
+Formulario de compatibilidad recomendado para la colocación individual:
 
 ```json
 {
@@ -475,7 +475,7 @@ Recommended compatibility form for individual placement:
 }
 ```
 
-For larger recipes, prefer grouping content by logical level rather than repeating `z` on every operation:
+Para recetas más largas, es preferible agrupar el contenido por nivel lógico en lugar de repetirlo. `z` en cada operación:
 
 ```json
 {
@@ -493,64 +493,64 @@ For larger recipes, prefer grouping content by logical level rather than repeati
 }
 ```
 
-Legacy root-level `base_tile`, `regions`, and `operations` cannot coexist with grouped `levels`. The generator rejects that ambiguous layout instead of inventing merge or overwrite ordering.
+Nivel raíz heredado `base_tile`, `regions`, y `operations` no pueden coexistir con grupos `levels`El generador rechaza ese diseño ambiguo en lugar de inventar un ordenamiento de fusión o sobrescritura.
 
-Initial structural validation:
+Validación estructural inicial:
 
-* `z` is an integer from `-10` through `+10`;
-* converted level indices remain within `0` through `20`;
-* the output always contains exactly 21 level arrays;
-* every populated level contains exactly 1024 row-major tile entries;
-* unused levels remain `[]`;
-* every operation and expanded pattern remains horizontally and vertically in bounds;
-* duplicate or ambiguous per-level definitions are rejected;
-* identical recipes and seeds produce identical output across every populated level.
+* `z` es un número entero de `-10` a través de `+10`;
+* Los índices de nivel convertidos permanecen dentro `0` a través de `20`;
+* La salida siempre contiene exactamente matrices de 21 niveles;
+* Cada nivel poblado contiene exactamente 1024 entradas de casillas con orden de fila principal;
+* Los niveles no utilizados permanecen `[]`;
+* Cada operación y patrón expandido permanece dentro de los límites tanto horizontal como verticalmente;
+* Se rechazan las definiciones duplicadas o ambiguas por nivel;
+* Las mismas recetas y semillas producen resultados idénticos en todos los niveles poblados.
 
-Runtime investigation established:
+Se ha establecido una investigación en tiempo de ejecución:
 
-* `Chunk.create_block_position_dictionary_new_arraymesh()` maps level-array index `i` to world height `i - 10`;
-* tiles with `shape: "slope"` generate sloped mesh, collision, and navigation geometry within one vertical block;
-* recipe and map-editor slope rotation selects the high edge: `0` north, `90` east, `180` south, and `270` west;
-* `Chunk.get_block_rotation()` converts those newly loaded slope values before mesh, collision, and navigation code uses its internal orientation, so recipes must preserve the editor-facing values rather than pre-converting them;
-* existing hills, holes, and buildings place slope tiles on the upper of the two connected logical levels;
-* the maintained examples can therefore validate occupied high-side and lower-level low-side endpoints without inventing a broader support model.
-* focused GUT coverage confirms all four editor rotations produce matching high edges in rendered mesh vertices, convex collision geometry, and navigation-source faces.
-* the real asynchronous navigation bake synchronizes all four transition orientations into a chunk navigation map, with queryable paths in both directions between lower and upper surfaces.
-* manual playtesting of the generated hill and depression confirms that the player controller can walk up and down every slope orientation without problems.
+* `Chunk.create_block_position_dictionary_new_arraymesh()` índice de matriz de niveles de mapas `i` a la altura mundial `i - 10`;
+* baldosas con `shape: "slope"` Generar malla inclinada, geometría de colisión y navegación dentro de un bloque vertical;
+* La rotación de pendiente de la receta y del editor de mapas selecciona el borde más alto: `0` norte, `90` este, `180` sur y `270` Oeste;
+* `Chunk.get_block_rotation()` convierte esos valores de pendiente recién cargados antes de que el código de malla, colisión y navegación utilice su orientación interna, por lo que las recetas deben conservar los valores visibles para el editor en lugar de convertirlos previamente;
+* Las colinas, agujeros y edificios existentes colocan baldosas de pendiente en el nivel lógico superior de los dos niveles conectados;
+* Por lo tanto, los ejemplos mantenidos pueden validar los puntos finales ocupados de alto nivel y de bajo nivel sin necesidad de inventar un modelo de soporte más amplio.
+* La cobertura específica de GUT confirma que las cuatro rotaciones del editor producen bordes altos coincidentes en los vértices de la malla renderizada, la geometría de colisión convexa y las caras de origen de navegación.
+* El proceso de navegación asíncrona real sincroniza las cuatro orientaciones de transición en un mapa de navegación por fragmentos, con rutas consultables en ambas direcciones entre las superficies inferior y superior.
+* Las pruebas manuales realizadas en la colina y la depresión generadas confirman que el controlador del jugador puede subir y bajar por cualquier pendiente sin problemas.
 
-Later phases must determine broader structure-specific rules as their schemas are introduced:
+Las fases posteriores deben determinar reglas más amplias específicas de la estructura a medida que se introducen sus esquemas:
 
-* whether transitions require corresponding tiles on both levels;
-* how floors, walls, roofs, ceilings, and intentional air gaps occupy stacked levels;
-* whether support is determined by tile presence, collision shape, or another runtime rule;
-* which broader transition, support, and reachability checks belong in Python, Godot unit tests, or later gameplay validation.
+* si las transiciones requieren baldosas correspondientes en ambos niveles;
+* cómo los pisos, las paredes, los techos, los cielorrasos y los espacios de aire intencionales ocupan niveles apilados;
+* ya sea que el soporte esté determinado por la presencia de baldosas, la forma de colisión u otra regla de tiempo de ejecución;
+* Determina qué comprobaciones más amplias de transición, soporte y accesibilidad deben realizarse en Python, en las pruebas unitarias de Godot o en la validación posterior del juego.
 
-Reference fixtures should include existing hills, depressions, deep craters, buildings, and underground maps such as `field_grass_hill_00`, `field_grass_hole_00`, `crater_small`, `two_story_house`, and `underground_lab`.
+Los elementos de referencia deben incluir colinas existentes, depresiones, cráteres profundos, edificios y mapas subterráneos como `field_grass_hill_00`, `field_grass_hole_00`, `crater_small`, `two_story_house`, y `underground_lab`.
 
-### Success criterion
+### Criterio de éxito
 
-Generate and validate one two-level hill and one two-level depression from recipes. Each map has correctly sized populated levels, preserves unused levels as `[]`, uses valid transition tiles, loads in Godot, and permits runtime traversal between generated elevations.
+Genera y valida una colina de dos niveles y una depresión de dos niveles a partir de recetas. Cada mapa tiene niveles poblados del tamaño correcto y conserva los niveles no utilizados como `[]`Utiliza teselas de transición válidas, se carga en Godot y permite el recorrido en tiempo de ejecución entre elevaciones generadas.
 
-This success criterion is met. The maintained recipes generate valid two-level maps, deterministic Godot tests cover mesh, collision, navigation-source geometry, and asynchronously baked bidirectional paths, and manual playtesting confirms that the real player controller traverses all four slope orientations in both directions without problems.
+Se cumple este criterio de éxito. Las recetas mantenidas generan mapas válidos de dos niveles, las pruebas deterministas de Godot cubren la malla, la colisión, la geometría de la fuente de navegación y las rutas bidireccionales generadas asíncronamente, y las pruebas de juego manuales confirman que el controlador del jugador real recorre las cuatro orientaciones de la pendiente en ambas direcciones sin problemas.
 
-## Phase 5 — Features and furniture
+## Fase 5: Características y mobiliario
 
-**Status: complete**
+**Estado: completado**
 
-This is where generated maps start becoming playable rather than merely visual.
+Aquí es donde los mapas generados comienzan a ser jugables en lugar de meramente visuales.
 
-Schema investigation established:
+Investigación del esquema establecida:
 
-* newly generated furniture is stored as one `feature` dictionary embedded directly in a non-empty terrain tile, not in a separate map-level object array;
-* the serialized feature uses `type: "furniture"`, a furniture `id`, an editor-facing quarter-turn `rotation`, and optional `itemgroups`;
-* no state or mode field is present in authored map features; blueprint `mode` appears only in saved runtime furniture data;
-* logical height is inherited from the containing level-array index, and `Chunk.process_level_data()` converts index `i` to world height `i - 10`;
-* runtime furniture data chooses the static or physics spawner from the referenced furniture definition's `moveable` property;
-* furniture IDs come from the merged furniture definitions; the generator validates against the selected `Furniture.json` database for this initial core-mod workflow;
-* the map editor permits only one feature dictionary per terrain cell and writes an empty `itemgroups` array when no container contents are selected;
-* existing map data does not encode a general multi-tile footprint or adjacent-level occupancy contract, so neither is inferred in this first slice.
+* Los muebles recién generados se almacenan como uno `feature` Diccionario incrustado directamente en una casilla de terreno no vacía, no en una matriz de objetos separada a nivel de mapa;
+* La función serializada utiliza `type: "furniture"`, un mueble `id`, un cuarto de vuelta frente al editor `rotation`y opcional `itemgroups`;
+* No hay ningún campo de estado o modo presente en las características del mapa creado; plano `mode` aparece únicamente en los datos de mobiliario guardados durante la ejecución;
+* La altura lógica se hereda del índice de la matriz de niveles que la contiene, y `Chunk.process_level_data()` convierte índice `i` a la altura mundial `i - 10`;
+* Los datos de mobiliario en tiempo de ejecución eligen el generador estático o físico de la definición de mobiliario referenciada. `moveable` propiedad;
+* Los identificadores de muebles provienen de las definiciones de muebles fusionadas; el generador valida contra la selección. `Furniture.json` base de datos para este flujo de trabajo inicial de modificación del núcleo;
+* El editor de mapas permite solo un diccionario de características por celda de terreno y escribe un archivo vacío. `itemgroups` matriz cuando no se ha seleccionado ningún contenido de contenedor;
+* Los datos cartográficos existentes no codifican una huella general de múltiples teselas ni un contrato de ocupación de niveles adyacentes, por lo que ninguno de los dos se infiere en esta primera sección.
 
-Delivered recipe concept:
+Concepto de receta entregada:
 
 ```json
 {
@@ -563,120 +563,120 @@ Delivered recipe concept:
 }
 ```
 
-Delivered:
+Entregado:
 
-* root-level furniture operations with optional logical `z`, defaulting to `0` consistently with existing operations;
-* grouped-level furniture operations that inherit the enclosing logical level and reject repeated nested `z`;
-* strict operation fields, horizontal and vertical bounds, known furniture-ID checks, and fixed quarter-turn rotation validation;
-* required supporting terrain on the target cell and rejection when that tile already has a feature;
-* explicit ordered behavior: a duplicate furniture placement conflicts, while a later terrain operation replaces the complete earlier tile and feature;
-* established map/editor serialization with `type`, `id`, `rotation`, and empty `itemgroups` when the recipe omits an override;
-* optional non-empty furniture-operation `itemgroups`, validated against `Itemgroups.json` and serialized as an authored container-loot override;
-* lazy furniture-database loading so terrain-only recipes remain compatible and do not require furniture data;
-* independent structural validator checks for furniture feature fields, ID shape, rotation, and itemgroup arrays;
-* a maintained `generated_furnished_clearing` recipe at logical `z: 0` using a garden bench, tree, and pine tree;
-* Python coverage for root and grouped logical levels, exact serialization, support and feature conflicts, operation ordering, strict validation, compatibility, and maintained-example output;
-* Godot coverage confirming `Chunk.process_level_data()` preserves the feature and derives the expected world height from its serialized logical level.
-* named weighted furniture palettes with strict known-ID, positive-weight, and editor-facing rotation validation;
-* bounded `furniture_scatter` operations that enumerate terrain-without-feature candidates in row-major order, sample them without replacement, select weighted furniture deterministically, and fail before placement when count exceeds eligibility;
-* an expanded furnished clearing with explicit garden bench, unlit campfire, and potted plant plus 24 conflict-aware tree, pine, willow, or burned-stump placements;
-* manual editor and `save and test` verification by the maintainer that all clearing features behave correctly, including the seeded placements and explicit features;
-* two new core static Nature furniture definitions: `rock_field_00` and `wild_vegetation_00`, using dedicated AI-generated 32×32 sprites `ai_rock_32_32.png` and `ai_vegetation_32_32.png` in the core furniture sprite directory;
-* maintained-example reference entries and a weighted groundcover scatter pass containing the new rock and vegetation IDs, giving the clearing trees, rocks, vegetation, and simple decorative/interactable objects without changing the feature schema.
+* Operaciones de mobiliario de nivel raíz con lógica opcional `z`, por defecto `0` en consonancia con las operaciones existentes;
+* operaciones de mobiliario de nivel agrupado que heredan el nivel lógico contenedor y rechazan anidamientos repetidos `z`;
+* Campos de operación estrictos, límites horizontales y verticales, comprobaciones de identificación de muebles conocidas y validación de rotación fija de un cuarto de vuelta;
+* Se requiere terreno de apoyo en la celda objetivo y rechazo cuando esa casilla ya tiene una característica;
+* Comportamiento ordenado explícito: la colocación duplicada de muebles entra en conflicto, mientras que una operación de terreno posterior reemplaza por completo la loseta y la característica anteriores;
+* serialización de mapa/editor establecida con `type`, `id`, `rotation`y vacío `itemgroups` cuando la receta omite una anulación;
+* funcionamiento opcional con muebles no vacíos `itemgroups`, validado contra `Itemgroups.json` y serializado como una anulación de botín de contenedor creada por el autor;
+* Carga diferida de la base de datos de muebles para que las recetas que solo utilizan terreno sigan siendo compatibles y no requieran datos de muebles;
+* El validador estructural independiente comprueba los campos de características del mueble, la forma del ID, la rotación y las matrices de grupos de elementos;
+* un mantenido `generated_furnished_clearing` receta en lógica `z: 0` utilizando un banco de jardín, un árbol y un pino;
+* Cobertura de Python para los niveles lógicos raíz y agrupados, serialización exacta, conflictos de soporte y características, orden de operaciones, validación estricta, compatibilidad y salida de ejemplos mantenidos;
+* La cobertura de Godot lo confirma `Chunk.process_level_data()` conserva la característica y deriva la altura mundial esperada a partir de su nivel lógico serializado.
+* Paletas de muebles ponderadas con nombre, con estricta validación de rotación basada en ID conocido, peso positivo y visible para el editor;
+* encerrado `furniture_scatter` operaciones que enumeran candidatos de terreno sin características en orden de fila principal, los muestrean sin reemplazo, seleccionan mobiliario ponderado de forma determinista y fallan antes de la colocación cuando el recuento excede la elegibilidad;
+* un claro amueblado ampliado con un banco de jardín explícito, una fogata sin encender y una planta en maceta, además de 24 ubicaciones de árboles, pinos, sauces o tocones quemados que tienen en cuenta el conflicto;
+* editor manual y `save and test` Verificación por parte del responsable del mantenimiento de que todas las funciones de limpieza se comportan correctamente, incluidas las ubicaciones predefinidas y las funciones explícitas;
+* Dos nuevas definiciones básicas de mobiliario estático Nature: `rock_field_00` y `wild_vegetation_00`, utilizando sprites de 32×32 generados por IA específicos `ai_rock_32_32.png` y `ai_vegetation_32_32.png` en el directorio principal de sprites de muebles;
+* entradas de referencia de ejemplo mantenidas y un pase de dispersión de cobertura del suelo ponderado que contiene los nuevos ID de rocas y vegetación, lo que proporciona al claro árboles, rocas, vegetación y objetos decorativos/interactivos simples sin cambiar el esquema de características.
 
-Final verification:
+Verificación final:
 
-* the temporary art was replaced with dedicated AI-generated sprites `ai_rock_32_32.png` and `ai_vegetation_32_32.png`;
-* the maintainer regenerated `generated_furnished_clearing`, inspected it in the editor with `save and test`, and confirmed that both rock and wild-vegetation furniture spawn without issues;
-* the generated clearing therefore meets this phase's outdoor-composition success criterion with trees, rocks, vegetation, and simple decorative/interactable objects.
+* El arte temporal fue reemplazado por sprites generados por IA. `ai_rock_32_32.png` y `ai_vegetation_32_32.png`;
+* El mantenedor se regeneró `generated_furnished_clearing`, lo inspeccioné en el editor con `save and test`y confirmaron que tanto los muebles de roca como los de vegetación silvestre se reproducen sin problemas;
+* Por lo tanto, el claro generado cumple con el criterio de éxito de composición al aire libre de esta fase, al contar con árboles, rocas, vegetación y objetos decorativos/interactivos sencillos.
 
-### Success criterion
+### Criterio de éxito
 
-Generate an outdoor map with trees, rocks, vegetation, and simple interactable or decorative objects. The first example may remain at `z: 0`, but the feature schema and validation must support explicit logical levels from its first version.
+Genera un mapa exterior con árboles, rocas, vegetación y objetos simples interactivos o decorativos. El primer ejemplo puede permanecer en `z: 0`, pero el esquema de características y la validación deben admitir niveles lógicos explícitos desde su primera versión.
 
-## Phase 6 — Areas, rooms, and buildings
+## Fase 6: Áreas, habitaciones y edificios
 
-**Status: complete; authored area/room/building foundations and a physically generated, enterable multi-level building slice complete**
+**Estado: completado; se han completado los cimientos del área/habitación/edificio y una sección de edificio multinivel generada físicamente y accesible.**
 
-The generator needs semantic areas before it can create convincing buildings.
+El generador necesita áreas semánticas antes de poder crear edificios convincentes.
 
-### Completed foundation
+### Cimientos terminados
 
-The established map contract was inspected before extending the generator:
+El contrato de mapas establecido fue inspeccionado antes de extender el generador:
 
-* `DMap` serializes area definitions in the map-level `areas` array;
-* the map editor stores spatial membership in each terrain tile as an `areas` array of `{ "id", "rotation" }` references;
-* `Helper.map_manager.process_areas_in_map()` selects a definition by `spawn_chance` and applies it to connected tile-membership clusters on every populated level;
-* distinct area IDs may overlap on one tile, matching editor/runtime behavior; a duplicate reference to the same area ID is rejected by the recipe generator;
-* memberships do not introduce a new parallel map representation and do not replace terrain or features.
+* `DMap` serializa las definiciones de área en el nivel del mapa. `areas` formación;
+* El editor de mapas almacena la pertenencia espacial en cada mosaico de terreno como un `areas` variedad de `{ "id", "rotation" }` referencias;
+* `Helper.map_manager.process_areas_in_map()` selecciona una definición por `spawn_chance` y lo aplica a los grupos de pertenencia a mosaicos conectados en cada nivel poblado;
+* Los identificadores de área distintos pueden superponerse en una misma casilla, lo que coincide con el comportamiento del editor/tiempo de ejecución; el generador de recetas rechaza una referencia duplicada al mismo identificador de área;
+* Las membresías no introducen una nueva representación cartográfica paralela ni reemplazan el terreno ni las características del terreno.
 
-The recipe generator now supports strict root `areas` definitions plus an `area_rectangle` operation. The operation uses existing logical-level rules: root operations default to `z: 0`, can target `-10` through `10`, and grouped operations inherit their containing level. It requires supporting terrain, validates its named area, uses only editor-facing quarter-turn rotations, and serializes the existing runtime/editor tile membership object.
+El generador de recetas ahora admite raíz estricta. `areas` definiciones más un `area_rectangle` operación. La operación utiliza reglas de nivel lógico existentes: las operaciones raíz por defecto son `z: 0`, puede apuntar `-10` a través de `10`y las operaciones agrupadas heredan su nivel contenedor. Requiere terreno de soporte, valida su área nombrada, utiliza solo rotaciones de cuarto de vuelta orientadas hacia el editor y serializa el objeto de pertenencia de mosaico de tiempo de ejecución/editor existente.
 
-`Tools/examples/map_recipe_area_meadow.json` is the maintained evidence: a deterministic `12×12` `meadow_clearing` membership rectangle from `[10, 10]` through `[21, 21]` at `z: 0`, with a 100-percent runtime rule that applies `grass_dirt_00`. Python coverage verifies level placement, malformed references, duplicate memberships, unsupported cells, maintained-example bounds, and validator shape/rotation checks.
+`Tools/examples/map_recipe_area_meadow.json` es la evidencia mantenida: un determinista `12×12` `meadow_clearing` rectángulo de membresía de `[10, 10]` a través de `[21, 21]` en `z: 0`, con una regla de tiempo de ejecución del 100 por ciento que se aplica `grass_dirt_00`La cobertura de Python verifica la ubicación de niveles, las referencias mal formadas, las membresías duplicadas, las celdas no compatibles, los límites de los ejemplos mantenidos y las comprobaciones de forma/rotación del validador.
 
-The area entity contract is now strict and catalog-aware. Recipes may use the existing runtime entity types `furniture`, `mob`, `mobgroup`, and `itemgroup`; each record must have a known catalog ID and a positive integer weight. Entity selection deliberately remains runtime-owned: `map_manager` appends its implicit no-spawn weight and selects a new outcome for every membership tile when the map is instanced. This keeps area fields unique between runs, unlike deterministic `furniture_scatter`, which pre-writes the same seeded feature positions into generated JSON. `Tools/examples/map_recipe_area_entity_clearing.json` is the maintained evidence: its 12×12 `stump_clearing` boundary has no pre-baked features, then independently rolls `burned_tree_stump` features at runtime. Focused GUT coverage proves membership rotation is retained for the spawned furniture structure and runtime processing reaches serialized level `11` (logical `z: +1`).
+El contrato de entidad de área ahora es estricto y tiene en cuenta el catálogo. Las recetas pueden usar los tipos de entidad de tiempo de ejecución existentes. `furniture`, `mob`, `mobgroup`, y `itemgroup`Cada registro debe tener un ID de catálogo conocido y un peso entero positivo. La selección de entidades permanece deliberadamente bajo control del tiempo de ejecución: `map_manager` agrega su peso implícito de no aparición y selecciona un nuevo resultado para cada casilla de membresía cuando se instancia el mapa. Esto mantiene los campos de área únicos entre ejecuciones, a diferencia de los deterministas. `furniture_scatter`, que preescribe las mismas posiciones de características predefinidas en el JSON generado. `Tools/examples/map_recipe_area_entity_clearing.json` es la evidencia mantenida: su 12×12 `stump_clearing` El límite no tiene características prehorneadas, luego se enrolla de forma independiente. `burned_tree_stump` características en tiempo de ejecución. La cobertura GUT enfocada demuestra que la rotación de miembros se conserva para la estructura de muebles generada y el procesamiento en tiempo de ejecución alcanza un nivel serializado. `11` (lógico `z: +1`).
 
-Authored room semantics use a separate map-level `rooms` array plus exclusive tile-local `rooms: ["id"]` membership. Each definition has a stable authored ID and exactly one semantic kind: `enclosed`, `covered_open`, or `ruin`. These labels are deliberately independent from floor material and runtime `areas`: one wood or concrete floor can span several rooms, a roofed garage can be `covered_open`, and a ruined room remains a room despite intended wall gaps. `Tools/examples/map_recipe_room_semantics.json` is the maintained evidence and puts adjacent `office` and `garage_bay` labels on the same `concrete_00` material.
+La semántica de la sala de autoría utiliza un nivel de mapa separado `rooms` conjunto más azulejos exclusivos locales `rooms: ["id"]` membresía. Cada definición tiene un ID de autor estable y exactamente un tipo semántico: `enclosed`, `covered_open`, o `ruin`Estas etiquetas son deliberadamente independientes del material del suelo y del tiempo de ejecución. `areas`: un piso de madera o concreto puede abarcar varias habitaciones, un garaje techado puede ser `covered_open`y una habitación en ruinas sigue siendo una habitación a pesar de los huecos previstos en las paredes. `Tools/examples/map_recipe_room_semantics.json` es la evidencia mantenida y coloca adyacente `office` y `garage_bay` etiquetas en el mismo `concrete_00` material.
 
-`room_connections` adds explicit authored door intent without topology inference. Each root connection names a unique `id`, an `[x, y]` coordinate, required logical `z`, and two distinct endpoints: a known room or `exterior`. An optional `target_at` may name the physical door-furniture tile separately from the authored `at` coordinate, decoupling the room-edge anchor from the door tile. The target must be an existing terrain tile with catalog-recognized door-capable furniture; current evidence uses the runtime-native `door_wood` feature. This covers both room-to-exterior and room-to-room doors while preserving existing door opening, collision, and rotation behavior. `Tools/examples/map_recipe_room_connections.json` carries both cases. The generator and independent validator reject malformed endpoints, unknown rooms, duplicate door targets, or non-door targets; `DMap` preserves valid connections and removes links that name deleted rooms.
+`room_connections` agrega intención de puerta de autor explícita sin inferencia de topología. Cada conexión raíz nombra una única `id`, un `[x, y]` coordinar, lógica requerida `z`y dos puntos finales distintos: una habitación conocida o `exterior`. Una opción `target_at` puede nombrar la pieza física del herraje de la puerta por separado de la pieza de autor. `at` coordina, desacoplando el anclaje del borde de la habitación de la casilla de la puerta. El objetivo debe ser una casilla de terreno existente con muebles con capacidad de puerta reconocidos por el catálogo; la evidencia actual utiliza el nativo del tiempo de ejecución `door_wood` Esta función abarca tanto las puertas que dan al exterior como las que conectan las habitaciones entre sí, manteniendo el comportamiento existente de apertura, colisión y rotación de las puertas. `Tools/examples/map_recipe_room_connections.json` abarca ambos casos. El generador y el validador independiente rechazan los puntos finales mal formados, las habitaciones desconocidas, los objetivos de puerta duplicados o los objetivos que no son puertas; `DMap` Conserva las conexiones válidas y elimina los enlaces que hacen referencia a salas eliminadas.
 
-`room_boundaries` provides the explicit compatibility path for authored physical evidence without generating a building perimeter. Each record identifies one room, exact `[x, y, z]`, and either `wall_tile` or `door_furniture`; a directional `side` may identify its cardinal edge. Optional `target_at` and `room_at` fields may name the physical wall/door tile and the room-membership tile explicitly, so an authored boundary can reference a wall tile that is not the room tile itself. Wall records use the room's logical z while their existing `Wall`-category tile is materialized one level above it, with implicit dirt support at z0; door records point outward from their existing door-capable furniture tile and require a same-location `room_connections` endpoint naming the room. A room cannot duplicate a target, but one wall tile can be declared for different rooms. `Tools/examples/map_recipe_room_boundaries.json` demonstrates a complete opt-in `office` enclosure with eleven `brick_wall_00` segments and one existing `door_wood` opening, while retaining deliberately partial `covered_open` garage and `ruin` records.
+`room_boundaries` Proporciona la ruta de compatibilidad explícita para la evidencia física creada sin generar un perímetro del edificio. Cada registro identifica una habitación, exacta `[x, y, z]`y o bien `wall_tile` o `door_furniture`; una dirección `side` puede identificar su borde cardinal. Opcional `target_at` y `room_at` Los campos pueden nombrar explícitamente la baldosa de pared/puerta física y la baldosa de pertenencia a la habitación, por lo que un límite creado puede hacer referencia a una baldosa de pared que no sea la baldosa de la habitación en sí. Los registros de pared usan la z lógica de la habitación mientras que su existente `Wall`-La casilla de categoría se materializa un nivel por encima de ella, con soporte de suciedad implícito en z0; los registros de puertas apuntan hacia afuera desde su casilla de muebles con capacidad de puerta existente y requieren una misma ubicación. `room_connections` El punto final nombra la habitación. Una habitación no puede duplicar un objetivo, pero una misma baldosa de pared puede declararse para diferentes habitaciones. `Tools/examples/map_recipe_room_boundaries.json` demuestra una aceptación total `office` recinto con once `brick_wall_00` segmentos y uno existente `door_wood` apertura, mientras se mantiene deliberadamente parcial `covered_open` garaje y `ruin` archivos.
 
-An `enclosed` room may add `boundary_validation: "complete"`. Only this opt-in mode requires directional evidence and validates every exposed cardinal edge of every room-membership tile: exactly one wall or connected-door boundary must map to each edge. Missing, incorrectly oriented, duplicate, and non-exposed declarations are rejected. `covered_open` and `ruin` cannot opt in, so their intentional openings and damage remain valid without blanket enclosure requirements.
+Un `enclosed` La habitación puede añadir `boundary_validation: "complete"`Únicamente este modo de participación requiere evidencia direccional y valida cada borde cardinal expuesto de cada casilla de pertenencia a la habitación: exactamente un límite de pared o puerta conectada debe corresponder a cada borde. Se rechazan las declaraciones faltantes, mal orientadas, duplicadas o no expuestas. `covered_open` y `ruin` No pueden optar por participar, por lo que sus aperturas y daños intencionados siguen siendo válidos sin requisitos de cierre general.
 
-The generator, standalone map validator, and `DMap` save/load path validate or preserve definitions and references. A first `buildings` root field groups existing room content under one explicit, data-only rectangular footprint at one logical z. Each record names a nonempty set of known rooms, requires every owned membership, boundary target, and named door-connection target to sit inside its bounds, disallows same-level overlap, and requires at least one owned `enclosed` room with complete boundary validation. `Tools/examples/map_recipe_single_level_building.json` provides a 4×4 `office_building` containing the already-proven office, its eleven wall tiles, and exterior door. The footprint does not generate or modify geometry, furniture, roofs, collision, navigation, lighting, weather, or indoor state; it only gives authored validated evidence a first building-level grouping.
+El generador, validador de mapas independiente y `DMap` Ruta de guardado/carga, validar o conservar definiciones y referencias. Una primera `buildings` El campo raíz agrupa el contenido de la habitación existente bajo una huella rectangular explícita, solo de datos, en una z lógica. Cada registro nombra un conjunto no vacío de habitaciones conocidas, requiere que cada membresía de propiedad, objetivo de límite y objetivo de conexión de puerta nombrado se encuentre dentro de sus límites, no permite superposición del mismo nivel y requiere al menos una propiedad `enclosed` habitación con validación completa de los límites. `Tools/examples/map_recipe_single_level_building.json` proporciona una tracción 4x4 `office_building` Contiene la oficina ya probada, sus once azulejos de pared y la puerta exterior. La huella no genera ni modifica la geometría, el mobiliario, los techos, las colisiones, la navegación, la iluminación, el clima ni el estado interior; solo proporciona evidencia validada por el autor para una primera agrupación a nivel de edificio.
 
-`building_surfaces` now adds one narrow overhead semantic layer to that validated footprint. Each root record has a unique `id`, names one existing `building`, declares `kind` as `roof` or `ceiling`, and declares the immediately overhead logical level (`building.z + 1`). One building may carry one authored record of each kind; the records inherit the building rectangle rather than duplicate per-cell geometry. `Tools/examples/map_recipe_building_surfaces.json` demonstrates both classifications over `office_building` at `z: 1`. These records do not generate roof/ceiling tiles or meshes, mark any cell occupied or indoors, imply support/collision, or alter lighting, weather, or runtime behavior.
+`building_surfaces` Ahora agrega una capa semántica de sobrecarga estrecha a esa huella validada. Cada registro raíz tiene un único `id`, nombra uno existente `building`, declara `kind` como `roof` o `ceiling`y declara el nivel lógico inmediatamente superior (`building.z + 1`). Un edificio puede contener un registro de autor de cada tipo; los registros heredan el rectángulo del edificio en lugar de duplicar la geometría por celda. `Tools/examples/map_recipe_building_surfaces.json` demuestra ambas clasificaciones sobre `office_building` en `z: 1`Estos registros no generan tejas ni mallas de techo/cielo, no marcan ninguna celda como ocupada o interior, no implican soporte/colisión ni alteran la iluminación, el clima o el comportamiento en tiempo de ejecución.
 
-`building_compositions` adds an opt-in cross-record constraint over the existing building and surface metadata. Each record has a unique `id`, names one existing `building`, and lists one or both required surface kinds (`roof`, `ceiling`); each named kind must already have a matching authored `building_surfaces` record. A building has at most one composition, while buildings without compositions remain valid. The maintained building-surfaces example asserts that `office_building` requires both its roof and ceiling classifications. This verifies authored consistency only: it creates no geometry, coverage, occupancy, support, indoor state, or runtime behavior.
+`building_compositions` agrega una restricción de registro cruzado opcional sobre los metadatos existentes de edificios y superficies. Cada registro tiene un identificador único. `id`, nombra uno existente `building`y enumera uno o ambos tipos de superficie requeridos (`roof`, `ceiling`); cada tipo nombrado debe tener ya un autor correspondiente `building_surfaces` registro. Un edificio tiene como máximo una composición, mientras que los edificios sin composiciones siguen siendo válidos. El ejemplo de superficies de edificios mantenidas afirma que `office_building` Requiere clasificaciones tanto para el techo como para el cielo raso. Esto solo verifica la coherencia del diseño: no crea geometría, cobertura, ocupación, soporte, estado interior ni comportamiento en tiempo de ejecución.
 
-A building may now opt into `access_validation: "complete"`. Every owned room must reach `exterior` through same-z authored `room_connections`; exterior door links seed reachability and owned room-to-room links propagate it. Links to rooms outside the building do not satisfy the validation. `office_building` opts in through its existing `office_front_door` exterior link. The check validates authored semantic access only: it does not infer physical door adjacency, collision, navigation, or player traversal.
+Ahora un edificio puede optar por `access_validation: "complete"`Cada habitación propia debe alcanzar `exterior` a través de same-z autorizado `room_connections`Los enlaces a puertas exteriores generan accesibilidad y los enlaces entre habitaciones propias la propagan. Los enlaces a habitaciones fuera del edificio no cumplen con la validación. `office_building` opta por participar a través de su existente `office_front_door` Enlace externo. La comprobación valida únicamente el acceso semántico autorizado: no infiere la adyacencia de puertas físicas, colisiones, navegación ni el recorrido del jugador.
 
-A building may explicitly classify a nonempty subset of its owned rooms with `interior_rooms`. Every interior room must remain an authored `enclosed` room with complete boundary validation; `covered_open` and `ruin` cannot be interior. This metadata is never inferred from access, floor materials, wall/door placement, roof/ceiling records, or topology, and it adds no indoor runtime behavior. The maintained office building classifies its already-complete enclosed `office` as its interior room.
+Un edificio puede clasificar explícitamente un subconjunto no vacío de sus habitaciones de propiedad con `interior_rooms`Cada habitación interior debe seguir siendo un espacio de autor. `enclosed` habitación con validación completa de los límites; `covered_open` y `ruin` No puede ser interior. Estos metadatos nunca se infieren del acceso, los materiales del suelo, la ubicación de paredes/puertas, los registros de techos/cielos o la topología, y no añaden ningún comportamiento de ejecución en interiores. El edificio de oficinas mantenido clasifica su área cerrada ya completa. `office` como su habitación interior.
 
-A building may explicitly classify a nonempty subset of its owned rooms with `open_space_rooms`. Every named room must be `covered_open` or `ruin`, and it cannot overlap `interior_rooms`. The maintained building marks its covered-open `garage_bay` as open space. This metadata is never inferred from missing walls, exterior access, floor materials, roof/ceiling records, or topology, and it adds no geometry or runtime indoor/outdoor behavior.
+Un edificio puede clasificar explícitamente un subconjunto no vacío de sus habitaciones de propiedad con `open_space_rooms`Cada habitación nombrada debe ser `covered_open` o `ruin`y no puede superponerse `interior_rooms`El edificio bien conservado marca su apertura cubierta. `garage_bay` como espacio abierto. Estos metadatos nunca se infieren a partir de la falta de paredes, acceso exterior, materiales del suelo, registros de techos o cielorrasos, o topografía, y no añaden geometría ni comportamiento interior/exterior en tiempo de ejecución.
 
-An opted-in `room_partition_validation: "complete"` now requires every room owned by a building to be classified exactly once as either interior or open space. The maintained office/garage building demonstrates this complete partition. The rule validates authored labels only: it does not require all footprint cells to be room-labelled or add runtime indoor/outdoor behavior.
+Un participante voluntario `room_partition_validation: "complete"` Ahora se requiere que cada habitación de un edificio se clasifique exactamente una vez como interior o espacio abierto. El edificio de oficinas/garaje en mantenimiento muestra esta división completa. La regla solo valida las etiquetas creadas por el usuario: no requiere que todas las celdas de la superficie estén etiquetadas como habitaciones ni añade comportamiento interior/exterior en tiempo de ejecución.
 
-An opted-in `overhead_validation: "complete"` requires that a validated single-level building carry both authored `roof` and `ceiling` classifications at its immediately overhead logical z; for a multi-level building it requires a `floor` or `ceiling` at every declared occupied level above ground and a `roof` at the highest declared occupied level. This checks classification consistency only: it does not generate surfaces, assert physical coverage, mark cells occupied/indoors, or alter support, collision, lighting, weather, or runtime behavior.
+Un participante voluntario `overhead_validation: "complete"` requiere que un edificio de un solo nivel validado lleve ambos elementos de autoría `roof` y `ceiling` clasificaciones en su z lógica inmediatamente superior; para un edificio de varios niveles se requiere una `floor` o `ceiling` en cada nivel declarado ocupado sobre el suelo y un `roof` al nivel de ocupación más alto declarado. Esto solo verifica la coherencia de la clasificación: no genera superficies, no afirma la cobertura física, no marca celdas como ocupadas/interiores ni altera el soporte, la colisión, la iluminación, el clima o el comportamiento en tiempo de ejecución.
 
-`exterior_context` now names one existing room-free terrain tile at the building’s z directly outside and cardinally adjacent to its footprint. It is a data-only external reference point: it does not generate or reserve terrain, infer streets/yards, alter runtime areas, establish an entrance, or change runtime behavior. The maintained building names `[6, 8, 0]` west of its footprint.
+`exterior_context` Ahora nombra una casilla de terreno existente sin habitaciones en la coordenada z del edificio, directamente fuera y cardinalmente adyacente a su huella. Es un punto de referencia externo solo de datos: no genera ni reserva terreno, no infiere calles/patios, no altera las áreas de ejecución, no establece una entrada ni cambia el comportamiento de ejecución. Los nombres de edificios mantenidos `[6, 8, 0]` al oeste de su área de influencia.
 
-`exterior_access_context` now explicitly associates that context with one existing owned room-to-exterior connection at the same logical z. The maintained building names `office_front_door`. This validates authored semantic association only: it does not infer physical routes or door/context adjacency, create entrances, alter collision/navigation, or change runtime behavior.
+`exterior_access_context` Ahora asocia explícitamente ese contexto con una conexión existente de habitación a exterior en la misma z lógica. Los nombres de edificios mantenidos `office_front_door`Esto valida únicamente la asociación semántica definida por el autor: no infiere rutas físicas ni adyacencia de puertas/contexto, no crea entradas, no altera la colisión/navegación ni cambia el comportamiento en tiempo de ejecución.
 
-`entrance` now authors one data-only building-level entrance semantic. Each record has exactly `connection` and `facing`: `connection` names an existing same-z room-to-exterior connection owned by the building (the same contract as `exterior_access_context.connection`), and `facing` is one of `north`, `east`, `south`, or `west`. It requires `exterior_context` and, when `exterior_access_context` is also present, `entrance.connection` must match it. The `facing` direction must point from `exterior_context.at` toward the building footprint: stepping one cell in that direction from the context coordinate must land inside the footprint. The maintained building authors `office_front_door` facing `east`, matching its west-of-footprint exterior context. This validates authored entrance orientation only: it does not generate a door, infer a physical route, require coordinate adjacency between the context tile and the referenced door, or alter collision, navigation, lighting, weather, or runtime behavior.
+`entrance` ahora los autores crean una semántica de entrada a nivel de edificio solo de datos. Cada registro tiene exactamente `connection` y `facing`: `connection` nombra una conexión existente de habitación al exterior del mismo nivel Z propiedad del edificio (el mismo contrato que `exterior_access_context.connection`), y `facing` es uno de `north`, `east`, `south`, o `west`Requiere `exterior_context` y, cuando `exterior_access_context` también está presente, `entrance.connection` debe coincidir. El `facing` La dirección debe apuntar desde `exterior_context.at` hacia la huella del edificio: al avanzar una celda en esa dirección desde la coordenada de contexto, se debe aterrizar dentro de la huella. Los autores del edificio mantenido `office_front_door` frente a `east`, que coincide con su contexto exterior al oeste de la huella. Esto valida únicamente la orientación de entrada definida: no genera una puerta, no infiere una ruta física, no requiere adyacencia de coordenadas entre la casilla de contexto y la puerta referenciada, ni altera la colisión, la navegación, la iluminación, el clima o el comportamiento en tiempo de ejecución.
 
-`entrance_validation: "complete"` now opts a building into complete entrance orientation and approach validation. It requires `entrance` and then checks two authored constraints. First, the `room_boundaries` record with `element: "door_furniture"` at the entrance connection's `at` and `z`, naming a building-owned room, must have a `side` equal to the opposite of `entrance.facing`—the door opens toward the approaching direction. Second, `exterior_context.at` and the entrance connection's `at` must both fall within the footprint's perpendicular range, ensuring the approach path runs along the correct building side. The maintained building opts in; its `office_northwest_door` boundary at `[8, 8]` with `side: "west"` matches `entrance.facing: "east"`, and both the context Y (8) and door Y (8) fall within the footprint height (7–10). This validates authored orientation and alignment only: it does not generate or modify geometry, infer a walkable path, check collision or navigation, or alter runtime behavior.
+`entrance_validation: "complete"` Ahora opta por un edificio en la validación completa de la orientación y el acceso a la entrada. Requiere `entrance` y luego comprueba dos restricciones de autor. Primero, la `room_boundaries` registro con `element: "door_furniture"` en la conexión de entrada `at` y `z`, nombrando una habitación propiedad del edificio, debe tener una `side` igual a lo opuesto de `entrance.facing`—la puerta se abre hacia la dirección que se aproxima. Segundo, `exterior_context.at` y la conexión de entrada `at` ambos deben quedar dentro del rango perpendicular de la huella, asegurando que la ruta de acceso corra a lo largo del lado correcto del edificio. El edificio mantenido opta por participar; su `office_northwest_door` límite en `[8, 8]` con `side: "west"` partidos `entrance.facing: "east"`y tanto el contexto Y (8) como la puerta Y (8) se encuentran dentro de la altura de la huella (7–10). Esto valida únicamente la orientación y alineación definidas por el autor: no genera ni modifica la geometría, no infiere una ruta transitable, no comprueba colisiones ni navegación, ni altera el comportamiento en tiempo de ejecución.
 
-`entrances` now authors multiple data-only building-level entrance semantics as an alternative to the singular `entrance`. Each record is a non-empty array of `{ "id", "connection", "facing" }` entries following the same per-entrance contract as the singular form. `entrance` and `entrances` are mutually exclusive. Each `id` is unique within the building, and each `connection` may be referenced by at most one entrance. `entrances` requires `exterior_context`; when `exterior_access_context` is also present, its `connection` must match one of the entrance connections. The primary entrance is the one whose `connection` matches `exterior_access_context.connection`, or the first entry when `exterior_access_context` is absent. Only the primary entrance is checked against `exterior_context.at` for the facing-toward-footprint constraint; non-primary entrances are not checked against the context tile because a single context coordinate cannot serve multiple approach directions. `entrance_validation: "complete"` validates door orientation for every entrance and approach alignment for the primary entrance. `Tools/examples/map_recipe_multi_entrance_building.json` demonstrates the maintained office building with two entrances: `front_entrance` (office front door facing east) and `garage_entrance` (garage opening facing west), each with its own door-furniture boundary. This validates authored multi-entrance orientation and alignment only: it does not generate doors, infer physical routes, check collision or navigation, or alter runtime behavior.
+`entrances` ahora crea múltiples semánticas de entrada de nivel de edificio solo de datos como alternativa a la singular `entrance`Cada registro es una matriz no vacía de `{ "id", "connection", "facing" }` Las entradas siguen el mismo contrato por entrada que la forma singular. `entrance` y `entrances` son mutuamente excluyentes. Cada `id` es único dentro del edificio, y cada `connection` Puede ser referenciado por como máximo una entrada. `entrances` requiere `exterior_context`; cuando `exterior_access_context` también está presente, su `connection` debe coincidir con una de las conexiones de entrada. La entrada principal es aquella cuya `connection` partidos `exterior_access_context.connection`, o la primera entrada cuando `exterior_access_context` está ausente. Solo se comprueba la entrada principal. `exterior_context.at` para la restricción de huella orientada hacia; las entradas no principales no se comprueban con respecto a la baldosa de contexto porque una sola coordenada de contexto no puede servir para múltiples direcciones de acceso. `entrance_validation: "complete"` Valida la orientación de las puertas para cada entrada y la alineación de acceso para la entrada principal. `Tools/examples/map_recipe_multi_entrance_building.json` Muestra el edificio de oficinas en buen estado con dos entradas: `front_entrance` (puerta principal de la oficina orientada al este) y `garage_entrance` (apertura del garaje orientada al oeste), cada una con su propio límite de puerta-mueble. Esto valida únicamente la orientación y alineación de las múltiples entradas definidas por el autor: no genera puertas, no infiere rutas físicas, no comprueba colisiones ni navegación, ni altera el comportamiento en tiempo de ejecución.
 
-`furniture_anchors` now authors named data-only furniture anchor metadata for a validated building. Each record is a non-empty array of `{ "id", "at", "z", "kind" }` entries. Each `id` is unique within the building and follows the standard naming pattern. `at` is a two-integer `[x, y]` coordinate within map bounds. `z` is a logical level from `-10` through `10` and must match the building's own `z`. `kind` is a non-empty free-form semantic label (e.g. `"door"`, `"storage"`, `"workstation"`) — not an enumerated set and carrying no runtime behavior. Each anchor must reference a tile inside the building footprint that has an existing furniture feature at the authored `[x, y, z]`; the anchor does not generate furniture, modify terrain, infer walkability, check furniture category or function, or alter collision, navigation, lighting, weather, or runtime behavior. `Tools/examples/map_recipe_furniture_anchors.json` demonstrates the maintained office building with two furniture anchors: `office_door_anchor` and `garage_door_anchor`, each pointing to an existing `door_wood` feature inside the footprint. This is a data-only authored reference point that future template composition and gameplay validation can use as an anchor.
+`furniture_anchors` Ahora los autores nombraron metadatos de anclaje de muebles de solo datos para un edificio validado. Cada registro es una matriz no vacía de `{ "id", "at", "z", "kind" }` entradas. Cada `id` Es único dentro del edificio y sigue el patrón de nomenclatura estándar. `at` es un número entero de dos `[x, y]` Coordenadas dentro de los límites del mapa. `z` es un nivel lógico desde `-10` a través de `10` y debe coincidir con el propio edificio. `z`. `kind` es una etiqueta semántica de forma libre no vacía (por ejemplo `"door"`, `"storage"`, `"workstation"`) — no es un conjunto enumerado y no lleva comportamiento en tiempo de ejecución. Cada ancla debe hacer referencia a una baldosa dentro de la huella del edificio que tenga una característica de mobiliario existente en el autor. `[x, y, z]`; el ancla no genera muebles, no modifica el terreno, no infiere la transitabilidad, no comprueba la categoría o función de los muebles, ni altera la colisión, la navegación, la iluminación, el clima o el comportamiento en tiempo de ejecución. `Tools/examples/map_recipe_furniture_anchors.json` Muestra el edificio de oficinas mantenido con dos elementos de mobiliario principales: `office_door_anchor` y `garage_door_anchor`, cada uno apuntando a uno existente `door_wood` Función dentro de la huella. Este es un punto de referencia creado exclusivamente con datos que la futura composición de plantillas y la validación del juego pueden usar como ancla.
 
-`building_levels` now provides the first multi-level building footprint foundation and per-floor room/furniture ownership metadata. A building remains rooted at ground floor `z: 0` and may declare strictly ascending occupied floor levels at even logical z values: `z: 0` ground, `z: 1` intentional open gap, `z: 2` ceiling/first floor, `z: 3` open gap, and so on through `z: 10`. Each level may assign aggregate building rooms and furniture anchors exactly once. Walls follow the simple derived rule: the wall layer is `floor_z + 1`; no independent wall elevation is stored. A future `wall_height` property may support genuinely tall storeys, but is intentionally deferred.
+`building_levels` Ahora proporciona la primera base de datos de la huella de un edificio de varios niveles y metadatos de propiedad de habitaciones/muebles por piso. Un edificio permanece enraizado en la planta baja. `z: 0` y pueden declarar niveles de piso ocupados estrictamente ascendentes en valores z lógicos pares: `z: 0` suelo, `z: 1` brecha abierta intencional, `z: 2` techo/primer piso, `z: 3` brecha abierta, y así sucesivamente hasta `z: 10`Cada nivel puede asignar anclas de habitaciones y muebles de edificios agregados exactamente una vez. Las paredes siguen la regla derivada simple: la capa de pared es `floor_z + 1`No se almacena ninguna elevación de pared independiente. Un futuro `wall_height` El terreno puede soportar pisos realmente altos, pero esto se pospone intencionalmente.
 
-`staircases` now adds authored physical transition semantics to that foundation. Each staircase names `lower_at` and `upper_at` coordinates plus editor-facing rotations, and validation requires matching slope tiles (any tile-database `shape: "slope"` tile) at the lower coordinate on `z: 1` and upper coordinate on `z: 2` — exactly the two slope blocks required for player ascent. Straight stairs use two cardinally adjacent slopes with the same rotation; corner stairs insert one flat landing block at `z: 1` between the slopes so the upper slope turns the corner (`upper_rotation`). Slopes never stack: the upper slope is always horizontally offset from the lower slope. `Tools/examples/map_recipe_multi_level_building_foundation.json` demonstrates the corner formation with a landing block; the straight formation remains covered by focused tests.
+`staircases` Ahora añade a esa base semántica de transición física definida por el autor. Nombres de cada escalera `lower_at` y `upper_at` coordenadas más rotaciones visibles para el editor, y la validación requiere teselas de pendiente coincidentes (cualquier base de datos de teselas) `shape: "slope"` baldosa) en la coordenada inferior en `z: 1` y coordenada superior en `z: 2` — exactamente los dos bloques de pendiente necesarios para el ascenso del jugador. Las escaleras rectas usan dos pendientes cardinalmente adyacentes con la misma rotación; las escaleras de esquina insertan un bloque de rellano plano en `z: 1` entre las pendientes de modo que la pendiente superior gira en la esquina (`upper_rotation`). Las pendientes nunca se apilan: la pendiente superior siempre está desplazada horizontalmente con respecto a la pendiente inferior. `Tools/examples/map_recipe_multi_level_building_foundation.json` Se muestra la formación en esquina con un bloque de aterrizaje; la formación en línea recta sigue cubierta por pruebas específicas.
 
-`building_surfaces` now authors per-floor floor and roof surfaces for multi-level buildings in addition to single-level roof/ceiling semantics. For a building with `building_levels`, `z` must name a declared occupied level and `kind` may be `floor`, `ceiling`, or `roof`; a multi-level `roof` must be at the highest declared occupied level. The physical generator materializes the roof tile at the authored roof surface z. If that z is already an occupied floor level, the existing floor layer is reused as the roof and no second roof layer is generated. Ceiling remains metadata-only and is intentionally omitted from physical generation. `building_supports` adds authored structural support paths from lower to upper occupied levels.
+`building_surfaces` ahora genera superficies de pisos y techos por piso para edificios de varios niveles, además de la semántica de techos/cielos de un solo nivel. Para un edificio con `building_levels`, `z` debe nombrar un nivel ocupado declarado y `kind` tal vez `floor`, `ceiling`, o `roof`; un multinivel `roof` Debe estar en el nivel de ocupación más alto declarado. El generador físico materializa la teja en la superficie del techo z definida. Si z ya corresponde a un nivel de piso ocupado, la capa de piso existente se reutiliza como techo y no se genera una segunda capa. El techo permanece como metadatos únicamente y se omite intencionalmente de la generación física. `building_supports` Añade vías de soporte estructural predefinidas desde los niveles inferiores a los superiores ocupados.
 
-The generator, standalone map validator, and `DMap` save/load path validate or preserve these contracts. An opt-in `building_geometry` record now generates physical floors on declared occupied levels, wall tiles from authored room boundaries, support tiles from authored support paths, and the authored roof tile at the roof surface z when a roof surface is authored. Walls materialize at `boundary_z + 1`. Only walls whose boundary is on the building ground level receive `dirt_light_00` beneath them; upper-storey walls retain the declared `floor_tile` beneath them. Implicit wall `set` operations follow the same dirt-below-wall convention. Existing doors and staircase slopes remain authored operations. Lower staircase slope and landing cells reserve empty headroom on the directly overhead z2 floor so the player is not blocked by the upper floor. The generated geometry uses the existing Chunk collision/navigation pipeline; focused tests verify the maintained building's multi-level route and roof geometry.
+El generador, validador de mapas independiente y `DMap` Ruta de guardado/carga, validar o conservar estos contratos. Una opción de suscripción `building_geometry` El registro ahora genera pisos físicos en niveles ocupados declarados, baldosas de pared a partir de límites de habitaciones creados, baldosas de soporte a partir de rutas de soporte creadas y la baldosa de techo creada en la superficie del techo z cuando se crea una superficie de techo. Las paredes se materializan en `boundary_z + 1`. Solo las paredes cuyo límite está al nivel del suelo del edificio reciben `dirt_light_00` debajo de ellos; los muros del piso superior conservan lo declarado `floor_tile` debajo de ellos. Pared implícita `set` Las operaciones siguen la misma convención de tierra bajo la pared. Las puertas y las pendientes de las escaleras existentes siguen siendo operaciones predefinidas. Las celdas de la pendiente inferior de la escalera y del rellano reservan espacio libre en el piso z2 directamente encima para que el jugador no quede bloqueado por el piso superior. La geometría generada utiliza el sistema de detección de colisiones y navegación de Chunk existente; las pruebas específicas verifican la ruta multinivel y la geometría del techo del edificio.
 
-This slice intentionally does **not** yet define polygons, topology-derived room boundaries, indoor/outdoor runtime behavior, automatic door or staircase generation, or generalized templates.
+Esta sección, intencionadamente, **aún** no define polígonos, límites de habitaciones derivados de la topología, comportamiento en tiempo de ejecución interior/exterior, generación automática de puertas o escaleras, ni plantillas generalizadas.
 
-Capabilities:
+Capacidades:
 
-* named, level-aware rectangular or polygonal areas;
-* room boundaries;
-* floors and walls;
-* doors and openings;
-* indoor/outdoor designation;
-* area metadata;
-* reusable building footprints;
-* furniture anchors;
-* multi-level building geometry using logical z coordinates;
-* occupied-floor, wall, roof, and intentional-air-space semantics;
-* vertical transition anchors.
+* áreas rectangulares o poligonales con nombre y que tienen en cuenta el nivel;
+* límites de la habitación;
+* pisos y paredes;
+* puertas y aberturas;
+* designación interior/exterior;
+* metadatos del área;
+* Huellas de edificios reutilizables;
+* anclajes para muebles;
+* Geometría de edificios de varios niveles mediante coordenadas z lógicas;
+* Semántica de piso ocupado, pared, techo y espacio aéreo intencional;
+* anclajes de transición vertical.
 
-Example concept:
+Concepto de ejemplo:
 
 ```json
 {
@@ -694,128 +694,128 @@ Example concept:
 }
 ```
 
-Important checks:
+Comprobaciones importantes:
 
-* every room has an entrance;
-* doors connect compatible cells;
-* walls do not block all access;
-* area definitions match physical boundaries;
-* upper geometry has valid support according to the runtime rules established in Phase 4C;
-* occupied floors have valid, unobstructed vertical transitions;
-* stairs and slopes connect valid destinations on adjacent logical levels;
-* roofs, ceilings, and walls do not incorrectly occupy walkable interior cells;
-* furniture remains inside intended rooms.
+* Cada habitación tiene una entrada;
+* Las puertas conectan celdas compatibles;
+* Las paredes no bloquean todo el acceso;
+* Las definiciones de área coinciden con los límites físicos;
+* La geometría superior tiene soporte válido según las reglas de ejecución establecidas en la Fase 4C;
+* Las plantas ocupadas cuentan con transiciones verticales válidas y sin obstáculos;
+* Las escaleras y las rampas conectan destinos válidos en niveles lógicos adyacentes;
+* Los techos, cielorrasos y paredes no ocupan incorrectamente celdas interiores transitables;
+* Los muebles permanecen dentro de las habitaciones previstas.
 
-### Success criterion
+### Criterio de éxito
 
-Generate one small, enterable building that loads correctly and has a reachable interior. The generated structure must exercise physical floor, wall, support, and standable roof geometry, include at least two reachable occupied floors, valid generated support, an authored working vertical transition, and correctly scoped rooms and furniture. The maintained multi-level building recipe provides the evidence for this criterion.
+Genera un edificio pequeño y transitable que se cargue correctamente y tenga un interior accesible. La estructura generada debe cumplir con la geometría física de pisos, paredes, soportes y techo, incluir al menos dos pisos habitables accesibles, soportes generados válidos, una transición vertical funcional y habitaciones y mobiliario con el alcance correcto. La receta de construcción de varios niveles mantenida proporciona la evidencia de este criterio.
 
-## Phase 7 — Roads and map connections
+## Fase 7: Carreteras y conexiones cartográficas
 
-**Status: complete; authored map-edge connections, road endpoints, map-local road painting, and runtime walkability validation complete**
+**Estado: completado; se han completado las conexiones de borde del mapa, los puntos finales de las carreteras, el trazado de carreteras locales en el mapa y la validación de la transitabilidad en tiempo de ejecución.**
 
-The prototype previously hardcoded all four edge connections as `"ground"`. These are now authored recipe-level metadata, with named endpoint anchors identifying the exact map-edge cells where roads enter or exit.
+El prototipo previamente tenía codificadas de forma fija las cuatro conexiones de borde como `"ground"`Ahora se trata de metadatos a nivel de receta, con anclas de punto final con nombre que identifican las celdas exactas del borde del mapa por donde entran o salen las carreteras.
 
-### Completed foundation
+### Cimientos terminados
 
-The recipe generator supports a root-level `connections` field. It accepts up to four keys — `north`, `east`, `south`, and `west` — each with a value of `ground` or `road`, matching the existing runtime map format. Omitted directions default to `ground`, so existing recipes without the field remain compatible. The generator validates unknown directions and unsupported connection types and outputs the complete four-direction dictionary. The standalone validator independently checks the same content.
+El generador de recetas admite un nivel raíz `connections` campo. Acepta hasta cuatro claves. `north`, `east`, `south`, y `west` — cada uno con un valor de `ground` o `road`, que coincide con el formato de mapa de tiempo de ejecución existente. Las direcciones omitidas se establecen por defecto en `ground`De esta forma, las recetas existentes sin ese campo siguen siendo compatibles. El generador valida las direcciones desconocidas y los tipos de conexión no compatibles, y genera el diccionario completo de cuatro direcciones. El validador independiente comprueba el mismo contenido por sí mismo.
 
-The recipe generator now also supports root-level `road_endpoints`. Each endpoint has a unique `id`, a cardinal `direction`, an edge coordinate `at`, and ground-level `z: 0`. Its direction must be declared as `"road"` in `connections`, and its coordinate must lie on the corresponding map edge. The generator, standalone validator, and DMap save/load path validate or preserve these authored references. `Tools/examples/map_recipe_road_endpoints.json` is the maintained evidence: a simple outdoor map with west and east road endpoints and a deterministic connecting dirt path.
+El generador de recetas ahora también admite el nivel raíz. `road_endpoints`Cada punto final tiene una identidad única. `id`, un cardenal `direction`, una coordenada de borde `at`y a nivel del suelo `z: 0`Su dirección debe ser declarada como `"road"` en `connections`y su coordenada debe estar en el borde correspondiente del mapa. El generador, el validador independiente y la ruta de guardado/carga de DMap validan o conservan estas referencias de autor. `Tools/examples/map_recipe_road_endpoints.json` La evidencia que se conserva es: un mapa sencillo al aire libre con los extremos de la carretera hacia el oeste y el este, y un camino de tierra que los conecta de forma determinista.
 
-`road_paths` now authors a named ground-level cardinal polyline between two validated `road_endpoints`. The generator and standalone validator require different existing endpoint IDs, optional map-bounded waypoints, and cardinal continuity across the complete endpoint-to-endpoint sequence. A path may now provide a known `Ground` cube `tile`; the generator rasterizes and paints the complete route after validating supporting terrain and rejecting feature overwrites. The maintained `map_recipe_road_endpoints.json` demonstrates a generated west-to-east dirt route. A focused GUT test bakes a corresponding ground route through the real Chunk navigation pipeline and verifies a path between interior points near both map edges. This remains map-local geometry: it does not integrate multiple maps.
+`road_paths` ahora los autores de una polilínea cardinal de nivel del suelo con nombre entre dos validadas `road_endpoints`El generador y el validador independiente requieren diferentes ID de punto final existentes, puntos de referencia delimitados por el mapa opcionales y continuidad cardinal a lo largo de toda la secuencia de punto final a punto final. Ahora, una ruta puede proporcionar un conocido `Ground` cubo `tile`; el generador rasteriza y pinta la ruta completa después de validar el terreno de soporte y rechazar las sobrescrituras de características. El mantenido `map_recipe_road_endpoints.json` Se muestra una ruta de tierra generada de oeste a este. Una prueba GUT específica genera una ruta terrestre correspondiente a través del sistema de navegación real de Chunk y verifica un camino entre puntos interiores cercanos a ambos bordes del mapa. Esta geometría sigue siendo local al mapa: no integra varios mapas.
 
-Capabilities:
+Capacidades:
 
-* entrances on map edges;
-* road endpoints;
-* path routing and deterministic road painting between anchors;
-* north/east/south/west connection metadata;
-* guaranteed map-local terrain continuity between declared entry points;
-* bridge or obstacle handling remains future work beyond this narrow map-local slice.
+* entradas en los bordes del mapa;
+* puntos finales de la carretera;
+* Enrutamiento de rutas y trazado determinista de carreteras entre anclajes;
+* metadatos de conexión norte/este/sur/oeste;
+* Se garantiza la continuidad del terreno local en el mapa entre los puntos de entrada declarados;
+* La gestión de puentes u obstáculos sigue siendo un trabajo futuro que va más allá de esta estrecha sección local del mapa.
 
-Validation should determine:
+La validación debe determinar:
 
-* whether every declared connection has a corresponding terrain edge;
-* whether every generated route has continuous supporting terrain;
-* whether road paths terminate at their declared endpoints;
-* whether generated Ground cube routes are connected by runtime navigation;
-* whether edge tiles match adjacent-map expectations; this map-to-map compatibility contract is intentionally deferred and may be resumed later.
+* si cada conexión declarada tiene un borde de terreno correspondiente;
+* si cada ruta generada tiene un terreno de apoyo continuo;
+* si los caminos viales terminan en sus puntos finales declarados;
+* si las rutas de cubos terrestres generadas están conectadas por navegación en tiempo de ejecución;
+* si las teselas de borde coinciden con las expectativas del mapa adyacente; este contrato de compatibilidad entre mapas se pospone intencionadamente y puede reanudarse más adelante.
 
-### Success criterion
+### Criterio de éxito
 
-Generate a standalone map with one or more road edge connections and a continuous, deterministically painted ground-level route between declared endpoints. The route must use conservative walkable terrain and pass a real Godot navigation-path check. Full multi-map route integration remains later validation or an overmap concern.
+Genera un mapa independiente con una o más conexiones de borde de carretera y una ruta continua a nivel del suelo, pintada de forma determinista, entre los puntos finales declarados. La ruta debe utilizar un terreno transitable conservador y superar una comprobación de ruta de navegación real de Godot. La integración completa de rutas en múltiples mapas queda pendiente de validación posterior o se abordará como un tema de superposición de mapas.
 
-## Phase 8 — Templates and compositional generation
+## Fase 8: Plantillas y generación de composiciones
 
-**Status: Phase 8 complete; deterministic nested and rotation-aware template expansion, validated 3D footprints, compositional locations, facing-compatible anchors, bounded numeric/collection variants, and structured parameter objects complete**
+**Estado: Fase 8 completada; expansión de plantilla anidada determinista y con reconocimiento de rotación, huellas 3D validadas, ubicaciones compositivas, anclas compatibles con la orientación, variantes numéricas/de colección delimitadas y objetos de parámetros estructurados completos.**
 
-The first Phase 8 slice adds reusable template definitions without creating a second generation pipeline. Templates expand into ordinary root operations before the existing recipe validation and map generation stages.
+La primera fase 8 incorpora definiciones de plantillas reutilizables sin crear una segunda generación de canalizaciones. Las plantillas se expanden a operaciones raíz ordinarias antes de las etapas existentes de validación de recetas y generación de mapas.
 
-### Completed foundation
+### Cimientos terminados
 
-* named template definitions with relative `dz` level sections;
-* unrotated placements with translated horizontal origins and `origin.z + dz` resolution;
-* named template anchors with absolute anchor resolution; exterior connection anchors place distinct footprints adjacently while coincident interior anchors intentionally overlap;
-* anchor-to-anchor placement against prior placements;
-* typed `tile_id`, `boolean`, and enum template parameters with required/default resolution and placement-level overrides;
-* conditional template operations for boolean inclusion and enum-selected semantic variants;
-* bounded integer parameters for operation coordinates, dimensions, and counts;
-* constrained string-list parameters with conditional operation inclusion;
-* placement rotations of `0`, `90`, `180`, and `270` degrees, rotating local horizontal geometry, anchors, and anchor facings while preserving `dz`;
-* automatic anchor-to-anchor rotation selection from cardinal facings, with explicit rejection when either connected anchor lacks facing metadata;
-* recursive nested template placements with local origins, cumulative rotation and `dz`, forwarded parameter overrides, and cycle rejection;
-* structured object parameters with declared property schemas, per-property defaults/required values, placement overrides, and dotted references;
-* rotated 5×3 cabin coverage and automatically oriented brick/metal cabin connection coverage;
-* complete three-dimensional template-footprint validation before ordinary generation, with conservative operation coverage, map/logical-z bounds, and unconnected-conflict rejection;
-* named rectangular compositional locations with rotation-aware placement, matching-volume checks, and intentional aligned-volume overlap;
-* expansion into existing ordinary root operations before normal validation;
+* Definiciones de plantillas con nombre con relación `dz` secciones de nivel;
+* colocaciones sin rotación con orígenes horizontales trasladados y `origin.z + dz` resolución;
+* Anclajes de plantilla con nombre y resolución de anclaje absoluta; los anclajes de conexión exterior colocan huellas distintas adyacentes, mientras que los anclajes interiores coincidentes se superponen intencionalmente;
+* Comparación de la ubicación de anclajes con respecto a las ubicaciones previas;
+* escrito `tile_id`, `boolean`y parámetros de plantilla de enumeración con anulaciones de resolución y nivel de ubicación requeridas/predeterminadas;
+* operaciones de plantilla condicionales para la inclusión booleana y variantes semánticas seleccionadas por enumeración;
+* Parámetros enteros acotados para coordenadas de operación, dimensiones y recuentos;
+* Parámetros de lista de cadenas restringidos con inclusión de operación condicional;
+* rotaciones de colocación de `0`, `90`, `180`, y `270` grados, geometría horizontal local giratoria, anclajes y caras de anclaje mientras se preserva `dz`;
+* Selección automática de rotación de ancla a ancla a partir de orientaciones cardinales, con rechazo explícito cuando alguna de las anclas conectadas carece de metadatos de orientación;
+* Colocaciones recursivas de plantillas anidadas con orígenes locales, rotación acumulativa y `dz`, anulaciones de parámetros reenviados y rechazo de ciclos;
+* parámetros de objetos estructurados con esquemas de propiedades declarados, valores predeterminados/obligatorios por propiedad, anulaciones de ubicación y referencias con puntos;
+* Cobertura de cabina rotada 5×3 y cobertura de conexión de cabina de ladrillo/metal orientada automáticamente;
+* Validación completa de la huella de la plantilla tridimensional antes de la generación ordinaria, con cobertura de operaciones conservadora, límites de mapa/z lógico y rechazo de conflictos no conectados;
+* Ubicaciones compositivas rectangulares con nombre, colocación que tiene en cuenta la rotación, comprobaciones de volumen coincidente y superposición intencional de volumen alineado;
+* expansión en operaciones raíz ordinarias existentes antes de la validación normal;
 
-### Phase 8 completion note
+### Nota de finalización de la fase 8
 
-The next map-generation work should remain separate from generalized town or overmap composition until a concrete gameplay need requires it.
+El siguiente trabajo de generación de mapas debería mantenerse separado de la composición generalizada de ciudades o mapas generales hasta que una necesidad concreta del juego lo requiera.
 
-## Phase 9 — Map-local compositional locations
+## Fase 9 — Ubicaciones compositivas locales del mapa
 
-**Status: complete; maintained village-square composition and field_farmland semantic acceptance fixture**
+**Estado: completado; se mantuvo la composición village-square y el fixture de aceptación semántica field_farmland**
 
-The first Phase 9 slice proves map-local composition with `Tools/examples/map_recipe_village_square_composition.json`. It expands a central `village_square` template with nested plaza fixtures and named road anchors, then uses automatic facing-compatible anchor placement to attach a metal open-top cabin and a brick roofed cabin. `Tools/examples/map_recipe_field_farmland.json` is the maintained semantic acceptance fixture for the legacy `field_farmland` footprint: its representative farmhouse preserves x3…18/y19…29, floors z0/z2, ordinary z1/z3 wall layers, and one explicit concrete roof at z4. It adds a complete kitchen, connected ground room, upper room, authored entrance and furniture anchors, `reachability_validation`, and a z1→z2 staircase without adding farmland-specific generator logic. Both generated maps remain standalone tactical-map assets; neither introduces town, settlement, or overmap-wide composition.
+La primera sección de la Fase 9 demuestra la composición local del mapa con `Tools/examples/map_recipe_village_square_composition.json`. Expande un centro `village_square` Se utiliza una plantilla con elementos de plaza anidados y anclajes viales con nombre, y luego se emplea la colocación automática de anclajes compatibles con la orientación para fijar una cabina metálica abierta y una cabina con techo de ladrillo. `Tools/examples/map_recipe_field_farmland.json` es el complemento de aceptación semántica mantenido para el legado `field_farmland` Huella: su casa de campo representativa conserva x3…18/y19…29, pisos z0/z2, capas de pared ordinarias z1/z3 y un techo de hormigón específico en z4. Agrega una cocina completa, habitación conectada en la planta baja, habitación en la planta superior, entrada de autor y anclajes para muebles, `reachability_validation`y una escalera z1→z2 sin agregar lógica de generador específica para tierras de cultivo. Ambos mapas generados siguen siendo recursos de mapas tácticos independientes; ninguno introduce composición de ciudades, asentamientos o mapas generales.
 
-### Phase 9 execution milestones
+### Hitos de ejecución de la fase 9
 
-Phase 9 is implemented in generic slices. `field_farmland` is an acceptance fixture, not a special-case implementation.
+La fase 9 se implementa en segmentos genéricos. `field_farmland` Es un componente de aceptación, no una implementación de caso especial.
 
-#### 9.1 Generic semantic building profile — complete
+#### 9.1 Perfil genérico de construcción semántica — completo
 
-Canonical fixtures now provide a generic authoring reference before farmland enrichment:
+Los elementos canónicos ahora proporcionan una referencia de autoría genérica antes del enriquecimiento de tierras agrícolas:
 
-* `Tools/examples/map_recipe_semantic_single_storey_building.json` and `Mods/Dimensionfall/Maps/generated_semantic_single_storey_building.json`;
-* `Tools/examples/map_recipe_semantic_two_storey_building.json` and `Mods/Dimensionfall/Maps/generated_semantic_two_storey_building.json`;
-* focused generator coverage in `Tools/tests/test_map_generator.py`.
+* `Tools/examples/map_recipe_semantic_single_storey_building.json` y `Mods/Dimensionfall/Maps/generated_semantic_single_storey_building.json`;
+* `Tools/examples/map_recipe_semantic_two_storey_building.json` y `Mods/Dimensionfall/Maps/generated_semantic_two_storey_building.json`;
+* cobertura de generador enfocado en `Tools/tests/test_map_generator.py`.
 
-The single-storey fixture exercises the complete existing same-level semantic profile. Both canonical fixtures explicitly paint all required footprint-perimeter wall cells, including all four corners. The lower storey omits the wall at its authored door coordinate so the doorway has clear z1 headroom; every remaining z1 wall, including every corner, has a dirt support tile at z0. The two-storey fixture adds complete ground-room boundary evidence, per-floor room and furniture-anchor ownership, ordinary z1/z3 wall geometry, an explicit z4 roof, and `workroom_staircase` to prove cross-floor reachability and runtime traversal; its loft is enclosed but not boundary-complete because the stairwell opening breaks the perimeter. The explicit roof remains recipe geometry until the deferred generalized `wall_height` contract defines derived tall-storey roof metadata.
+El accesorio de una sola planta ejerce el perfil semántico existente completo del mismo nivel. Ambos accesorios canónicos pintan explícitamente todas las celdas de pared del perímetro de la huella requeridas, incluidas las cuatro esquinas. La planta baja omite la pared en su coordenada de puerta creada para que la puerta tenga un espacio libre z1; cada pared z1 restante, incluidas todas las esquinas, tiene una baldosa de soporte de tierra en z0. El accesorio de dos plantas agrega evidencia completa del límite de la habitación de la planta baja, propiedad de la habitación por piso y anclaje de muebles, geometría de pared z1/z3 ordinaria, un techo z4 explícito y `workroom_staircase` para demostrar la accesibilidad entre pisos y el recorrido en tiempo de ejecución; su loft está cerrado pero no tiene límites completos porque la abertura de la escalera rompe el perímetro. El techo explícito sigue siendo geometría de receta hasta que la generalizada diferida `wall_height` El contrato define los metadatos derivados del techo de la planta alta.
 
-The canonical profile uses existing fields in this order:
+El perfil canónico utiliza los campos existentes en este orden:
 
-1. physical floor, wall, roof, and transition geometry;
-2. root `rooms` plus `room_rectangle` memberships;
-3. complete `room_boundaries` and door evidence;
-4. `room_connections` and building ownership;
-5. `building_levels` room/anchor assignment;
-6. `interior_rooms`, `open_space_rooms`, and `room_partition_validation`;
-7. `exterior_context`, `exterior_access_context`, `entrance`, and `entrance_validation`;
-8. `furniture_anchors` and maintained target objects.
+1. Geometría física del suelo, las paredes, el techo y las zonas de transición;
+2. raíz `rooms` más `room_rectangle` membresías;
+3. completo `room_boundaries` y evidencia de puerta;
+4. `room_connections` y la propiedad del edificio;
+5. `building_levels` asignación de sala/anclaje;
+6. `interior_rooms`, `open_space_rooms`, y `room_partition_validation`;
+7. `exterior_context`, `exterior_access_context`, `entrance`, y `entrance_validation`;
+8. `furniture_anchors` y mantuvo los objetos objetivo.
 
-A valid profile must prove that room membership is inside the footprint, complete enclosed rooms have complete boundaries, doors connect declared endpoints, and every room/anchor is assigned to one intended level. The single-storey profile also proves current same-z semantic access validation. Cross-floor semantic access is intentionally deferred to 9.3, where validated staircases become vertical graph edges. `access_validation` remains semantic graph validation; it is not a collision or navigation proof.
+Un perfil válido debe demostrar que la pertenencia a la sala se encuentra dentro del perímetro, que las salas cerradas completas tienen límites definidos, que las puertas conectan los puntos finales declarados y que cada sala/ancla está asignada a un nivel previsto. El perfil de una sola planta también demuestra la validación actual del acceso semántico same-z. El acceso semántico entre plantas se pospone intencionadamente a la versión 9.3, donde las escaleras validadas se convierten en aristas verticales del grafo. `access_validation` Sigue siendo una validación de grafos semánticos; no es a prueba de colisiones ni de navegación.
 
-#### 9.2 Independent data-boundary validation — complete
+#### 9.2 Validación independiente de los límites de los datos: completa
 
-Both canonical recipes generate deterministically and validate with `Tools/map_validator.py`. `Tests/Unit/test_dmap_sanitization.gd` loads both recipe sources through the production JSON helper and proves that room, connection, boundary, building, and support metadata round-trips through DMap sanitization.
+Ambas recetas canónicas se generan de forma determinista y se validan con `Tools/map_validator.py`. `Tests/Unit/test_dmap_sanitization.gd` Carga ambas fuentes de recetas a través del asistente JSON de producción y demuestra que los metadatos de sala, conexión, límite, edificio y soporte viajan de ida y vuelta a través de la sanitización de DMap.
 
-This exposed and fixed one real compatibility gap: Godot JSON parsing represents numeric literals as floats, while DMap semantic sanitizers require integers for coordinates, z levels, and rotations. `Scripts/Helper/json_helper.gd` now recursively normalizes whole-number JSON floats to integers before returning parsed dictionaries or arrays; non-integral floats remain floats. Do not duplicate this generic boundary coverage for farmland.
+Esto puso al descubierto y solucionó una brecha de compatibilidad real: el análisis JSON de Godot representa los literales numéricos como números de coma flotante, mientras que los validadores semánticos de DMap requieren números enteros para las coordenadas, los niveles z y las rotaciones. `Scripts/Helper/json_helper.gd` Ahora, normaliza recursivamente los números flotantes JSON enteros a enteros antes de devolver los diccionarios o matrices analizados; los números flotantes no enteros permanecen como tales. No duplique esta cobertura de límites genérica para tierras de cultivo.
 
-#### 9.3 Generic required-route contract — complete
+#### 9.3 Contrato genérico de ruta obligatoria — completo
 
-Buildings may declare an optional `reachability_validation` record:
+Los edificios pueden declarar una opción `reachability_validation` registro:
 
 ```json
 {
@@ -825,48 +825,48 @@ Buildings may declare an optional `reachability_validation` record:
 }
 ```
 
-It names only existing entrances, furniture anchors, and declared occupied levels. It stores no coordinates, tile IDs, or precomputed paths. Static validation rejects unknown targets, undeclared levels, unreachable semantic rooms, and missing vertical graph links. Vertical graph edges derive only from already-valid authored staircases; the link is floor-granular because staircase slopes occupy the intentional open gap with no room membership. The contract is implemented independently in `Tools/map_generator.py`, `Tools/map_validator.py`, and `Scripts/Gamedata/DMap.gd`, with focused negative and positive tests in `Tools/tests/test_map_generator.py` and DMap preservation coverage in `Tests/Unit/test_dmap_sanitization.gd`. Python does not simulate runtime collision or navigation; the reusable Phase 9.4 helper proves runtime traversal. The maintained multi-level foundation, canonical two-storey fixture, and `field_farmland` acceptance fixture demonstrate full cross-storey records through their authored staircases.
+Nombra únicamente las entradas existentes, los anclajes de muebles y los niveles ocupados declarados. No almacena coordenadas, identificadores de mosaico ni rutas precalculadas. La validación estática rechaza objetivos desconocidos, niveles no declarados, habitaciones semánticas inaccesibles y enlaces de grafos verticales faltantes. Los bordes del grafo vertical se derivan únicamente de escaleras ya válidas creadas; el enlace es granular a nivel de piso porque las pendientes de las escaleras ocupan el espacio abierto intencional sin pertenencia a ninguna habitación. El contrato se implementa de forma independiente en `Tools/map_generator.py`, `Tools/map_validator.py`, y `Scripts/Gamedata/DMap.gd`, con pruebas negativas y positivas focalizadas en `Tools/tests/test_map_generator.py` y cobertura de preservación de DMap en `Tests/Unit/test_dmap_sanitization.gd`Python no simula colisiones ni navegación en tiempo de ejecución; la función auxiliar reutilizable Phase 9.4 demuestra el recorrido en tiempo de ejecución. La base multinivel mantenida, el accesorio canónico de dos pisos y `field_farmland` Los dispositivos de aceptación demuestran registros completos entre pisos a través de sus escaleras diseñadas.
 
-#### 9.4 Reusable runtime navigation fixture — complete
+#### 9.4 Accesorio de navegación en tiempo de ejecución reutilizable — completo
 
-`Tests/Unit/helpers/map_navigation_fixture.gd` provides the reusable GUT helper around the existing Chunk setup, navigation baking, grid-to-world conversion, and `NavigationServer3D.map_get_path()` assertions. The helper is generic: it receives endpoint coordinates, shapes, and labels; it does not know farmland, room semantics, or any maintained recipe.
+`Tests/Unit/helpers/map_navigation_fixture.gd` proporciona el asistente GUT reutilizable en torno a la configuración de Chunk existente, horneado de navegación, conversión de cuadrícula a mundo y `NavigationServer3D.map_get_path()` aserciones. El asistente es genérico: recibe coordenadas de punto final, formas y etiquetas; no conoce tierras de cultivo, semántica de habitaciones ni ninguna receta mantenida.
 
-Proven with:
+Comprobado con:
 
-* `Tests/Unit/test_semantic_single_storey_navigation.gd` — exterior-to-interior and return on the canonical single-storey geometry;
-* `Tests/Unit/test_semantic_two_storey_navigation.gd` — exterior-to-ground, ground-to-upper through the authored staircase, and both returns;
-* `Tests/Unit/test_chunk_road_navigation.gd` and `Tests/Unit/test_multi_level_building_navigation.gd`, refactored onto the same helper with unchanged coverage.
+* `Tests/Unit/test_semantic_single_storey_navigation.gd` — de exterior a interior y retorno sobre la geometría canónica de una sola planta;
+* `Tests/Unit/test_semantic_two_storey_navigation.gd` — desde el exterior hasta la planta baja, desde la planta baja hasta el piso superior a través de la escalera diseñada, y ambos retornos;
+* `Tests/Unit/test_chunk_road_navigation.gd` y `Tests/Unit/test_multi_level_building_navigation.gd`, refactorizado en el mismo auxiliar con cobertura sin cambios.
 
-Required runtime checks are exterior-to-ground target and, for two-storey fixtures, ground-to-upper target. Runtime tests prove collision/navigation behavior; Python tests do not replace them. To make the two-storey proof possible, the canonical two-storey fixture now authors `workroom_staircase` (lower slope [10, 10] on z1, upper slope [10, 9] on z2) and upgrades its `reachability_validation` to require `loft_bench` and level z2; the loft is `enclosed` but intentionally not `boundary_validation: complete` because the stairwell opening breaks its perimeter, mirroring the maintained multi-level foundation.
+Las comprobaciones de tiempo de ejecución requeridas son de exterior a objetivo de suelo y, para accesorios de dos pisos, de suelo a objetivo superior. Las pruebas de tiempo de ejecución demuestran el comportamiento de colisión/navegación; las pruebas de Python no las reemplazan. Para hacer posible la prueba de dos pisos, el accesorio canónico de dos pisos ahora escribe `workroom_staircase` (pendiente inferior [10, 10] en z1, pendiente superior [10, 9] en z2) y mejora su `reachability_validation` requerir `loft_bench` y nivel z2; el loft es `enclosed` pero intencionalmente no `boundary_validation: complete` porque la abertura de la escalera rompe su perímetro, reflejando la cimentación multinivel que se ha mantenido.
 
-#### 9.5 Apply the generic profile to farmland — complete
+#### 9.5 Aplicar el perfil genérico a las tierras de cultivo — completar
 
-`Tools/examples/map_recipe_field_farmland.json` applies the existing generic profile to a representative `field_farmland` farmhouse: a complete `farmhouse_kitchen`, connected `farmhouse_ground_room`, `farmhouse_upper_room`, building ownership across z0/z2, a room-to-exterior entrance, door and workstation anchors, `reachability_validation`, and `farmhouse_staircase`. It preserves the legacy farmhouse footprint x3…18/y19…29, ordinary floor/wall elevations (z0/z1 and z2/z3), and one roof at z4. The recipe intentionally represents only the kitchen/ground-room/upper-room slice needed for the acceptance fixture; it does not reproduce every legacy map room or introduce farmland-specific generator behavior.
+`Tools/examples/map_recipe_field_farmland.json` aplica el perfil genérico existente a un representante `field_farmland` casa de campo: una completa `farmhouse_kitchen`, conectado `farmhouse_ground_room`, `farmhouse_upper_room`, propiedad del edificio en z0/z2, una entrada de habitación al exterior, anclajes de puerta y estación de trabajo, `reachability_validation`, y `farmhouse_staircase`Conserva la planta original de la casa de campo (x3…18/y19…29), las elevaciones de piso y pared habituales (z0/z1 y z2/z3) y un techo en z4. La receta representa intencionadamente solo la sección de cocina, planta baja y planta alta necesaria para el dispositivo de aceptación; no reproduce todas las habitaciones del mapa original ni introduce un comportamiento de generador específico para terrenos agrícolas.
 
-`Tests/Unit/test_field_farmland_navigation.gd` uses the generic navigation helper to prove exterior→kitchen, kitchen→ground-room, and bidirectional ground↔upper traversal. `Mods/Dimensionfall/Maps/generated_field_farmland.json` is the deterministic generated artifact and passes independent `Tools/map_validator.py` validation.
+`Tests/Unit/test_field_farmland_navigation.gd` Utiliza el asistente de navegación genérico para demostrar el recorrido exterior→cocina, cocina→planta baja-habitación y recorrido bidireccional planta baja↔superior. `Mods/Dimensionfall/Maps/generated_field_farmland.json` es el artefacto generado determinista y pasa de forma independiente `Tools/map_validator.py` validación.
 
-#### 9.6 Execution workflow and validation
+#### 9.6 Flujo de trabajo de ejecución y validación
 
-Every implementation slice follows the same test-first sequence:
+Cada segmento de implementación sigue la misma secuencia de prueba primero:
 
-1. add one behavior-focused failing test;
-2. run only that test and confirm the failure is caused by the missing contract, not a test error;
-3. implement the smallest change in the generator;
-4. mirror the contract in the standalone validator and DMap only when that data boundary handles the field;
-5. rerun the focused test, then the complete Python suite;
-6. regenerate the maintained JSON artifact;
-7. run `Tools/map_validator.py`, relevant GUT tests, and `git diff --check`.
+1. agregar una prueba fallida centrada en el comportamiento;
+2. Ejecute únicamente esa prueba y confirme que el fallo se debe a la falta del contrato, y no a un error de la prueba;
+3. implementar el cambio más pequeño en el generador;
+4. Reflejar el contrato en el validador independiente y DMap solo cuando ese límite de datos maneja el campo;
+5. Vuelva a ejecutar la prueba específica y, a continuación, el conjunto completo de pruebas de Python;
+6. regenerar el artefacto JSON mantenido;
+7. correr `Tools/map_validator.py`, pruebas GUT relevantes y `git diff --check`.
 
-Primary files by responsibility:
+Archivos principales por responsabilidad:
 
-* generator and recipe tests: `Tools/map_generator.py`, `Tools/tests/test_map_generator.py`;
-* independent static validation: `Tools/map_validator.py`;
-* runtime serialization/sanitization: `Scripts/Gamedata/DMap.gd`, `Tests/Unit/test_dmap_sanitization.gd`;
-* runtime navigation: `Tests/Unit/test_semantic_single_storey_navigation.gd`, `Tests/Unit/test_semantic_two_storey_navigation.gd`, and `Tests/Unit/test_field_farmland_navigation.gd`;
-* maintained recipes/artifacts: `Tools/examples/` and `Mods/Dimensionfall/Maps/`;
-* documentation: this roadmap and `Documentation/Modding/map_recipe_generator.md`.
+* Pruebas de generadores y recetas: `Tools/map_generator.py`, `Tools/tests/test_map_generator.py`;
+* validación estática independiente: `Tools/map_validator.py`;
+* Serialización/sanitización en tiempo de ejecución: `Scripts/Gamedata/DMap.gd`, `Tests/Unit/test_dmap_sanitization.gd`;
+* navegación en tiempo de ejecución: `Tests/Unit/test_semantic_single_storey_navigation.gd`, `Tests/Unit/test_semantic_two_storey_navigation.gd`, y `Tests/Unit/test_field_farmland_navigation.gd`;
+* recetas/artefactos mantenidos: `Tools/examples/` y `Mods/Dimensionfall/Maps/`;
+* documentación: esta hoja de ruta y `Documentation/Modding/map_recipe_generator.md`.
 
-The focused commands are:
+Los comandos específicos son:
 
 ```bash
 PYTHONPATH=. python3 -m unittest discover -s Tools/tests -p "test_*.py"
@@ -877,36 +877,36 @@ python3 Tools/map_validator.py <generated-map>
 git diff --check
 ```
 
-#### 9.7 Phase 9 success criterion
+#### 9.7 Criterio de éxito de la fase 9
 
-A new map-local location can be composed from reusable templates and authored with the generic semantic profile, statically validated, generated deterministically, and checked through real runtime navigation. The resulting map remains an individual tactical-map/overmap asset. Generalized settlement generation and map-to-map edge compatibility remain deferred.
+Se puede crear una nueva ubicación en el mapa a partir de plantillas reutilizables, con un perfil semántico genérico, validación estática, generación determinista y comprobación mediante navegación en tiempo real. El mapa resultante sigue siendo un recurso individual de mapa táctico/mapa superpuesto. La generación generalizada de asentamientos y la compatibilidad de bordes entre mapas se posponen.
 
-## Phase 10 — Quality and gameplay validation
+## Fase 10: Validación de la calidad y la jugabilidad
 
-**Status: in progress; Phase 10.1.1 automatic room-boundary generation is complete**
+**Estado: en curso; la generación automática de límites de habitaciones de la fase 10.1.1 está completa.**
 
-Phase 10 converts structural validity into explicit acceptance checks. Implement the checks in this order:
+La fase 10 convierte la validez estructural en comprobaciones de aceptación explícitas. Implemente las comprobaciones en este orden:
 
-### 10.1 Static authored checks
+### 10.1 Comprobaciones estáticas creadas por el usuario
 
-Add focused checks for:
+Agregar comprobaciones específicas para:
 
-* every required entrance names an existing entrance/connection and has a valid exterior approach;
-* every required furniture anchor exists, belongs to the building, and is assigned to a declared floor;
-* every required occupied floor is declared;
-* every semantic room has an authored route to an exterior connection or a valid vertical transition;
-* every staircase endpoint is inside the footprint, has valid terrain and matching slope evidence, and reaches a declared target floor;
-* doors, stairs, and important targets are not hidden by incompatible authored geometry;
-* all logical z values remain within `-10` through `+10`;
-* deterministic regeneration produces byte-equivalent output.
+* Cada entrada requerida indica una entrada/conexión existente y tiene un acceso exterior válido;
+* Todos los anclajes necesarios para el mobiliario existen, pertenecen al edificio y están asignados a una planta determinada;
+* Se declara cada piso ocupado requerido;
+* Cada sala semántica tiene una ruta predefinida hacia una conexión exterior o una transición vertical válida;
+* Cada extremo de la escalera se encuentra dentro del perímetro delimitado, cuenta con evidencia válida del terreno y la pendiente correspondiente, y alcanza un piso objetivo declarado;
+* Las puertas, las escaleras y los objetivos importantes no quedan ocultos por geometrías de diseño incompatibles;
+* todos los valores lógicos z permanecen dentro `-10` a través de `+10`;
+* La regeneración determinista produce una salida equivalente a bytes.
 
-These checks belong in `Tools/map_generator.py` and `Tools/map_validator.py`; they must report the building, room/target ID, floor, and missing relation in failures.
+Estos controles pertenecen a `Tools/map_generator.py` y `Tools/map_validator.py`; deben informar el edificio, la habitación/ID del objetivo, el piso y la relación faltante en caso de fallas.
 
-#### 10.1.1 Room-boundary reliability and concise authoring — complete
+#### 10.1.1 Fiabilidad de los límites de la habitación y redacción concisa: completa
 
-The current `room_boundaries` contract is an explicit compatibility path: each record supplies authored physical evidence for one wall edge or door. It must continue to support existing recipes, irregular geometry, ruins, intentional openings, and unusual wall materials. It must not remain the only way to author an ordinary complete enclosed room.
+La corriente `room_boundaries` El contrato establece una ruta de compatibilidad explícita: cada registro proporciona evidencia física documentada para un borde de pared o puerta. Debe seguir siendo compatible con las recetas existentes, la geometría irregular, las ruinas, las aberturas intencionadas y los materiales de pared inusuales. No debe ser la única forma de crear una habitación cerrada completa y convencional.
 
-Add an opt-in room-level perimeter-generation contract for normal enclosed rooms, for example:
+Por ejemplo, agregue un contrato opcional de generación de perímetro a nivel de habitación para habitaciones cerradas normales:
 
 ```json
 {
@@ -917,113 +917,113 @@ Add an opt-in room-level perimeter-generation contract for normal enclosed rooms
 }
 ```
 
-When enabled, the generator derives the final room perimeter from room membership and uses the owning building's `building_geometry.wall_tile` to create the physical wall ring. `room_rectangle` remains a room-membership operation; it does not itself place walls. The derived perimeter must include corner caps and must leave openings only for valid `room_connections` crossing that room edge. A room-to-room connection consumes the facing edge for both participating generated rooms. The resolver must work from the final membership mask so future non-rectangular room operations, translation, nesting, and horizontal rotation do not require rectangle-specific special cases.
+Cuando está habilitado, el generador deriva el perímetro final de la habitación a partir de la pertenencia a la habitación y utiliza el edificio propietario. `building_geometry.wall_tile` para crear el anillo de pared físico. `room_rectangle` sigue siendo una operación de membresía de sala; no coloca paredes por sí mismo. El perímetro derivado debe incluir tapas de esquina y debe dejar aberturas solo para válido `room_connections` Cruzando el borde de esa habitación. Una conexión entre habitaciones consume el borde frontal para ambas habitaciones generadas participantes. El resolvedor debe trabajar a partir de la máscara de pertenencia final para que las futuras operaciones de habitaciones no rectangulares, la traslación, el anidamiento y la rotación horizontal no requieran casos especiales específicos para rectángulos.
 
-Implement this slice in the following order:
+Implementa esta sección en el siguiente orden:
 
-1. Add characterization tests before changing generation. Cover a complete 3×3 room, all perimeter corners, exterior and room-to-room openings, invalid or non-cardinal connections, missing door furniture, shared generated-room edges, and preservation of existing explicit `room_boundaries` behavior.
-2. Add and validate the new room-level field. Initially restrict it to `enclosed` rooms with `boundary_validation: "complete"`; reject mixing generated boundaries with explicit `room_boundaries` for the same room and level so wall ownership is unambiguous.
-3. Implement one reusable perimeter resolver that derives exposed semantic edges, connection openings, wall-ring coordinates, and deterministic shared-wall ownership from final room membership. Do not duplicate this logic in recipe-specific code.
-4. Materialize the resolved walls at `floor_z + 1`, using the owning building wall tile, and reject incompatible authored geometry instead of silently overwriting it. Generate ground supports only at the owning floor.
-5. Preserve semantic metadata when a support replaces a ground tile. Replacing a tile for support must not erase its `rooms`, `areas`, or other compatible metadata.
-6. Mirror the resolver and diagnostics in `Tools/map_validator.py`; preserve and sanitize the room-level field in `Scripts/Gamedata/DMap.gd` when that data boundary handles it.
-7. Migrate the `field_farmland` kitchen to the concise room-level declaration and remove its redundant per-wall records and duplicate kitchen wall operations. Verify that the generated perimeter includes the missing corner cells `[7,22]` and `[7,26]`, while connection openings remain open.
-8. Document the compact declaration, the explicit-boundary escape hatch, connection-derived openings, and conflict rules in `Documentation/Modding/map_recipe_generator.md` and `Documentation/Modding/map_example_generation.md`.
+1. Agregue pruebas de caracterización antes de cambiar la generación. Cubra una habitación completa de 3×3, todas las esquinas del perímetro, aberturas exteriores y entre habitaciones, conexiones no válidas o no cardinales, herrajes de puerta faltantes, bordes compartidos de habitaciones generadas y preservación de elementos explícitos existentes. `room_boundaries` comportamiento.
+2. Agregue y valide el nuevo campo a nivel de habitación. Inicialmente, restrinja su uso a: `enclosed` habitaciones con `boundary_validation: "complete"`; rechazar la mezcla de límites generados con explícitos `room_boundaries` para la misma habitación y nivel, por lo que la propiedad de la pared es inequívoca.
+3. Implemente un resolvedor de perímetro reutilizable que derive los bordes semánticos expuestos, las aberturas de conexión, las coordenadas del anillo de muros y la propiedad determinista de muros compartidos a partir de la pertenencia final a la sala. No duplique esta lógica en el código específico de la receta.
+4. Materializar las paredes resueltas en `floor_z + 1`, utilizando la baldosa de pared del edificio propietario, y rechazar la geometría de autor incompatible en lugar de sobrescribirla silenciosamente. Generar soportes de suelo solo en el piso propietario.
+5. Conservar los metadatos semánticos cuando un soporte reemplaza una loseta de suelo. Reemplazar una loseta por un soporte no debe borrar su `rooms`, `areas`o cualquier otro metadato compatible.
+6. Refleje el solucionador y los diagnósticos en `Tools/map_validator.py`; preservar y desinfectar el campo a nivel de habitación en `Scripts/Gamedata/DMap.gd` cuando ese límite de datos lo gestiona.
+7. Migrar el `field_farmland` cocina a la declaración concisa a nivel de habitación y eliminar sus registros redundantes por pared y operaciones duplicadas de pared de cocina. Verificar que el perímetro generado incluya las celdas de esquina faltantes `[7,22]` y `[7,26]`, mientras las conexiones permanezcan abiertas.
+8. Documentar la declaración compacta, la escotilla de escape de límites explícitos, las aperturas derivadas de la conexión y las reglas de conflicto en `Documentation/Modding/map_recipe_generator.md` y `Documentation/Modding/map_example_generation.md`.
 
-Phase 10.1.1 is complete. Focused generator and standalone-validator coverage proves a generated 3×3 complete room creates its complete 5×5 exterior wall ring—including all four corner caps—while a valid exterior `room_connection` remains the only opening. Additional coverage proves room-to-room links open both facing edges while retaining one physical door target, diagonal crossings are rejected, adjacent generated rooms share one deterministic partition wall, explicit `room_boundaries` behavior remains intact, and support replacement preserves tile metadata. `field_farmland` now migrates its kitchen to the concise declaration: it no longer lists per-wall boundaries or duplicate kitchen-wall operations, and its generated ring includes `[7,22]` and `[7,26]`.
+La fase 10.1.1 está completa. La cobertura del generador enfocado y del validador independiente demuestra que una habitación completa de 3×3 generada crea su anillo de pared exterior completo de 5×5, incluyendo las cuatro tapas de las esquinas, mientras que un exterior válido `room_connection` sigue siendo la única abertura. La cobertura adicional demuestra que los enlaces entre habitaciones se abren por ambos bordes enfrentados mientras se mantiene un objetivo de puerta física, se rechazan los cruces diagonales, las habitaciones generadas adyacentes comparten una pared divisoria determinista, explícita `room_boundaries` El comportamiento permanece intacto y la sustitución del soporte conserva los metadatos de los mosaicos. `field_farmland` ahora migra su cocina a la declaración concisa: ya no enumera límites por pared ni operaciones duplicadas de pared de cocina, y su anillo generado incluye `[7,22]` y `[7,26]`.
 
-This slice belongs in Phase 10.1 because it improves generic authored diagnostics and structural reliability. It is not farmland-specific and must not introduce a farmland conditional in the generator or validator.
+Esta sección pertenece a la Fase 10.1 porque mejora los diagnósticos genéricos y la fiabilidad estructural. No es específica de terrenos agrícolas y no debe introducir una condición para terrenos agrícolas en el generador ni en el validador.
 
-### 10.2 Runtime gameplay checks — complete
+### 10.2 Comprobaciones de jugabilidad en tiempo de ejecución: completas
 
-Phase 10.2 is complete for the migrated `field_farmland` farmhouse runtime traversal slice. `Tests/Unit/test_field_farmland_navigation.gd` uses the generic `MapNavigationFixture`, real `Chunk` navigation baking, and `NavigationServer3D` path queries to verify:
+La fase 10.2 está completa para la migración. `field_farmland` Recorrido de la sección en tiempo de ejecución de la granja. `Tests/Unit/test_field_farmland_navigation.gd` utiliza el genérico `MapNavigationFixture`, real `Chunk` navegación horneando y `NavigationServer3D` Consultas de ruta a verificar:
 
-* exterior approach → kitchen through the west door;
-* kitchen → ground room through the declared room connection;
-* bidirectional ground room ↔ upper room traversal through the authored staircase;
-* navigation baking completes only after the `NavigationServer3D` map iteration advances and two further physics frames settle the newly attached region.
+* Acceso exterior → cocina a través de la puerta oeste;
+* cocina → planta baja a través de la conexión de habitaciones declarada;
+* Recorrido bidireccional entre la planta baja y la planta superior a través de la escalera diseñada;
+* El horneado de navegación se completa solo después de que `NavigationServer3D` La iteración del mapa avanza y dos marcos físicos adicionales estabilizan la región recién adjunta.
 
-Runtime wall-blocking is not claimed by this slice: the current fixture contributes block top faces to navigation source geometry, so a one-block wall can itself be represented as an elevated navigation surface. A follow-up collision/navigation-fixture change is required before asserting that automatic wall cells block crossings. Dynamic door state, combat, and full player-input traversal remain outside this phase.
+Esta sección no contempla el bloqueo de muros en tiempo de ejecución: el sistema actual aporta caras superiores de bloques a la geometría de la fuente de navegación, por lo que un muro de un bloque puede representarse como una superficie de navegación elevada. Se requiere un cambio posterior en el sistema de colisión/navegación antes de poder afirmar que las celdas de muro automáticas bloquean los cruces. El estado dinámico de las puertas, el combate y el recorrido completo mediante la entrada del jugador quedan fuera de esta fase.
 
-Use real Chunk navigation baking and `NavigationServer3D`; do not introduce a Python pathfinder.
+Utilice el horneado de navegación de Chunk real y `NavigationServer3D`; no introduzca un buscador de rutas de Python.
 
-### 10.3 Maintained acceptance fixtures — complete
+### 10.3 Dispositivos de aceptación mantenidos — completos
 
-The maintained acceptance suite is complete. `MapGeneratorTests.test_maintained_recipe_suite_generates_validates_and_is_deterministic` enumerates every maintained `Tools/examples/map_recipe*.json` recipe, including the generic single-storey and two-storey semantic fixtures, the multi-level foundation, village-square composition, and `field_farmland`. For each recipe it:
+El conjunto de pruebas de aceptación está completo. `MapGeneratorTests.test_maintained_recipe_suite_generates_validates_and_is_deterministic` enumera cada mantenido `Tools/examples/map_recipe*.json` receta, incluyendo los accesorios semánticos genéricos de una y dos plantas, la base de varios niveles, la composición de la plaza del pueblo y `field_farmland`Para cada receta:
 
-* generates two independently written artifacts;
-* validates each artifact through `write_map`'s publication validation and a fresh standalone `MapValidator` instance;
-* requires byte-identical output from both regenerations; and
-* fails when a recipe is added or removed without updating the explicit maintained suite.
+* genera dos artefactos escritos de forma independiente;
+* valida cada artefacto a través de `write_map`validación de la publicación y una nueva publicación independiente `MapValidator` instancia;
+* requiere una salida idéntica en bytes de ambas regeneraciones; y
+* Se produce un error cuando se agrega o elimina una receta sin actualizar el conjunto de recetas mantenido explícitamente.
 
-Relevant GUT runtime coverage remains focused by geometry class: semantic single-storey, semantic two-storey, `field_farmland`, and Pine Hollow Outpost run real `Chunk` baking and `NavigationServer3D` navigation checks. Keep this suite green whenever maintained examples or map-generation behavior change; add an equivalent focused runtime test only when a fixture introduces gameplay geometry not already covered.
+La cobertura relevante del tiempo de ejecución de GUT sigue centrada en la clase de geometría: semántica de un solo piso, semántica de dos pisos, `field_farmland`y Pine Hollow Outpost funciona de verdad `Chunk` hornear y `NavigationServer3D` Comprobaciones de navegación. Mantenga este conjunto en verde siempre que cambien los ejemplos mantenidos o el comportamiento de generación de mapas; agregue una prueba de tiempo de ejecución enfocada equivalente solo cuando un fixture introduzca geometría de juego que aún no esté cubierta.
 
-### 10.4 Phase 10 success criterion — complete
+### 10.4 Criterio de éxito de la fase 10: completado
 
-The Phase 10 success criterion is complete for the maintained fixture set. The generator, standalone validator, DMap persistence, and runtime navigation tests now provide actionable coverage for authored structure and traversal: intended farmhouse doors, room connections, and stairs are reachable, while bounded runtime checks reject unintended crossings through the automatic kitchen walls and generated corner caps. The generic `MapNavigationFixture` models walls as vertical navigation obstacles rather than walkable top surfaces, so these checks exercise the same navigation-server path query used by gameplay.
+El criterio de éxito de la Fase 10 se ha completado para el conjunto de accesorios mantenido. El generador, el validador independiente, la persistencia de DMap y las pruebas de navegación en tiempo de ejecución ahora proporcionan una cobertura procesable para la estructura y el recorrido creados: las puertas de la casa de campo, las conexiones de las habitaciones y las escaleras previstas son accesibles, mientras que las comprobaciones limitadas en tiempo de ejecución rechazan los cruces no deseados a través de las paredes automáticas de la cocina y las tapas de esquina generadas. El genérico `MapNavigationFixture` Los modelos consideran las paredes como obstáculos de navegación verticales en lugar de superficies superiores transitables, por lo que estas comprobaciones realizan la misma consulta de ruta al servidor de navegación que utiliza el juego.
 
-### 10.5 New authored location: Pine Hollow Outpost — implemented; manual visual inspection complete
+### 10.5 Nueva ubicación creada: Puesto de avanzada de Pine Hollow — implementado; inspección visual manual completada
 
-**Status: automated and manual visual/compositional acceptance complete; field-map placement conversion complete**
+**Estado: aceptación visual/compositiva automatizada y manual completada; conversión de la ubicación del mapa de campo completada**
 
-Phase 10.5 shifts the primary acceptance target from reproducing an existing authored map to creating a new location from a concise design request. `field_farmland` remains a behavioral and visual reference, but the new fixture must not copy its coordinates, operation sequence, or complete tile/feature layout.
+La fase 10.5 cambia el objetivo principal de aceptación, pasando de reproducir un mapa existente ya creado a crear una nueva ubicación a partir de una solicitud de diseño concisa. `field_farmland` Sigue siendo una referencia visual y de comportamiento, pero el nuevo dispositivo no debe copiar sus coordenadas, secuencia de funcionamiento ni la disposición completa de los paneles o elementos.
 
-The first location is a small abandoned rural logging outpost suited to Dimensionfall's rural survival setting:
+La primera ubicación es un pequeño puesto maderero rural abandonado, adecuado para el entorno de supervivencia rural de Dimensionfall:
 
-* a weathered caretaker cabin with an enclosed room and loft;
-* a covered-open lean-to or wood-storage shelter beside the cabin;
-* a short pedestrian/service dirt path from the yard to the cabin entrance;
-* a fenced or partially overgrown work yard;
-* a well, hand pump, workstation, or representative storage furniture;
-* trees, rough terrain, and sparse environmental detail around the site.
+* una cabaña de cuidador desgastada por el tiempo, con una habitación cerrada y un altillo;
+* un cobertizo cubierto o descubierto, o un refugio para almacenar leña, junto a la cabaña;
+* un corto sendero de tierra para peatones y personal desde el patio hasta la entrada de la cabaña;
+* un patio de trabajo cercado o parcialmente cubierto de maleza;
+* un pozo, una bomba manual, una estación de trabajo o un mueble de almacenamiento representativo;
+* Árboles, terreno accidentado y escasos detalles ambientales alrededor del sitio.
 
-The purpose is to exercise the existing generic vocabulary in a new composition: base terrain, field-map classification, local pedestrian paths, rooms, automatic walls, building geometry, entrances, furniture anchors, stairs, areas, and deterministic variation. Do not introduce a settlement-generation system, a farmhouse-specific conditional, or a new physical-building primitive unless the outpost exposes a concrete missing requirement.
+El objetivo es ejercitar el vocabulario genérico existente en una nueva composición: terreno base, clasificación del mapa de campo, senderos peatonales locales, habitaciones, muros automáticos, geometría de edificios, entradas, anclajes de mobiliario, escaleras, áreas y variación determinista. No introduzca un sistema de generación de asentamientos, una condición específica para la granja ni una nueva primitiva física de construcción, a menos que el puesto avanzado exponga un requisito concreto que falte.
 
-#### 10.5 success criterion
+#### 10.5 criterio de éxito
 
-The generated Pine Hollow Outpost must:
+El puesto avanzado de Pine Hollow generado debe:
 
-* be authored from a new concise recipe rather than a hand-authored source-map transcription;
-* produce a visually recognizable rural survival outpost with a cabin, lean-to/storage area, yard, and short pedestrian/service path;
-* provide an enterable cabin with an exterior entrance and an intentional connection to the outdoor/covered-open area;
-* provide a loft or raised storage level with a valid staircase, headroom, and reachable upper surface;
-* retain representative furniture/features and area semantics important to gameplay;
-* block unintended crossings through enclosed walls while preserving declared entrances and connections;
-* pass generator validation, standalone `MapValidator` validation, deterministic regeneration, and the maintained recipe acceptance matrix;
-* pass focused runtime checks using real `Chunk` baking and `NavigationServer3D` for the service-path-to-cabin, cabin-to-outdoor-area, and cabin-to-loft traversal.
+* ser elaborado a partir de una nueva receta concisa en lugar de una transcripción manual de un mapa fuente;
+* Crear un puesto de avanzada rural de supervivencia visualmente reconocible con una cabaña, un cobertizo/área de almacenamiento, un patio y un corto sendero peatonal/de servicio;
+* Proporcionar una cabaña accesible con entrada exterior y una conexión intencionada con el área exterior/cubierta-abierta;
+* Proporcionar un altillo o un nivel de almacenamiento elevado con una escalera válida, altura suficiente y una superficie superior accesible;
+* conservar los elementos/características representativas y la semántica del área que son importantes para la jugabilidad;
+* Bloquear los cruces no deseados a través de muros cerrados, preservando al mismo tiempo las entradas y conexiones declaradas;
+* validación del generador de pases, independiente `MapValidator` validación, regeneración determinista y la matriz de aceptación de recetas mantenida;
+* pasar comprobaciones de tiempo de ejecución enfocadas usando reales `Chunk` hornear y `NavigationServer3D` para el recorrido desde el camino de servicio a la cabaña, desde la cabaña al área exterior y desde la cabaña al altillo.
 
-Decorative details, exact terrain scatter, minor prop placement, and other non-gameplay-critical differences from `field_farmland` are intentionally allowed. Phase 10.5 should add comparison/reporting only where it clarifies structural or visual equivalence; it must not turn the new recipe into a byte-equivalent snapshot of the authored farmhouse.
+Detalles decorativos, dispersión exacta del terreno, colocación menor de objetos y otras diferencias no críticas para la jugabilidad. `field_farmland` Se permiten intencionadamente. La fase 10.5 debe añadir comparaciones/informes solo cuando aclare la equivalencia estructural o visual; no debe convertir la nueva receta en una instantánea equivalente en bytes de la granja de código original.
 
-The production recipe is `Tools/recipes/pine_hollow_outpost.json`, with stable ID `pine_hollow_outpost`; its published runtime asset is `Mods/Dimensionfall/Maps/pine_hollow_outpost.json`. This promotion does not replace the legacy `field_outpost.json` map. The example recipe remains a separate maintained regression fixture with the `generated_pine_hollow_outpost` ID.
+La receta de producción es `Tools/recipes/pine_hollow_outpost.json`, con ID estable `pine_hollow_outpost`; su recurso de tiempo de ejecución publicado es `Mods/Dimensionfall/Maps/pine_hollow_outpost.json`Esta promoción no reemplaza el legado `field_outpost.json` mapa. La receta de ejemplo sigue siendo un accesorio de regresión mantenido por separado con el `generated_pine_hollow_outpost` IDENTIFICACIÓN.
 
-`Tests/Unit/test_pine_hollow_outpost_navigation.gd` uses real `Chunk` baking and `NavigationServer3D` path queries to verify the service-path-to-cabin and cabin-to-lean-to routes, bidirectional lower-to-loft traversal, and an isolated north-wall pocket that cannot be crossed. The automated structural/runtime portion and the manual Godot content-editor review are complete. The review confirmed the pedestrian approach, door alignment, cabin/lean-to silhouette, work yard, furniture/props, loft/stairs/roof, concrete threshold, and absence of roof coverage over the lean-to.
+`Tests/Unit/test_pine_hollow_outpost_navigation.gd` utiliza real `Chunk` hornear y `NavigationServer3D` Consultas de ruta para verificar las rutas de servicio a la cabaña y de la cabaña al cobertizo, el recorrido bidireccional de la planta baja al altillo y un hueco aislado en la pared norte que no se puede cruzar. La parte estructural/de ejecución automatizada y la revisión manual del editor de contenido de Godot están completas. La revisión confirmó el acceso peatonal, la alineación de la puerta, la silueta de la cabaña/cobertizo, el patio de trabajo, los muebles/accesorios, el altillo/escaleras/techo, el umbral de hormigón y la ausencia de cobertura de techo sobre el cobertizo.
 
-The implementation order is:
+El orden de implementación es:
 
-1. ~~author `Tools/examples/map_recipe_pine_hollow_outpost.json` from the location concept;~~
-2. ~~add focused generator and standalone-validator coverage for the new composition;~~
-3. ~~add or extend focused GUT runtime navigation coverage for the declared routes and blocked wall crossings;~~
-4. ~~generate the map and inspect it through the existing Godot/editor workflow;~~
-5. ~~mark the visual review complete only after that inspection confirms the intended rural outpost composition.~~
+1. ~~autor `Tools/examples/map_recipe_pine_hollow_outpost.json` a partir del concepto de ubicación;~~
+2. ~~Añadir cobertura de generador enfocado y validador independiente para la nueva composición;~~
+3. ~~Agregar o extender la cobertura de navegación en tiempo de ejecución de GUT enfocada para las rutas declaradas y los cruces de muros bloqueados;~~
+4. ~~generar el mapa e inspeccionarlo a través del flujo de trabajo existente de Godot/editor;~~
+5. ~~Marque la revisión visual como completada solo después de que dicha inspección confirme la composición prevista del puesto de avanzada rural.~~
 
-### 10.6 Room-derived surface operations — implemented
+### 10.6 Operaciones de superficie derivadas de la sala — implementadas
 
-**Status: implemented; automated acceptance complete**
+**Estado: implementado; aceptación automatizada completada**
 
-Phase 10.6 closes the Pine Hollow room-owned-geometry gap without merging distinct semantic layers. The root `rooms` registry remains the definition source, `buildings[].rooms` remains the backwards-compatible ownership relationship, and `building_levels[].rooms` remains the per-floor ownership relationship.
+La fase 10.6 cierra la brecha de geometría de propiedad de la habitación de Pine Hollow sin fusionar capas semánticas distintas. La raíz `rooms` El registro sigue siendo la fuente de la definición, `buildings[].rooms` sigue siendo la relación de propiedad retrocompatible, y `building_levels[].rooms` Se mantiene la relación de propiedad por planta.
 
-`room_surface` now derives physical coverage from final authored room membership:
+`room_surface` Ahora obtiene la cobertura física de la membresía de la habitación final autorizada:
 
 ```json
 {"type": "room_surface", "room": "outpost_loft", "z": 2, "tile": {"id": "concrete_00"}}
 {"type": "room_surface", "room": "outpost_loft", "z": 4, "tile": {"id": "concrete_00"}, "outline_padding": 1}
 ```
 
-It accepts one known room, target logical z, tile specification, and optional non-negative `outline_padding`. Derived cells use the final membership of a room that occupies exactly one source z; padding expands that membership by Chebyshev radius and must remain map-bounded. Surface materialization is deferred until room labels are complete, preserves existing metadata/features, and retains authored slope tiles at the same z. Raw `rectangle` operations remain valid for terrain, roads, yards, and intentional eaves. `room_connections` remain authoritative; this phase does not infer doors or openings.
+Acepta una habitación conocida, z lógica objetivo, especificación de mosaico y no negativo opcional. `outline_padding`Las celdas derivadas utilizan la pertenencia final a una habitación que ocupa exactamente una coordenada z de origen; el relleno expande dicha pertenencia mediante el radio de Chebyshev y debe permanecer dentro de los límites del mapa. La materialización de la superficie se pospone hasta que las etiquetas de las habitaciones estén completas, conserva los metadatos/características existentes y mantiene las teselas de pendiente creadas en la misma coordenada z. `rectangle` Las operaciones siguen siendo válidas para terrenos, carreteras, patios y aleros intencionados. `room_connections` mantener la autoridad; esta fase no implica puertas ni aperturas.
 
-`building_geometry` now limits floor materialization on declared `building_levels` to the member cells of that level's rooms, plus required wall supports, unless that level explicitly declares a building-wide `building_surfaces` floor. It no longer silently fills an entire multi-level footprint when only a subset room owns an elevated level.
+`building_geometry` ahora limita la materialización del piso en declarado `building_levels` a las celdas miembros de las habitaciones de ese nivel, más los soportes de pared requeridos, a menos que ese nivel declare explícitamente un edificio en general `building_surfaces` piso. Ya no ocupa silenciosamente toda una superficie de varios niveles cuando solo una parte de la habitación tiene un nivel elevado.
 
-Pine Hollow now expresses its `6×6` loft floor and padded `8×8` roof without duplicate coordinate rectangles:
+Pine Hollow ahora expresa su `6×6` piso del altillo y acolchado `8×8` techo sin rectángulos de coordenadas duplicados:
 
 ```text
 outpost_loft membership: x12..17, y11..16 (6×6)
@@ -1032,17 +1032,17 @@ loft roof:                x11..18, y10..17 (8×8)
 lean-to:                  outside the loft floor and roof coverage
 ```
 
-Automated coverage verifies final-membership derivation independent of operation order, padded coverage, unknown rooms/tiles/invalid padding/missing membership/out-of-bounds diagnostics, preserved loft crate and stairs, excluded lean-to cells, deterministic maintained-recipe regeneration, independent `MapValidator` validation of output, and existing real runtime navigation acceptance. `room_surface` is recipe-only syntax and does not appear in generated map data, so no DMap persistence field or standalone generated-map validator schema extension is needed.
+La cobertura automatizada verifica la derivación de la membresía final independientemente del orden de operación, cobertura acolchada, habitaciones desconocidas/baldosas/acolchado no válido/membresía faltante/diagnósticos fuera de límites, caja de desván y escaleras preservadas, celdas adosadas excluidas, regeneración determinista de receta mantenida, independiente `MapValidator` Validación de la salida y aceptación de la navegación en tiempo de ejecución real existente. `room_surface` es una sintaxis exclusiva de recetas y no aparece en los datos del mapa generado, por lo que no se necesita ningún campo de persistencia de DMap ni una extensión de esquema de validador de mapa generado independiente.
 
-The Phase 10.5 manual Godot content-editor visual/compositional review of Pine Hollow's pedestrian approach, cabin/lean-to silhouette, work yard, and prop placement is complete.
+La revisión visual y compositiva de la fase 10.5, realizada con el editor de contenido manual Godot, del acceso peatonal a Pine Hollow, la silueta de la cabaña/refugio, el patio de trabajo y la ubicación de los elementos de la escenografía, ya está completa.
 
-### 10.7 Canonical doorway and entrance declarations — complete
+### 10.7 Declaraciones canónicas de puertas y entradas — completas
 
-**Status: complete**
+**Estado: completado**
 
-Phase 10.7 reduces the duplicated descriptions of a single physical doorway exposed by Pine Hollow. A current exterior door can be described by a root `room_connections` record, a building-level entrance record, `exterior_context`, `exterior_access_context`, a door-kind `furniture_anchor`, a per-floor anchor assignment, and a separate door-furniture operation. These records do not all represent the same concern, but their repeated IDs and coordinates make recipes difficult to author and maintain.
+La fase 10.7 reduce las descripciones duplicadas de una única puerta física expuesta por Pine Hollow. Una puerta exterior actual puede describirse mediante una raíz. `room_connections` registro, un registro de entrada a nivel de edificio, `exterior_context`, `exterior_access_context`, un tipo de puerta `furniture_anchor`, una asignación de anclaje por piso y una operación independiente para puertas y herrajes. Estos registros no representan todos el mismo problema, pero sus identificadores y coordenadas repetidos dificultan la creación y el mantenimiento de recetas.
 
-The target model is to make a room connection the canonical identity of a doorway or opening. A room-to-exterior connection may opt into entrance metadata:
+El modelo objetivo consiste en convertir la conexión entre habitaciones en la identidad canónica de una puerta o abertura. Una conexión entre una habitación y el exterior puede optar por incluir metadatos de entrada:
 
 ```json
 {
@@ -1059,206 +1059,206 @@ The target model is to make a room connection the canonical identity of a doorwa
 }
 ```
 
-In this model:
+En este modelo:
 
-* `room_connections[].id` is the stable identity used by building and reachability metadata;
-* `at` remains the semantic room-edge coordinate;
-* `target_at` remains the physical door/opening coordinate, preserving the existing semantic-versus-physical distinction;
-* `entrance.exterior_at` replaces the separate building `exterior_context` for that entrance;
-* `entrance.facing` replaces the separate building `entrance`/`entrances` facing declaration;
-* an entrance is identified by its connection ID, so a separate entrance ID is not required;
-* door-kind furniture anchors and per-floor door-anchor assignments are derived from the connection target rather than authored again;
-* generic furniture anchors remain independent for crates, benches, workstations, storage, and other gameplay targets;
-* internal room-to-room connections remain valid without entrance metadata;
-* `room_connections` remain semantic declarations and do not automatically generate a door feature in the first slice.
+* `room_connections[].id` es la identidad estable utilizada por los metadatos de construcción y accesibilidad;
+* `at` sigue siendo la coordenada semántica del borde de la habitación;
+* `target_at` sigue siendo la coordenada física de la puerta/apertura, preservando la distinción existente entre lo semántico y lo físico;
+* `entrance.exterior_at` reemplaza el edificio separado `exterior_context` para esa entrada;
+* `entrance.facing` reemplaza el edificio separado `entrance`/`entrances` declaración de confrontación;
+* Una entrada se identifica mediante su ID de conexión, por lo que no se requiere un ID de entrada independiente;
+* Los anclajes de muebles para cada tipo de puerta y las asignaciones de anclajes de puertas por piso se derivan del objetivo de conexión en lugar de crearse de nuevo;
+* Los anclajes de mobiliario genéricos permanecen independientes para cajas, bancos, estaciones de trabajo, almacenamiento y otros objetivos de juego;
+* Las conexiones internas entre habitaciones siguen siendo válidas sin metadatos de entrada;
+* `room_connections` Siguen siendo declaraciones semánticas y no generan automáticamente una función de puerta en la primera sección.
 
-The first implementation should preserve backwards compatibility. Recipes using the existing building-level `entrance`, `entrances`, `exterior_context`, `exterior_access_context`, and door furniture anchors remain valid. If legacy and connection-level entrance metadata are both present, the generator and standalone validator must require them to describe the same connection, target, exterior context, and facing. Generated maps should continue to serialize the established runtime-compatible building metadata until consumers can migrate.
+La primera implementación debe preservar la compatibilidad con versiones anteriores. Recetas que utilizan el nivel de construcción existente. `entrance`, `entrances`, `exterior_context`, `exterior_access_context`y los anclajes de herrajes de puerta siguen siendo válidos. Si están presentes tanto los metadatos de entrada heredados como los de nivel de conexión, el generador y el validador independiente deben exigir que describan la misma conexión, destino, contexto exterior y orientación. Los mapas generados deben continuar serializando los metadatos de construcción compatibles con el tiempo de ejecución establecidos hasta que los consumidores puedan migrar.
 
-Reachability should use all owned room-to-exterior connections with entrance metadata as default seeds. `required_entrances` remains an optional narrowing requirement for buildings with multiple entrances; ordinary one-entrance buildings should not need to repeat the connection ID in a separate requirement list.
+La función de accesibilidad debe utilizar todas las conexiones de habitación a exterior que tengan los metadatos de entrada como puntos de partida predeterminados. `required_entrances` Sigue siendo un requisito de restricción opcional para edificios con múltiples entradas; los edificios ordinarios de una sola entrada no deberían necesitar repetir el ID de conexión en una lista de requisitos separada.
 
-Automatic door-feature generation is deliberately deferred. A later slice may allow an entrance connection to declare a door feature and rotation, but that requires explicit conflict, legacy-door, locked-door, window, and non-door opening rules. Phase 10.7 initially canonicalizes identity and validation; it does not infer topology, collision, navigation, or indoor state.
+La generación automática de características de puerta se pospone deliberadamente. Una versión posterior podría permitir que una conexión de entrada declare una característica de puerta y su rotación, pero esto requiere reglas explícitas para conflictos, puertas heredadas, puertas bloqueadas, ventanas y apertura de objetos que no sean puertas. La fase 10.7 inicialmente canoniza la identidad y la validación; no infiere topología, colisión, navegación ni estado interior.
 
-#### 10.7 success criterion
+#### 10.7 criterio de éxito
 
-A migrated Pine Hollow-style recipe must describe its exterior doorway with one canonical room-connection ID while preserving the current generated map and runtime behavior. The generator and standalone `MapValidator` must validate connection-level entrance metadata, detect conflicts with legacy declarations, derive default reachability seeds, preserve internal connections and generic furniture anchors, and keep generated output compatible with DMap/runtime consumers. Deterministic generation, maintained-recipe validation, DMap round-trip behavior, and real navigation acceptance must remain green.
+Una receta migrada al estilo Pine Hollow debe describir su puerta exterior con un ID de conexión de habitación canónico, conservando el mapa generado actual y el comportamiento en tiempo de ejecución. El generador y el independiente `MapValidator` Se debe validar la entrada de metadatos a nivel de conexión, detectar conflictos con declaraciones heredadas, derivar semillas de accesibilidad predeterminadas, preservar las conexiones internas y los anclajes genéricos de mobiliario, y mantener la salida generada compatible con los consumidores de DMap/tiempo de ejecución. La generación determinista, la validación de recetas mantenidas, el comportamiento de ida y vuelta de DMap y la aceptación de navegación real deben permanecer en verde.
 
-#### 10.7 implementation order
+#### 10.7 Orden de implementación
 
-1. ~~Add test-first generator and standalone-validator coverage for a connection-level `entrance` block, including default reachability seeding and invalid/conflicting legacy metadata. Keep the initial test red before adding production code.~~ The focused coverage is now GREEN in `Tools/tests/test_map_generator.py`.
-2. ~~Add the smallest backwards-compatible schema validation and normalized internal representation in `Tools/map_generator.py` and `Tools/map_validator.py`.~~ Both tools now accept and validate the optional `entrance` object, preserve it in generated connection data, validate external linkage, bounds, facing, and reject malformed declarations.
-3. ~~Migrate Pine Hollow’s exterior door to the new declaration while retaining the legacy form temporarily as an exact-equivalence compatibility test.~~ Both Pine Hollow recipe copies now use `room_connections[].entrance`; the temporary legacy building entrance/context, door furniture, and door-anchor declarations were subsequently removed after exact-equivalence testing.
-4. ~~Mirror the normalized persisted building metadata in `Scripts/Gamedata/DMap.gd` and add DMap round-trip coverage if serialized fields change.~~ `DMap` now preserves valid connection-level entrance metadata and removes malformed nested entrance data without discarding an otherwise valid connection; `Tests/Unit/test_dmap_sanitization.gd` covers both behaviors.
-5. ~~Remove redundant Pine Hollow door anchor, per-level door-anchor, and separate entrance/context declarations only after compatibility tests prove equivalent output.~~ The canonical connection-level entrance now owns doorway identity and exterior approach metadata; the redundant declarations were removed from both Pine Hollow recipes.
-6. ~~Re-run maintained generation, deterministic comparison, standalone validation, and focused Godot navigation coverage; document the final authoring contract.~~ The maintained acceptance matrix remains green after regeneration and the final authoring contract is documented above.
+1. ~~Agregar cobertura de generador test-first y validador independiente para un nivel de conexión `entrance` bloque, incluyendo la inicialización de accesibilidad predeterminada y metadatos heredados no válidos/conflictivos. Mantenga la prueba inicial en rojo antes de agregar código de producción.~~ La cobertura enfocada ahora es VERDE en `Tools/tests/test_map_generator.py`.
+2. ~~Agregue la validación de esquema compatible con versiones anteriores más pequeña y la representación interna normalizada en `Tools/map_generator.py` y `Tools/map_validator.py`.~~ Ambas herramientas ahora aceptan y validan la opción `entrance` objeto, conservarlo en los datos de conexión generados, validar el enlace externo, los límites, la orientación y rechazar las declaraciones mal formadas.
+3. ~~Migrar la puerta exterior de Pine Hollow a la nueva declaración, conservando temporalmente la forma anterior como prueba de compatibilidad de equivalencia exacta.~~ Ambas copias de la receta de Pine Hollow ahora utilizan `room_connections[].entrance`; la entrada/contexto temporal del edificio heredado, los herrajes de las puertas y las declaraciones de anclaje de las puertas fueron posteriormente retirados tras las pruebas de equivalencia exacta.
+4. ~~Refleje los metadatos de edificios persistentes normalizados en `Scripts/Gamedata/DMap.gd` y agregar cobertura de ida y vuelta de DMap si los campos serializados cambian. `DMap` Ahora conserva los metadatos de entrada válidos a nivel de conexión y elimina los datos de entrada anidados mal formados sin descartar una conexión que de otro modo sería válida; `Tests/Unit/test_dmap_sanitization.gd` abarca ambos comportamientos.
+5. ~~Elimine el anclaje de puerta redundante de Pine Hollow, el anclaje de puerta por nivel y las declaraciones separadas de entrada/contexto solo después de que las pruebas de compatibilidad demuestren una salida equivalente.~~ La entrada canónica de nivel de conexión ahora posee la identidad de la puerta y los metadatos de aproximación exterior; las declaraciones redundantes se eliminaron de ambas recetas de Pine Hollow.
+6. ~~Repita la generación mantenida, la comparación determinista, la validación independiente y la cobertura de navegación enfocada de Godot; documente el contrato de autoría final.~~ La matriz de aceptación mantenida permanece en verde después de la regeneración y el contrato de autoría final se documenta arriba.
 
-### 10.8 Pine Hollow Outpost detail and immersion pass — complete
+### 10.8 Pase de detalle e inmersión del puesto de avanzada Pine Hollow — completo
 
-**Status: complete; controlled field variation, shabby wood floors, cabin furnishing, bounded exterior nature dressing, container itemgroups, and acceptance validation complete**
+**Estado: completado; variación de campo controlada, suelos de madera desgastados, mobiliario de cabaña, decoración exterior delimitada, grupos de artículos de contenedores y validación de aceptación completada**
 
-Phase 10.7 made Pine Hollow a correctly classified, playable field map. Phase 10.8 completed its authored detail and immersion pass using the existing generic terrain, palette, area, furniture, and room/building primitives without adding Pine-Hollow-specific generator conditionals.
+La fase 10.7 convirtió a Pine Hollow en un mapa de campo jugable y correctamente clasificado. La fase 10.8 completó su revisión de detalles e inmersión utilizando los elementos genéricos existentes de terreno, paleta, área, mobiliario y habitaciones/edificios, sin añadir condiciones de generador específicas para Pine Hollow.
 
-The implemented first slice uses the existing field-compatible `grass_plain_01`, `grass_dirt_00`–`02`, `grass_medium_dirt_00`, and `grass_flowers_00` palette entries. It deliberately excludes `forest_underbrush_00`: Pine Hollow is a field map, not a forest map. It also excludes `grass_dead_00`, which does not fit the intended maintained field treatment. The `outpost_ground` runtime area covers every map cell outside the cabin footprint and always replaces its covered ground with a mostly-grass weighted mix; it does not use `null`. The cabin and loft use `floor_wood_shabby_00`, while the exterior threshold and open lean-to use explicit `concrete_00`. The ground-floor composition uses a wooden bed, stove, cabinet, table, chair, and lean-to tool bench; bounded exterior nature dressing uses an `outpost_field_nature` runtime area with wild vegetation, field rock, pine tree, and burned-stump weights in exterior-only membership regions. The `outpost_yard` runtime area has three dirt variants and deliberately excludes the path, building, and lean-to. Runtime area selection makes exterior dressing vary by map instance rather than baking it into the generated JSON. Focused generator assertions protect the material, route, required prop, non-forest palette, runtime-area, and clearance contracts.
+La primera sección implementada utiliza el campo compatible existente. `grass_plain_01`, `grass_dirt_00`–`02`, `grass_medium_dirt_00`, y `grass_flowers_00` entradas de paleta. Excluye deliberadamente `forest_underbrush_00`: Pine Hollow es un mapa de campo, no un mapa de bosque. También excluye `grass_dead_00`, lo cual no se ajusta al tratamiento de campo mantenido previsto. El `outpost_ground` El área de ejecución cubre cada celda del mapa fuera del perímetro de la cabaña y siempre reemplaza el suelo cubierto con una mezcla mayoritariamente de césped; no utiliza `null`. La cabaña y el altillo utilizan `floor_wood_shabby_00`, mientras que el umbral exterior y el cobertizo abierto utilizan explícitamente `concrete_00`La composición de la planta baja utiliza una cama de madera, estufa, armario, mesa, silla y banco de herramientas adosado; el revestimiento exterior delimitado de la naturaleza utiliza un `outpost_field_nature` Área de ejecución con vegetación silvestre, roca de campo, pino y tocones quemados en regiones de membresía solo para exteriores. `outpost_yard` El área de ejecución tiene tres variantes de terreno y excluye deliberadamente el camino, el edificio y el cobertizo. La selección del área de ejecución hace que el revestimiento exterior varíe según la instancia del mapa, en lugar de incorporarlo al JSON generado. Las aserciones del generador específico protegen el material, la ruta, el objeto requerido, la paleta que no sea de bosque, el área de ejecución y los contratos de autorización.
 
-#### 10.8.1 Authored composition contract
+#### 10.8.1 Contrato de composición redactado por el autor
 
-Keep the following spatial intent stable while adding detail:
+Mantenga estable la siguiente intención espacial mientras agrega detalles:
 
-* the map remains a `Field` map with all four edge connections set to `"ground"`;
-* the map has no `road_endpoints` or `road_paths`; the route is a local pedestrian/service path, not drivable road infrastructure;
-* `room_connections[].id` remains the canonical doorway identity;
-* `entrance.exterior_at` remains the outdoor approach point at `[10, 14]`;
-* the physical threshold at `[11, 14]` remains concrete and retains the `door_wood` feature;
-* the cabin room, lean-to, loft, stairs, wall opening, and blocked wall-crossing contract remain unchanged;
-* the service path remains continuous from the outer yard into the entrance approach and must not be replaced by random ground variation;
-* the cabin entrance, stairs, furniture clearances, and required navigation routes are reserved before scatter or decorative placement is applied.
+* el mapa sigue siendo un `Field` mapa con las cuatro conexiones de borde establecidas en `"ground"`;
+* el mapa no tiene `road_endpoints` o `road_paths`; la ruta es un sendero peatonal/de servicio local, no una infraestructura vial transitable para vehículos;
+* `room_connections[].id` sigue siendo la identidad de puerta de entrada canónica;
+* `entrance.exterior_at` sigue siendo el punto de acceso al aire libre en `[10, 14]`;
+* el umbral físico en `[11, 14]` permanece de hormigón y conserva el `door_wood` característica;
+* El contrato relativo a la habitación de la cabina, el cobertizo, el altillo, las escaleras, la abertura en la pared y el paso a través de la pared bloqueada permanece sin cambios;
+* La vía de servicio permanece continua desde el patio exterior hasta el acceso de entrada y no debe ser sustituida por variaciones aleatorias del terreno;
+* La entrada a la cabina, las escaleras, el espacio libre para los muebles y las rutas de navegación necesarias se reservan antes de aplicar cualquier colocación decorativa o esparcida.
 
-Do not use decoration to alter room membership, create openings, bypass building validation, or imply a new overmap placement rule.
+No utilice la decoración para alterar la pertenencia a una sala, crear aberturas, eludir la validación de edificios o implicar una nueva regla de colocación en el mapa general.
 
-#### 10.8.2 Ground and path treatment
+#### 10.8.2 Tratamiento del suelo y los caminos
 
-Replace the current nearly uniform outdoor treatment with controlled deterministic variation:
+Sustituir el tratamiento exterior actual, casi uniforme, por una variación determinista controlada:
 
-* define a weighted ground palette using compatible grass, grass/dirt, rough-ground, and seasonal or weathered variants already present in the tile catalog;
-* keep the base field readable as grass rather than turning the entire map into dirt;
-* use a lower-variation yard treatment around the cabin and lean-to, with worn patches near the entrance, work area, storage, fence remnants, and path;
-* retain the short `dirt_light_00` service path from the yard to `[10, 14]` and keep its width intentionally pedestrian-scale;
-* avoid palette or scatter placement on the cabin, lean-to, loft, roof/support, threshold, stair, wall, furniture, and reserved navigation cells;
-* use the fixed recipe seed and assert that repeated generation is byte-identical;
-* prefer palettes and bounded scatter over large hand-authored tile lists, while keeping deliberately composed focal cells explicit.
+* definir una paleta de terreno ponderada utilizando variantes compatibles de césped, césped/tierra, terreno accidentado y variantes estacionales o desgastadas ya presentes en el catálogo de baldosas;
+* Mantener el terreno base legible como césped en lugar de convertir todo el mapa en tierra;
+* Utilice un tratamiento de jardín con menor variación alrededor de la cabaña y el cobertizo, con parches desgastados cerca de la entrada, el área de trabajo, el almacenamiento, los restos de la cerca y el camino;
+* conservar el corto `dirt_light_00` camino de servicio desde el patio hasta `[10, 14]` y mantener su anchura intencionadamente a escala peatonal;
+* Evite colocar paletas o objetos dispersos en la cabina, cobertizo, altillo, techo/soporte, umbral, escalera, pared, muebles y celdas de navegación reservadas;
+* utilice la semilla de receta fija y asegure que la generación repetida sea idéntica byte a byte;
+* Prefiero las paletas y la dispersión delimitada a las grandes listas de mosaicos creadas manualmente, manteniendo explícitas las celdas focales compuestas deliberadamente.
 
-The exact palette membership must be chosen from the real tile catalog during implementation. Do not invent tile IDs in the roadmap implementation without catalog validation.
+La paleta de colores debe seleccionarse del catálogo de mosaicos real durante la implementación. No invente identificadores de mosaicos en la implementación del plan de desarrollo sin la validación del catálogo.
 
-#### 10.8.3 Cabin floors and structural material
+#### 10.8.3 Suelos de cabina y material estructural
 
-Change the cabin’s authored floor treatment from generic concrete to a suitable walkable wood tile where the catalog and runtime support it:
+Cambie el revestimiento del suelo predeterminado de la cabaña, pasando de hormigón genérico a una baldosa de madera transitable adecuada, siempre que el catálogo y el entorno de ejecución lo permitan:
 
-* use a wood floor for the ground-floor cabin room and, if appropriate, the loft;
-* retain concrete at the exterior threshold if it communicates a worn foundation or weather-protected entry;
-* preserve the stairs, door tile/feature, wall supports, roof, and all room membership while changing floor material;
-* verify that the selected wood tile is a valid walkable `Ground`/`Floor` tile and that it does not introduce a navigation or collision regression;
-* decide explicitly whether the lean-to remains wood, dirt, or open ground rather than allowing the building footprint to imply a floor there;
-* keep the physical standable roof contract unchanged; do not add physical ceilings as part of this visual pass.
+* Utilice un suelo de madera para la habitación de la planta baja de la cabaña y, si procede, para el altillo;
+* Conserve el hormigón en el umbral exterior si este comunica una base desgastada o una entrada protegida de la intemperie;
+* conservar las escaleras, los azulejos/elementos de la puerta, los soportes de las paredes, el techo y la distribución de todas las habitaciones al cambiar el material del suelo;
+* verificar que la baldosa de madera seleccionada sea transitable válida `Ground`/`Floor` mosaico y que no introduce una regresión de navegación o colisión;
+* decidir explícitamente si el cobertizo sigue siendo de madera, tierra o terreno abierto, en lugar de permitir que la huella del edificio implique que hay un piso allí;
+* Mantenga sin cambios el contrato de techo físico estable; no agregue techos físicos como parte de esta revisión visual.
 
-If no suitable wood tile exists, stop and add the smallest catalog/content prerequisite rather than silently retaining concrete while documenting the floor as complete.
+Si no existe una baldosa de madera adecuada, deténgase y agregue el requisito previo de catálogo/contenido más pequeño en lugar de conservar el hormigón en silencio mientras documenta el piso como terminado.
 
-#### 10.8.4 Ground-floor furnishing plan
+#### 10.8.4 Plano de mobiliario de la planta baja
 
-Add a deliberate interior furnishing composition to `outpost_cabin`, leaving a clear route from the door to the stairs and preserving the required navigation targets. The first furnishing set should include:
+Agregue una composición de mobiliario interior deliberada a `outpost_cabin`, dejando una ruta despejada desde la puerta hasta las escaleras y preservando los puntos de referencia de navegación necesarios. El primer conjunto de muebles debe incluir:
 
-* one sleeping arrangement or bed-like prop;
-* one table or work surface with one or more seats where available;
-* one stove, fireplace, lantern, or equivalent survival utility prop if an existing catalog item supports it;
-* storage for supplies, tools, or firewood, using crates/shelves where appropriate;
-* a small amount of abandoned clutter or damage rather than filling every cell;
-* no furniture on the threshold, staircase landing, upper-clearance cell, wall opening, or required path endpoints.
+* un aparato para dormir o un soporte similar a una cama;
+* una mesa o superficie de trabajo con uno o más asientos, si están disponibles;
+* una estufa, chimenea, linterna o accesorio de supervivencia equivalente si existe un artículo en el catálogo que lo admita;
+* Almacenamiento de suministros, herramientas o leña, utilizando cajas o estantes cuando sea apropiado;
+* una pequeña cantidad de objetos abandonados o daños en lugar de llenar cada celda;
+* No se permite colocar muebles en el umbral, el rellano de la escalera, la celda con altura libre superior, la abertura de la pared o los puntos finales de la ruta requerida.
 
-Each placement must use an existing furniture ID, valid rotation, supporting terrain, and one-feature-per-cell rules. Generic furniture anchors should be added only for gameplay-relevant targets such as storage or workstations; decorative furniture should not receive redundant semantic anchors.
+Cada colocación debe usar un ID de mueble existente, una rotación válida, terreno compatible y reglas de un elemento por celda. Los anclajes genéricos de muebles solo deben agregarse para objetivos relevantes para el juego, como almacenamiento o estaciones de trabajo; los muebles decorativos no deben recibir anclajes semánticos redundantes.
 
-The loft should receive only a small sleeping/storage composition. The lean-to should remain visually distinct as covered storage/work space, with room for the existing work crate and an unobstructed cabin-side route.
+El altillo solo debe albergar una pequeña zona para dormir y guardar cosas. El cobertizo debe conservar su apariencia distintiva como espacio cubierto para almacenamiento y trabajo, con espacio para la caja de herramientas existente y un acceso despejado al lateral de la cabaña.
 
-#### 10.8.5 Vegetation and exterior storytelling
+#### 10.8.5 Vegetación y narración exterior
 
-Use the existing nature furniture and scatter vocabulary to make the field feel reclaimed without turning it into an impassable forest:
+Utilice el mobiliario natural existente y el vocabulario de dispersión para que el campo parezca recuperado sin convertirlo en un bosque impenetrable:
 
-* place sparse wild vegetation and grass-height clutter around the map perimeter and beyond the maintained yard;
-* add a few rocks, stumps, shrubs, or trees to establish the outpost’s rural/woodland setting;
-* concentrate overgrowth near fence remnants, the lean-to exterior, yard edges, and less-used corners;
-* leave the service path, exterior approach, door threshold, cabin interior, stairs, lean-to access, and navigation test points clear;
-* avoid placing vegetation over existing features, room-derived surfaces, wall supports, slopes, or reserved cells;
-* use a bounded, exterior-only runtime `areas[].entities` palette for broad nature dressing so each map instance varies; retain explicit furniture operations only for focal props that must remain stable;
-* distinguish static decorative nature props from area entities: use authored deterministic features when the visual composition must remain stable, and use area entities only when runtime variation is intentional.
+* Coloca vegetación silvestre dispersa y objetos a la altura del césped alrededor del perímetro del mapa y más allá del jardín mantenido;
+* Añade algunas rocas, tocones, arbustos o árboles para recrear el ambiente rural o boscoso del puesto de avanzada;
+* concentrar el crecimiento excesivo cerca de los restos de la cerca, el exterior del cobertizo, los bordes del patio y las esquinas menos utilizadas;
+* Deje despejados el camino de servicio, el acceso exterior, el umbral de la puerta, el interior de la cabina, las escaleras, el acceso al cobertizo y los puntos de prueba de navegación;
+* Evite colocar vegetación sobre elementos existentes, superficies derivadas de la habitación, soportes de pared, pendientes o celdas reservadas;
+* utilizar un entorno de ejecución limitado y solo para el exterior. `areas[].entities` paleta para la decoración general de la naturaleza, de modo que cada instancia del mapa varíe; conservar las operaciones explícitas de mobiliario solo para los elementos principales que deben permanecer estables;
+* Distinga los elementos decorativos estáticos de la naturaleza de las entidades de área: utilice elementos deterministas creados por el autor cuando la composición visual deba permanecer estable, y utilice entidades de área solo cuando la variación en tiempo de ejecución sea intencional.
 
-The density should be tuned through editor inspection rather than an arbitrary global count. Record the chosen protected regions, runtime-area weights, and reserved cells in focused tests.
+La densidad debe ajustarse mediante la inspección del editor, en lugar de un recuento global arbitrario. Registre las regiones protegidas seleccionadas, los pesos del área de ejecución y las celdas reservadas en pruebas específicas.
 
-#### 10.8.6 Work-yard and abandonment details
+#### 10.8.6 Detalles del patio de trabajo y del abandono
 
-Strengthen the outpost story with a restrained exterior composition:
+Refuerza la narrativa del puesto avanzado con una composición exterior sobria:
 
-* retain the existing partially destroyed fence markers;
-* add a small work/storage cluster near the lean-to without blocking the route;
-* use worn-ground patches to connect the path, door, work area, and storage area;
-* add one or two abandoned or damaged props only if existing furniture definitions support them;
-* keep the yard readable from above and avoid making every outdoor cell equally busy;
-* preserve the `outpost_yard` area semantics independently from visual tile variation and furniture placement.
+* conservar los marcadores de valla existentes que estén parcialmente destruidos;
+* agregar un pequeño grupo de trabajo/almacenamiento cerca del cobertizo sin bloquear el paso;
+* Utilice parches de suelo desgastado para conectar el camino, la puerta, el área de trabajo y el área de almacenamiento;
+* Agregue uno o dos elementos de utilería abandonados o dañados solo si las definiciones de mobiliario existentes lo permiten;
+* Mantenga el patio legible desde arriba y evite que todas las celdas exteriores estén igualmente recargadas;
+* preservar el `outpost_yard` la semántica del área independientemente de la variación visual de las baldosas y la disposición de los muebles.
 
-This is authored environmental storytelling, not a new generic settlement or overmap composition system.
+Se trata de narración ambiental creada por autores, no de un nuevo sistema genérico de asentamientos o de composición de mapas generales.
 
-#### 10.8.7 Implementation order
+#### 10.8.7 Orden de implementación
 
-All planned implementation steps are complete. The maintained production recipe, example recipe, published map, generator tests, validator checks, deterministic regeneration, and runtime navigation acceptance remain aligned. The final content/editor acceptance was completed as part of closing this phase.
+Se han completado todos los pasos de implementación previstos. La receta de producción mantenida, la receta de ejemplo, el mapa publicado, las pruebas del generador, las comprobaciones del validador, la regeneración determinista y la aceptación de la navegación en tiempo de ejecución siguen alineados. La aceptación final del contenido/editor se completó como parte del cierre de esta fase.
 
-1. ~~Inventory the real tile and furniture catalogs for wood floors, beds, tables, seats, stoves/utilities, storage, rocks, vegetation, shrubs, trees, stumps, and damaged props. Record unavailable concepts and choose the closest existing assets.~~
-2. ~~Add test-first assertions for the intended recipe contract: `Field` classification, all-ground edges, no road metadata, preserved service-path cells, wood floor cells, threshold concrete, and reserved clearances.~~
-3. ~~Add the smallest ground palette and deterministic terrain variation. Run the focused generator tests and inspect the generated map before adding furniture.~~
-4. ~~Replace the ground-floor concrete material where appropriate, preserving threshold and staircase exceptions. Validate the generated map independently.~~
-5. ~~Add the ground-floor cabin furnishing composition and any loft/lean-to additions. Add only gameplay-relevant furniture anchors and update required target assertions.~~
-6. ~~Add bounded exterior vegetation and nature-prop runtime area membership, then tune density and protected regions through editor inspection.~~
-7. ~~Add restrained work-yard wear, clutter, fence/overgrowth relationships, and any available abandoned props.~~
-8. ~~Regenerate both the maintained example and production map from their respective recipes, compare the complete published artifact, and inspect the result in Godot/content editor.~~
-9. ~~Run the structural, deterministic, validator, DMap, and real navigation acceptance matrix. Do not mark this phase complete if any detail pass blocks an existing route or changes the canonical doorway contract.~~
+1. Inventaría los catálogos reales de azulejos y muebles para pisos de madera, camas, mesas, asientos, estufas/utensilios, almacenamiento, rocas, vegetación, arbustos, árboles, tocones y accesorios dañados. Registra los conceptos no disponibles y elige los activos existentes más similares.
+2. ~~Agregue aserciones de prueba primero para el contrato de receta previsto: `Field` Clasificación, bordes de terreno, sin metadatos de carretera, celdas de caminos de servicio preservadas, celdas de suelo de madera, hormigón de umbral y espacios libres reservados.
+3. ~~Añade la paleta de colores de suelo más pequeña y la variación de terreno determinista. Ejecuta las pruebas del generador enfocado e inspecciona el mapa generado antes de añadir muebles.~~
+4. Sustituya el material de hormigón de la planta baja donde corresponda, respetando las excepciones de umbrales y escaleras. Valide el mapa generado de forma independiente.
+5. ~~Añade la composición de mobiliario de la cabaña de la planta baja y cualquier añadido de altillo/cobertizo. Añade solo los anclajes de mobiliario relevantes para el juego y actualiza las aserciones de objetivo necesarias.~~
+6. ~~Añade vegetación exterior delimitada y pertenencia al área de ejecución de objetos naturales, luego ajusta la densidad y las regiones protegidas mediante la inspección del editor.~~
+7. ~~Añade un desgaste moderado propio de un patio de trabajo, desorden, relaciones entre vallas y vegetación excesiva, y cualquier objeto abandonado disponible.~~
+8. ~~Regenera tanto el ejemplo mantenido como el mapa de producción a partir de sus respectivas recetas, compara el artefacto publicado completo e inspecciona el resultado en Godot/editor de contenido.~~
+9. Ejecute la matriz de aceptación de navegación estructural, determinista, de validación, DMap y real. No marque esta fase como completada si algún paso de detalle bloquea una ruta existente o modifica el contrato de puerta canónica.
 
-#### 10.8.8 Acceptance criteria
+#### 10.8.8 Criterios de aceptación
 
-All acceptance criteria below are complete for the maintained Pine Hollow outpost. The final implementation includes controlled ground variation, furnished and navigable cabin spaces, sparse runtime nature dressing, authored container itemgroups, preserved route/doorway semantics, generated-map validation, deterministic output, and final content/editor acceptance.
+Todos los criterios de aceptación que se detallan a continuación se cumplen para el puesto avanzado Pine Hollow. La implementación final incluye variación controlada del terreno, espacios de cabañas amueblados y navegables, elementos naturales en tiempo de ejecución, grupos de objetos de contenedores definidos, semántica de rutas y puertas preservada, validación de mapas generados, salida determinista y aceptación final del contenido y del editor.
 
-The detail pass is complete because all of the following acceptance conditions were met:
+La revisión detallada se ha completado porque se han cumplido todas las siguientes condiciones de aceptación:
 
-* the ground has visible but controlled deterministic variation beyond one uniform grass tile;
-* the cabin ground floor visibly reads as wood or an explicitly documented catalog limitation is resolved;
-* the ground floor contains a deliberate, playable furnishing composition;
-* vegetation and nature props are visible in the field and around the outpost without obstructing routes;
-* the service path remains pedestrian-scale, continuous, and distinct from road infrastructure;
-* the cabin entrance, threshold, stairs, loft, lean-to, work crate, and required furniture remain valid;
-* no feature overwrites, unsupported IDs, invalid rotations, or out-of-bounds placements are introduced;
-* the production and fixture recipes remain semantically equivalent where intended, while retaining their distinct IDs;
-* the standalone `MapValidator` reports no errors for the published map;
-* production regeneration is byte-identical to the committed published map;
-* the full Python map-tool suite passes;
-* focused and full Godot GUT suites pass, including real `Chunk`/`NavigationServer3D` Pine Hollow traversal and blocked-wall tests;
-* manual Godot/content-editor review confirms the outpost reads as a rural, weathered, inhabited-then-abandoned location rather than a decorated test rectangle.
+* El terreno presenta una variación determinista visible pero controlada, más allá de una sola loseta de césped uniforme;
+* La planta baja de la cabaña se ve claramente como de madera o se resuelve una limitación del catálogo documentada explícitamente;
+* La planta baja contiene una composición de mobiliario intencionada y funcional;
+* La vegetación y los elementos naturales son visibles en el terreno y alrededor del puesto de avanzada sin obstruir las rutas;
+* El sendero de servicio sigue siendo a escala peatonal, continuo y distinto de la infraestructura vial;
+* La entrada a la cabaña, el umbral, las escaleras, el altillo, el cobertizo, la caja de trabajo y el mobiliario requerido siguen siendo válidos;
+* No se introducen sobrescrituras de características, identificadores no compatibles, rotaciones no válidas ni ubicaciones fuera de los límites;
+* Las recetas de producción y de accesorios siguen siendo semánticamente equivalentes cuando se pretende, al tiempo que conservan sus identificadores únicos;
+* el independiente `MapValidator` No se reportan errores en el mapa publicado;
+* La regeneración de la producción es idéntica byte a byte al mapa publicado comprometido;
+* El conjunto completo de herramientas de mapeo de Python pasa las pruebas;
+* Paquetes GUT de Godot completos y enfocados, incluyendo real `Chunk`/`NavigationServer3D` Pruebas de recorrido y de pared bloqueada en Pine Hollow;
+* La revisión manual de Godot/editor de contenido confirma que el puesto de avanzada se percibe como un lugar rural, desgastado por el tiempo, habitado y luego abandonado, en lugar de un rectángulo de prueba decorado.
 
-#### 10.8.9 Explicit non-goals
+#### 10.8.9 No objetivos explícitos
 
-Do not include the following in this detail pass:
+No incluya lo siguiente en este pase de detalles:
 
-* a new generic automatic room-furnishing algorithm;
-* automatic vegetation inferred from `Field` classification;
-* a new roadside placement or adjacency system;
-* map-to-map road integration;
-* town, settlement, or overmap-wide composition;
-* physical ceiling generation;
-* generalized tall-storey `wall_height`.
+* un nuevo algoritmo genérico de mobiliario automático para habitaciones;
+* vegetación automática inferida a partir de `Field` clasificación;
+* un nuevo sistema de ubicación o proximidad en la carretera;
+* integración de carreteras de mapa a mapa;
+* Composición que abarca una ciudad, un asentamiento o un mapa general;
+* generación de techo físico;
+* planta alta generalizada `wall_height`.
 
-### 10.9 Crater Research Camp maintained content map — implementation complete
+### 10.9 Mapa de contenido mantenido del campamento de investigación del cráter: implementación completada
 
-**Status: implementation and automated acceptance complete; manual in-game/content-editor visual review pending**
+**Estado: implementación y aceptación automatizada completadas; revisión visual manual en el juego/editor de contenido pendiente**
 
-`crater_research_camp` demonstrates that the generic recipe workflow can ship a finished field location without adding map-specific generator behavior. The map uses `Field` and `Plains` categories with `ground` on all four edges. Its authored composition includes a four-level-deep rock crater with an asymmetric rounded basin and irregular rim inspired by `crater_small`, nested solid-backed terraces, exposed-surface debris coverage kept off the access route, and four sparse reversible slopes linking the surface to z=-4, an enclosed metal research hut with a canonical east-side entrance and an explicitly authored standable cracked-concrete roof, a connected service path, a concrete outdoor equipment pad, scientific and industrial furniture with deliberate rotations, container itemgroup overrides, hazardous-material props, and reserved navigation cells.
+`crater_research_camp` demuestra que el flujo de trabajo de la receta genérica puede enviar una ubicación de campo terminada sin agregar comportamiento de generador específico del mapa. El mapa utiliza `Field` y `Plains` categorías con `ground` en los cuatro bordes. Su composición de autor incluye un cráter rocoso de cuatro niveles de profundidad con una cuenca redondeada asimétrica y un borde irregular inspirado en `crater_small`, terrazas anidadas con respaldo sólido, cobertura de escombros de superficie expuesta mantenida fuera de la ruta de acceso y cuatro pendientes reversibles dispersas que conectan la superficie con z=-4, una cabaña de investigación metálica cerrada con una entrada canónica en el lado este y un techo de hormigón agrietado que se puede sostener explícitamente, un camino de servicio conectado, una plataforma de equipo exterior de hormigón, muebles científicos e industriales con rotaciones deliberadas, anulaciones de grupos de elementos de contenedores, accesorios de materiales peligrosos y celdas de navegación reservadas.
 
-Runtime areas provide broad field-ground variation outside the protected camp/crater envelope, sparse nature dressing, crater-floor rock debris, and a possible security-robot patrol. The field palette follows the proven `crater_small` grass/dirt/flower proportions; the crater, hut, path, and equipment pad remain explicitly authored so runtime area selection cannot overwrite focal geometry. Existing catalog assets were sufficient, so no new tile or furniture definitions were introduced. A dedicated 128×128 tactical-map preview accompanies the published JSON.
+Las áreas de ejecución ofrecen una amplia variedad de terreno fuera del perímetro protegido del campamento/cráter, escasa vegetación natural, escombros rocosos en el fondo del cráter y una posible patrulla de robots de seguridad. La paleta de campo sigue el método probado `crater_small` Proporciones de hierba, tierra y flores; el cráter, la cabaña, el sendero y la plataforma de equipamiento siguen definidos explícitamente para que la selección de área en tiempo de ejecución no sobrescriba la geometría principal. Los recursos del catálogo existentes fueron suficientes, por lo que no se introdujeron nuevas definiciones de mosaicos ni de mobiliario. Una vista previa del mapa táctico de 128 × 128 píxeles acompaña al JSON publicado.
 
-The maintained source/output set is:
+El conjunto de origen/salida mantenido es:
 
-* `Tools/recipes/crater_research_camp.json` — production source of truth;
-* `Tools/examples/map_recipe_crater_research_camp.json` — structurally equivalent maintained fixture with distinct example identity;
-* `Mods/Dimensionfall/Maps/crater_research_camp.json` and `.png` — published runtime map and preview;
-* `Tests/Unit/test_crater_research_camp_navigation.gd` — real `Chunk`/`NavigationServer3D` hut-to-rim and crater descent/ascent acceptance.
+* `Tools/recipes/crater_research_camp.json` — fuente de información fidedigna para la producción;
+* `Tools/examples/map_recipe_crater_research_camp.json` — accesorio estructuralmente equivalente mantenido con una identidad de ejemplo distinta;
+* `Mods/Dimensionfall/Maps/crater_research_camp.json` y `.png` — Mapa de ejecución y vista previa publicados;
+* `Tests/Unit/test_crater_research_camp_navigation.gd` - real `Chunk`/`NavigationServer3D` Aceptación de descensos y ascensos desde refugios hasta el borde del cráter.
 
-The generated-map contract asserts map classification and connections, crater depth and slope rotation, building ownership and canonical entrance metadata, exact focal furniture rotations and itemgroups, protected clear route cells, runtime-area entity pools, production/fixture parity, deterministic publication, and standalone validation.
+El contrato de mapas generados garantiza la clasificación y las conexiones del mapa, la profundidad del cráter y la rotación de la pendiente, la propiedad de los edificios y los metadatos de entrada canónicos, las rotaciones exactas de los muebles focales y los grupos de elementos, las celdas de ruta despejadas protegidas, los grupos de entidades del área de ejecución, la paridad de producción/accesorios, la publicación determinista y la validación independiente.
 
-## Phase 11 — Generalized tall-storey wall height
+## Fase 11 — Altura generalizada de los muros de plantas altas
 
-**Status: deferred pending a concrete tall-storey gameplay requirement; Phase 10 acceptance is green**
+**Estado: aplazado a la espera de un requisito concreto de jugabilidad en altura; la aceptación de la Fase 10 es positiva**
 
-Do not reintroduce `wall_z`. Ordinary storeys always derive walls as `floor_z + 1`.
+No reintroducir `wall_z`. Los pisos ordinarios siempre derivan paredes como `floor_z + 1`.
 
-When a real tall-room requirement exists, add the smallest generic `wall_height` contract:
+Cuando exista un requisito real de espacio alto, agregue el genérico más pequeño. `wall_height` contrato:
 
 ```json
 {"z": 0, "wall_height": 2, "rooms": ["tall_hall"]}
 ```
 
-This means:
+Esto significa:
 
 ```text
 floor z0
@@ -1266,34 +1266,34 @@ wall layers z1 and z2
 roof surface z3
 ```
 
-Required constraints:
+Restricciones requeridas:
 
-* omitted `wall_height` means `1`;
-* it is a positive integer;
-* every derived wall layer remains within logical bounds;
-* a wall span ends strictly below the next occupied floor;
-* the roof surface is derived from the highest wall layer;
-* wall boundaries materialize across every derived wall layer;
-* supports remain at the owning floor and are not duplicated vertically;
-* multi-layer door/window openings are rejected initially unless an explicit opening-span design exists.
+* omitido `wall_height` medio `1`;
+* es un número entero positivo;
+* Cada capa de pared derivada permanece dentro de los límites lógicos;
+* un tramo de pared termina justo debajo del siguiente piso ocupado;
+* La superficie del techo se deriva de la capa más alta de la pared;
+* Los límites de las paredes se materializan en cada capa de pared derivada;
+* Los soportes permanecen en la planta principal y no se duplican verticalmente;
+* Las aberturas de puertas/ventanas de varias capas se rechazan inicialmente a menos que exista un diseño explícito del tramo de la abertura.
 
-Implement this only with test-first coverage in `Tools/tests/test_map_generator.py`, then mirror validation in `Tools/map_validator.py` and `Scripts/Gamedata/DMap.gd`. Add a minimal `Tools/examples/map_recipe_tall_storey_building.json` and focused GUT navigation/collision coverage before applying it to farmland or any other maintained map.
-
----
-
-# Recommended immediate next task
-
-**Recommended next task: manually review Crater Research Camp in the content editor/game, then define a concrete tall-room gameplay requirement before implementing Phase 11 (`wall_height`).** Pine Hollow is complete, and Crater Research Camp has complete implementation and automated acceptance with only its visual walkthrough pending. After that review, the plan has no remaining location-specific work for either map. Phase 11 is the next defined generator milestone, but it should remain deferred until a real location or gameplay feature requires storeys taller than the current one-wall-layer rule. Once that requirement exists, begin with test-first coverage for the generic `wall_height` contract, then update the generator, standalone validator, DMap sanitization, a minimal example recipe, and focused Godot navigation/collision tests.
-
-Until that requirement exists, the best next step is a short discovery/design pass: choose the first concrete tall-room use case, define its door/window opening behavior and expected roof/support geometry, and only then start Phase 11 implementation. Do not reopen Pine Hollow or generate towns/overmap-wide composition as a substitute; preserve the established map-level areas, room semantics, runtime itemgroup behavior, and map-edge contracts.
-
-Run the complete Python suite, relevant Godot tests or smoke checks, all maintained example generations through `Tools/map_validator.py`, and `git diff --check` after implementation work.
-
-Do not commit or push unless explicitly requested.
+Implemente esto solo con cobertura de prueba primero en `Tools/tests/test_map_generator.py`, luego validación del espejo en `Tools/map_validator.py` y `Scripts/Gamedata/DMap.gd`. Agrega un mínimo `Tools/examples/map_recipe_tall_storey_building.json` y una cobertura de navegación/colisión GUT específica antes de aplicarla a tierras de cultivo o cualquier otro mapa mantenido.
 
 ---
 
-# Current position in one view
+# Tarea siguiente recomendada
+
+**Tarea siguiente recomendada: revisar manualmente Crater Research Camp en el editor de contenido/juego, luego definir un requisito de juego concreto para habitaciones altas antes de implementar la Fase 11 (`wall_height`).** Pine Hollow está completo, y Crater Research Camp tiene la implementación completa y la aceptación automatizada, quedando pendiente únicamente su recorrido visual. Después de esa revisión, el plan no tiene trabajo adicional específico de ubicación para ninguno de los mapas. La fase 11 es el siguiente hito definido del generador, pero debería posponerse hasta que una ubicación real o una característica de juego requiera pisos más altos que la regla actual de una sola capa de pared. Una vez que exista ese requisito, comience con la cobertura de prueba primero para el genérico `wall_height` contrato, luego actualizar el generador, validador independiente, saneamiento de DMap, una receta de ejemplo mínima y pruebas de navegación/colisión de Godot enfocadas.
+
+Hasta que exista ese requisito, el mejor siguiente paso es una breve fase de descubrimiento/diseño: elegir el primer caso de uso concreto para habitaciones altas, definir el comportamiento de apertura de puertas/ventanas y la geometría prevista del techo/soporte, y solo entonces comenzar la implementación de la Fase 11. No reabra Pine Hollow ni genere pueblos/composición a nivel de mapa como sustituto; conserve las áreas establecidas a nivel de mapa, la semántica de las habitaciones, el comportamiento de los grupos de elementos en tiempo de ejecución y los contratos de los bordes del mapa.
+
+Ejecuta el conjunto completo de Python, las pruebas o comprobaciones de humo relevantes de Godot, todas las generaciones de ejemplos mantenidas hasta `Tools/map_validator.py`, y `git diff --check` después del trabajo de implementación.
+
+No realices confirmaciones ni envíos a menos que se te solicite explícitamente.
+
+---
+
+# Posición actual en una vista
 
 ```text
 [Complete] Hermes-compatible repository guidance
@@ -1376,5 +1376,5 @@ Do not commit or push unless explicitly requested.
 [Target] Agent-generated playable maps
 ```
 
-You are no longer experimenting with whether maps can be generated safely. That part is established. The project is now at the point of expanding the generator’s vocabulary until it can express an actual location.
+Ya no se está experimentando con la posibilidad de generar mapas de forma segura. Esa parte ya está resuelta. El proyecto se encuentra ahora en la fase de ampliar el vocabulario del generador hasta que pueda expresar una ubicación real.
 
