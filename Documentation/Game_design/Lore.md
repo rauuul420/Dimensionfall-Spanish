@@ -1,7 +1,7 @@
 # Historia
 Esta página describe la historia y el trasfondo de Dimensionfall. Los conceptos y el contenido del juego deben ajustarse a esta historia para crear una experiencia de juego coherente.
 
-## Dimensionfall: Descripción general del mundo y la ambientación
+## Dimensionfall: Historia del mundo y la ambientación
 
 ### Nuestra dimensión (199X)
 
