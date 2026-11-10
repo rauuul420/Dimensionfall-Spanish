@@ -1,49 +1,50 @@
 # Dimensionfall
-Dimensionfall es un juego de supervivencia en tiempo real con perspectiva cenital, ambientado en un mundo postapocalíptico. Sobrevive en un lugar extraño donde han convergido múltiples dimensiones. ¿Te enfrentarás a demonios? ¿A alienígenas? ¿A zombis? Quién sabe con qué te encontrarás. El [lore](https://github.com/rauuul420/Dimensionfall-Spanish/blob/main/Documentation/Game_design/Lore.md) presenta muchos aspectos interesantes
+Dimensionfall es un juego de supervivencia en tiempo real con perspectiva cenital, ambientado en un mundo postapocalíptico. Sobrevive en un lugar extraño donde han convergido múltiples dimensiones. ¿Te enfrentarás a demonios? ¿A alienígenas? ¿A zombis? Quién sabe con qué te encontrarás. La [historia](https://github.com/rauuul420/Dimensionfall-Spanish/blob/main/Documentation/Game_design/Lore.md) presenta muchos aspectos interesantes
 
 ## Tabla de Contenidos
-- [Como jugar](#como-jugar)
-- [Features](#features)
-- [Roadmap](#roadmap)
-- [Contribute](#contribute)
-- [Community](#community)
-- [Credits](#credits)
+- [Cómo jugar](#cómo-jugar)
+- [Características](#características)
+- [Hoja de ruta](#hoja-de-ruta)
+- [Contribuir](#contribuir)
+- [Comunidad](#comunidad)
+- [Créditos](#créditos)
 
-Find a way to defend yourself in the city
+Encuentra la manera de defenderte en la ciudad.
 ![Catax_basic](Media/Catax_basic.png)
 
-The world is infinite in every direction. Explore and survive as long as you can!
+El mundo es infinito en todas direcciones. ¡Explora y sobrevive todo el tiempo que puedas!
 ![Catax_basic](Media/Catax_basic_zoomed_out.png)
 
-Check out the gameplay video:
+Mira el video del juego:
 
 [![Dimensionfall_gameplay_demo](https://img.youtube.com/vi/Dnn8xvyTN74/maxresdefault.jpg)](https://www.youtube.com/watch?v=Dnn8xvyTN74)
 
-## Como jugar
-You can find some demo releases [here](https://github.com/Khaligufzel/Dimensionfall/releases).
-Alternatively, you can play the game in the following way:
-- Download [Godot](https://godotengine.org/download/) from their website or from [Steam](https://store.steampowered.com/app/404790/Godot_Engine/)
-- Download this project by clicking the green 'Code' button at the top-right of this page and selecting 'Download ZIP'
-- Extract the ZIP file to a location of your choosing
-- Open Godot and click *Open Project*, then navigate to the folder where you extracted the ZIP file
-- Open the project in Godot and click *Play* in the top-right
+## Cómo jugar
+Puedes encontrar algunas versiones de demostración aqui [here](https://github.com/rauuul420/Dimensionfall/releases).
+Como alternativa, puedes jugar y editar el proyecto de la siguiente manera:
+- Descarga [Godot](https://godotengine.org/download/) desde su sitio web o a través de [Steam](https://store.steampowered.com/app/404790/Godot_Engine/)
+- Descarga este proyecto haciendo clic en el botón verde "Code" en la parte superior derecha de esta página y seleccionando "Download ZIP"
+- Extrae el archivo ZIP en tu ubicación de preferencia.
+- Abre Godot y haz clic en Importar proyecto existente , luego navega hasta la carpeta donde extrajiste el archivo ZIP.
+- Abre el proyecto en Godot y haz clic en Reproducir en la esquina superior derecha.
+- CONSEJO: El proyecto en Godot v4.7.2 debería funcionar sin problemas.
 
-## Features
+## Características
 The game has the following features:
-- Melee and ranged combat + dual wielding
-- Inventory management
-- Infinite procedural terrain
-- Quests
-- Content editor for maps, items, quests, factions, mobs etc.
-- Moddable
-- Base building
-- Crafting stations
+- Combate cuerpo a cuerpo/a distancia + doble empuñadura
+- Gestión de inventario
+- Terreno procedural infinito
+- Misiones
+- Editor de contenido para mapas, objetos, misiones, facciones, monstruos etc.
+- Moddeable
+- Creación de bases
+- Estaciones de fabricacióm
 
-See also the extended [list of features](FeatureList.md)
+Consulté también la [lista ampliada de características](FeatureList.md)
 
-## Roadmap
+## Hoja de ruta
 
-### Stage 1 (first release)
+### Etapa 1 (primer lanzamiento)
 - Building ~~/crafting/reloading~~ should take resources from the inventory
 - Basic ~~crafting/~~ building menu
 - ~~"Progress bar" to show the player when the current action will be finished (reloading, building, crafting etc.)~~
@@ -73,8 +74,8 @@ Additional features before our first release:
 - ~~Melee weapons~~
 - ~~Recoil/sway/spread/aiming~~
 
-## Contribute
-If you like Godot and want to contribute, feel free to submit a pull request or issue on your ideas, or join us on discord. To make edits, start by reading the [getting started guide](https://github.com/Khaligufzel/Dimensionfall/blob/main/Documentation/Game_development/Getting_started.md).
+## Contribuir
+Si te gusta Godot y quieres contribuir, no dudes en enviar una solicitud de extracción o un informe de error con tus ideas, o unirte a nosotros en Discord. Para realizar ediciones, comienza leyendo la [guía de inicio].(https://github.com/Khaligufzel/Dimensionfall/blob/main/Documentation/Game_development/Getting_started.md).
 
 This will always be a hobby project and will not be for sale. However, if you want to, you can donate to the developers:
 
@@ -82,15 +83,16 @@ Khaligufzel: https://ko-fi.com/khaligufzel
 
 snipercup: https://ko-fi.com/snipercup
 
-## Community
+## Comunidad
 
 Official Discord:
 [https://discord.gg/yzrxG9zZqA](https://discord.gg/yzrxG9zZqA)
 
-## Credits
+## Créditos
+- Repositorio original: https://github.com/Dimensionfall/Dimensionfall
 - Sprites: Some sprites were created with https://github.com/int-ua/blender-pixelart
 - Sprites: Some sprites were created with https://github.com/RodZill4/material-maker
-- Inventory: This game uses https://github.com/peter-kish/gloot to implement the inventory
+- Inventario: Este juego usea https://github.com/peter-kish/gloot para implementar el inventario
 - Text display: Some UI uses https://github.com/daenvil/MarkdownLabel for text display
 - Music:
 	Main menu music: Desolate - https://opengameart.org/users/matthew-pablo
