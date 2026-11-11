@@ -1,173 +1,173 @@
-# Feature list
+# Lista de características
 
-This is an extended and detailed list of features for the Dimensionfall game. These features are implemented unless a note says otherwise.
-
-
-### Combat
-Ranged and melee combat are currently implemented. 
-- One-handed weapons can be dual-wielded, while two-handed weapons will occupy both slots.
-- Load and unload guns and magazines.
-- Ammunition and other loot can be collected from enemy corpses.
-- Increase your accuracy by gaining ranged combat skills and managing recoil.
+Esta es una lista extensa y detallada de las características del juego Dimensionfall. Estas características están implementadas a menos que una nota indique lo contrario.
 
 
-### Inventory
-- You have to manage weight and volume.
-- You can drag and drop items from different containers
-- Interact with your equipment slots
-
-![Catax_inventory](Media/Dimensionfall_inventory.png)
-
-### Overmap
-
-The game will create an infinite map to explore. The world is divided by regions, each having their own opportunities and challenges. A marker will indicate your current location.
-
-![Catax_overmap](Media/Dimensionfall_overmap.png)
-
-Cities and roads are generated. Explore a whole network of roads and get to know the area
-
-![Catax_overmap](Media/Catax_overmap_large.png)
-
-### Quest journal
-Follow quests to guide your way through this dangerous world. A quest may have multiple objectives, which will be displayed step-by-step
-
-![Catax_overmap](Media/Dimensionfall_quest_journal.png)
-
-### Crafting stations
-Crafting stations allow off-handed crafting while you're doing other stuff. Expand your base with all the crafting stations you need. To make an item, put in the required ingredients and add it to the queue. Once it's done, the output will be present inside the furniture's inventory. Use the content editor to turn any furniture into a crafting station. 
-
-![Catax_overmap](Media/Dimensionfall_crafting_station.png)
+### Combatir
+Actualmente, se han implementado el combate a distancia y el combate cuerpo a cuerpo. 
+- Las armas de una mano se pueden usar con ambas manos, mientras que las armas de dos manos ocuparán ambas ranuras.
+- Cargar y descargar armas y cargadores.
+- Se puede recoger munición y otros objetos de los cadáveres de los enemigos.
+- Mejora tu precisión adquiriendo habilidades de combate a distancia y controlando el retroceso.
 
 
-### Main menu
-- Play the game
-- Load a game
-- Manage options
-- Read documentation
-- Manage content for the game
+### Inventario
+- Hay que controlar el peso y el volumen.
+- Puedes arrastrar y soltar elementos desde diferentes contenedores.
+- Interactúa con tus ranuras de equipo
+
+![Inventario de Catax](Media/Dimensionfall_inventory.png)
+
+### Mapa general
+
+El juego creará un mapa infinito para explorar. El mundo está dividido en regiones, cada una con sus propias oportunidades y desafíos. Un marcador indicará tu ubicación actual.
+
+![Mapa superpuesto de Catax](Media/Dimensionfall_overmap.png)
+
+Se generan ciudades y carreteras. Explora toda una red de carreteras y conoce la zona.
+
+![Mapa superpuesto de Catax](Media/Catax_overmap_large.png)
+
+### Diario de búsqueda
+Sigue las misiones para guiarte a través de este peligroso mundo. Una misión puede tener múltiples objetivos, que se mostrarán paso a paso.
+
+![Mapa superpuesto de Catax](Media/Dimensionfall_quest_journal.png)
+
+### Estaciones de fabricación
+Las estaciones de creación te permiten fabricar objetos mientras realizas otras tareas. Amplía tu base con todas las estaciones de creación que necesites. Para crear un objeto, introduce los ingredientes necesarios y añádelo a la cola. Una vez finalizado, el resultado aparecerá en el inventario del mueble. Usa el editor de contenido para convertir cualquier mueble en una estación de creación. 
+
+![Mapa superpuesto de Catax](Media/Dimensionfall_crafting_station.png)
+
+
+### Menú principal
+- Juega el juego
+- Cargar un juego
+- Gestionar opciones
+- Lea la documentación
+- Gestionar el contenido del juego
 ![Dimensionfall_main_menu](Media/Dimensionfall_main_menu.png)
 
 
-### Add/Remove Mods Menu
+### Menú para añadir/eliminar mods
 
-Manage the game’s content dynamically using the Add/Remove Mods menu. From this menu, you can enable, disable, reorder, and inspect mods without leaving the game. When selecting a mod, its details are shown on the right:
+Gestiona el contenido del juego de forma dinámica mediante el menú Añadir/Eliminar Mods. Desde este menú, puedes activar, desactivar, reordenar e inspeccionar los mods sin salir del juego. Al seleccionar un mod, sus detalles se muestran a la derecha.
 
 ![Dimensionfall_add_remove_mod_menu](Media/Dimensionfall_add_remove_mod_menu.png)
 
 
-### Content editor
-Content for this game is created in the content editor. On the left, you can select content to edit. You can edit tactical maps, maps, items, tiles, furniture, mobs, itemgroups, wearable slots, skills, and stats.
-- All content is saved as JSON, which allows you to edit the files manually or using an external editor if you want to.
-- Content is loaded as mods, even the core content. Put all your json and sprites into /mods/yourmod/ and it can be read by the game.
-![Catax_content_editor](Media/Catax_content_editor.png)
+### Editor de contenido
+El contenido de este juego se crea en el editor de contenido. A la izquierda, puedes seleccionar el contenido que deseas editar. Puedes editar mapas tácticos, mapas, objetos, casillas, muebles, criaturas, grupos de objetos, ranuras de equipamiento, habilidades y estadísticas.
+- Todo el contenido se guarda en formato JSON, lo que permite editar los archivos manualmente o utilizando un editor externo si se desea.
+- El contenido se carga como mods, incluso el contenido principal. Coloca todos tus archivos JSON y sprites en /mods/tumod/ y el juego podrá leerlos.
+![Editor de contenido de Catax](Media/Catax_content_editor.png)
 
 
-### Tacticalmap editor
-A tacticalmap is made from maps and can be used to define a fixed area in the infinite world. This allows you to piece together a bigger map. You can specify any size and start filling the grid with maps from the selection on the right. The tiles in the grid can be rotated to properly connect roads and create symmetry. Tacticalmaps will spawn randomly on the map.
-![Catax_tacticalmap_editor](Media/Catax_tacticalmap_editor.png)
+### editor de mapas tácticos
+Un mapa táctico se compone de mapas y permite definir un área fija en un mundo infinito. Esto te permite crear un mapa más grande. Puedes especificar cualquier tamaño y empezar a rellenar la cuadrícula con mapas de la selección de la derecha. Las casillas de la cuadrícula se pueden rotar para conectar correctamente las carreteras y crear simetría. Los mapas tácticos aparecerán aleatoriamente en el mapa.
+![Editor de mapas tácticos de Catax](Media/Catax_tacticalmap_editor.png)
 
 
-### Map editor
-A map has a fixed size of 32x32 and has a maximum of 21 levels in height, ranging from -10 to +10. 
-- Place tiles, mobs and furniture onto the grid and get creative
-- Controls allow you to move up and down, zoom, rotate, copy/paste and more
-- Compose a custom brush with the Brush Composer, aiding in quick (randomized) terrain painting.
+### Editor de mapas
+Un mapa tiene un tamaño fijo de 32x32 y un máximo de 21 niveles de altura, que van desde -10 hasta +10. 
+- Coloca baldosas, criaturas y muebles en la cuadrícula y da rienda suelta a tu creatividad.
+- Los controles te permiten moverte hacia arriba y hacia abajo, hacer zoom, rotar, copiar/pegar y mucho más.
+- Crea pinceles personalizados con el Compositor de pinceles, lo que te ayudará a pintar terrenos de forma rápida (y aleatoria).
 
-![Catax_map_editor](Media/Catax_map_editor.png)
+![Editor de mapas de Catax](Media/Catax_map_editor.png)
 
-Define areas on the map to allow more randomization:
-![Catax_map_editor](Media/Catax_map_editor_areas.png)
+Defina áreas en el mapa para permitir una mayor aleatorización:
+![Editor de mapas de Catax](Media/Catax_map_editor_areas.png)
 
-Use the map preview to balance the areas and adjust the randomization. Hit the generate button multiple times to visualize the spawn chance and area coverage:
-![Catax_map_editor](Media/Catax_map_editor_preview.png)
+Usa la vista previa del mapa para equilibrar las áreas y ajustar la aleatorización. Pulsa el botón "Generar" varias veces para visualizar la probabilidad de aparición y la cobertura del área.
+![Editor de mapas de Catax](Media/Catax_map_editor_preview.png)
 
-With the area editor, you can finetune the area to your liking. Set the proportions of tiles, set the spawn chance and exclude other areas from spawning. You can also rename the area and enable random rotation:
-![Catax_map_editor](Media/Catax_map_editor_area_editor.png)
+Con el editor de áreas, puedes ajustar el área a tu gusto. Establece las proporciones de las casillas, la probabilidad de aparición y excluye otras áreas de la generación. También puedes cambiar el nombre del área y habilitar la rotación aleatoria.
+![Editor de mapas de Catax](Media/Catax_map_editor_area_editor.png)
 	
 
-### Item editor
-Allows you to edit and add items in the game. An item will work as you configure it. You can make it work as a weapon and as food if you choose to, the types are not mutually exclusive. Specify the item properties in the convenient editor which has tooltips and controls to help you fill in the right values.
-![Catax_item_editor](Media/Catax_item_editor.png)
+### Editor de elementos
+Te permite editar y añadir objetos al juego. Cada objeto funcionará según tu configuración. Puedes usarlo como arma o como comida, ya que ambas funciones no son excluyentes. Especifica las propiedades del objeto en el práctico editor, que incluye información emergente y controles para ayudarte a introducir los valores correctos.
+![Editor de elementos de Catax](Media/Catax_item_editor.png)
 
 
-One item can have any number of crafting recipes. Use the crafting recipe editor to specify the requirements for this item. To add items to the recipe, drag them from the left side of the window onto the recipe!
-![Catax_item_editor](Media/Catax_crafting_editor.png)
+Un objeto puede tener cualquier número de recetas de fabricación. Usa el editor de recetas para especificar los requisitos de este objeto. Para añadir objetos a la receta, arrástralos desde el lado izquierdo de la ventana hasta la receta.
+![Editor de elementos de Catax](Media/Catax_crafting_editor.png)
 
-### Tile editor
-Allows you to specify the properties of tiles and add new ones. Sprites are loaded from /mods/core/tiles so put your sprites there if you want to add new ones.
-![Catax_tile_editor](Media/Catax_tile_editor.png)
-
-
-### Mob editor
-Allows you to create new mobs and configure them. You can then use the map editor to place them on the map.
-
-![Catax_mob_editor](Media/Catax_mob_editor.png)
+### editor de mosaicos
+Te permite especificar las propiedades de los mosaicos y añadir otros nuevos. Los sprites se cargan desde /mods/core/tiles, así que coloca tus sprites allí si quieres añadir nuevos.
+![Editor de mosaicos de Catax](Media/Catax_tile_editor.png)
 
 
-### Furniture editor
-Create new furniture or edit existing ones with this editor. After creating them, you can place them on the map with the Map Editor. Hover over the controls to get information about each of them.
+### Editor de la mafia
+Te permite crear nuevas criaturas y configurarlas. Luego puedes usar el editor de mapas para colocarlas en el mapa.
 
-![Catax_furniture_editor](Media/Catax_furniture_editor.png)
+![Editor de mobs de Catax](Media/Catax_mob_editor.png)
 
 
+### editor de muebles
+Crea muebles nuevos o edita los que ya tienes con este editor. Después de crearlos, puedes colocarlos en el mapa con el Editor de mapas. Pasa el cursor sobre los controles para obtener información sobre cada uno de ellos.
 
-### Itemgroup editor
-Specify itemgroups, used to spawn items in various locations including containers and corpses. By specifying a spawn chance and amount, it offers a wide variety of possibilities. To add items to the itemgroup, drag them from the left side of the screen onto the itemgroup!
-
-![Catax_furniture_editor](Media/Catax_itemgroup_editor.png)
+![Editor de muebles Catax](Media/Catax_furniture_editor.png)
 
 
 
-### Player attribute editor
-In line with complete moddability, you can set the player's attributes using the editor. This allows for more immersion and customization. Once the attribute is created, you can then drag them from the menu onto items and have them alter the attribute. For example, you can have an "apple" item increase the "food" attribute when used.
+### editor de grupos de elementos
+Especifica grupos de objetos, que se utilizan para generar objetos en diversas ubicaciones, como contenedores y cadáveres. Al especificar la probabilidad y la cantidad de aparición, se ofrece una amplia variedad de posibilidades. Para añadir objetos a un grupo, arrástralos desde el lado izquierdo de la pantalla hasta el grupo.
 
-![Catax_furniture_editor](Media/Catax_playerattribute_editor.png)
-
-
-
-### Wearable slots editor
-Ever wanted to create that unique piece of armor, but didn't have that slot to fit it in? Now you can add your own slots. These show up in the player's inventory and enables the player to equip armor into it.
-
-![Catax_furniture_editor](Media/Catax_wearableslots_editor.png)
+![Editor de muebles Catax](Media/Catax_itemgroup_editor.png)
 
 
 
-### Stats editor
-Add your own stats to the game. Stats are used to boost the use of skills when crafting or using a weapon
+### editor de atributos del jugador
+En línea con la posibilidad de modificación completa, puedes configurar los atributos del jugador mediante el editor. Esto permite una mayor inmersión y personalización. Una vez creado el atributo, puedes arrastrarlo desde el menú a los objetos para modificarlo. Por ejemplo, puedes hacer que una manzana aumente su atributo de "alimento" al usarse.
 
-![Catax_furniture_editor](Media/Catax_stats_editor.png)
-
-
-### Skills editor
-Make any and every skill you need! Some are included in the core mod, but you can easily add your own in the Skills Editor. After they are created, use them in weapon or recipe configuration for other entities.
-
-![Catax_furniture_editor](Media/Catax_skills_editor.png)
+![Editor de muebles Catax](Media/Catax_playerattribute_editor.png)
 
 
-### Quests editor
-Create a story for the player using the quest editor. These will show up in the quest journal in-game. It allows you to guide the player to their next destination and reward them for their efforts. There are multiple step types available. You can set many details and add a tip for the player.
 
-![Catax_furniture_editor](Media/Catax_quest_editor.png)
+### editor de ranuras para prendas de vestir
+¿Alguna vez quisiste crear una armadura única, pero no tenías espacio para colocarla? Ahora puedes añadir tus propios espacios. Estos aparecerán en el inventario del jugador y le permitirán equipar armaduras en ellos.
 
-
-### Overmap area editor
-This editor allows you to define an area that will be generated on the overmap. An area can be created from an unlimited number of regions. In this image, a city is defined by the urban, suburban and field regions:
-
-![Catax_furniture_editor](Media/Dimensionfall_overmaparea_editor.png)
-
-Each region in the area will cover a different circle around the center, depending on the radius. Using the generator, you can quickly see the result of your settings:
-
-![Catax_furniture_editor](Media/Dimensionfall_overmaparea_generator.png)
+![Editor de muebles Catax](Media/Catax_wearableslots_editor.png)
 
 
-Using this tool you can add new maps to cities, or create a whole new area with maps you made! This allows for the creation of biomes, for example.
 
-### Mob group editor
-With this editor, you can create your own group of mobs by adding a sprite, name, description, monsters (which can be dragged straight from the mob editor section within the content manager). You can even configure the monsters' spawn chance individually by altering their weight, all within the editor:
+### Editor de estadísticas
+Añade tus propias estadísticas al juego. Las estadísticas se utilizan para mejorar el uso de habilidades al fabricar objetos o usar un arma.
 
-![Catax_mobgroup_editor](Media/Dimensionfall_mobgroup_editor.png)
+![Editor de muebles Catax](Media/Catax_stats_editor.png)
 
-### Mob faction editor
-(Work in progress), you can create a new custom faction and assign it to any mobs or mobgroups you want. You can set what this faction is friendly, neutral and hostile towards other mobs, mobgroups and factions.
 
-![Catax_mobfaction_editor](Media/Dimensionfall_mobfaction_editor.png)
+### editor de habilidades
+¡Crea todas las habilidades que necesites! Algunas están incluidas en el mod principal, pero puedes añadir fácilmente las tuyas en el Editor de Habilidades. Una vez creadas, úsalas en la configuración de armas o recetas para otras entidades.
+
+![Editor de muebles Catax](Media/Catax_skills_editor.png)
+
+
+### editor de misiones
+Crea una historia para el jugador con el editor de misiones. Estas aparecerán en el diario de misiones del juego. Te permite guiar al jugador a su próximo destino y recompensarlo por su esfuerzo. Hay varios tipos de pasos disponibles. Puedes configurar muchos detalles y añadir una pista para el jugador.
+
+![Editor de muebles Catax](Media/Catax_quest_editor.png)
+
+
+### editor de área de mapa superior
+Este editor permite definir un área que se generará en el mapa general. Un área puede crearse a partir de un número ilimitado de regiones. En esta imagen, una ciudad está definida por las regiones urbana, suburbana y rural:
+
+![Editor de muebles Catax](Media/Dimensionfall_overmaparea_editor.png)
+
+Cada región del área abarcará un círculo diferente alrededor del centro, dependiendo del radio. Usando el generador, puedes ver rápidamente el resultado de tu configuración:
+
+![Editor de muebles Catax](Media/Dimensionfall_overmaparea_generator.png)
+
+
+Con esta herramienta puedes añadir nuevos mapas a las ciudades o crear una zona completamente nueva con los mapas que hayas creado. Esto permite, por ejemplo, la creación de biomas.
+
+### Editor de grupos de la mafia
+Con este editor, puedes crear tu propio grupo de criaturas añadiendo un sprite, nombre, descripción y monstruos (que puedes arrastrar directamente desde la sección del editor de criaturas dentro del gestor de contenido). Incluso puedes configurar la probabilidad de aparición de los monstruos individualmente modificando su peso, todo dentro del editor.
+
+![Editor de grupos de mobs de Catax](Media/Dimensionfall_mobgroup_editor.png)
+
+### editor de facciones de la mafia
+(En desarrollo), puedes crear una nueva facción personalizada y asignarla a cualquier monstruo o grupo de monstruos que desees. Puedes configurar si esta facción es amistosa, neutral u hostil hacia otros monstruos, grupos de monstruos y facciones.
+
+![Editor de acción de Catax_mobfaction](Media/Dimensionfall_mobfaction_editor.png)
