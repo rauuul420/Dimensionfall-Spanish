@@ -92,7 +92,7 @@ Discord oficial:
 - Repositorio original: https://github.com/Dimensionfall/Dimensionfall
 - Sprites: Algunos sprites fueron creados con https://github.com/int-ua/blender-pixelart
 - Sprites: Algunos sprites fueron creados con https://github.com/RodZill4/material-maker
-- Inventario: Este juego utiliza https://github.com/peter-kish/glot para implementar el inventario
+- Inventario: Este juego utiliza https://github.com/peter-kish/gloot para implementar el inventario
 - Visualización de texto: Algunas interfaces de usuario utilizan https://github.com/daenvil/MarkdownLabel para la visualización de texto.
 - Música:
 	Música del menú principal: Desolate - https://opengameart.org/users/matthew-pablo
